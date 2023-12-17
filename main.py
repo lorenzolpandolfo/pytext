@@ -4,11 +4,13 @@ import customtkinter as ctk
 
 
 class MainApp:
-    def __init__(self, root):
+    def __init__(self, root, modo = "view"):
         self.root = root
+        self.modo = modo
         self.create_window()
         self.create_frames()
         self.create_widgets()
+        self.capture_commands()
 
 
     def create_window(self):
@@ -64,10 +66,31 @@ class MainApp:
         self.bottomframe.columnconfigure(0, weight=1)
         self.bottomframe.rowconfigure(0, weight=1)
 
+
+    def capture_commands(self):
+        # ele envia argumentos mesmo sem indicar
+        root.bind("<Key>", self.teste)
+        root.bind("<Escape>", lambda e: self.trocar_modo(self.modo))
     
-    
+
+    def trocar_modo(self, modo):
+        if modo == "view":
+            self.modo = "insert"
+        else:
+            self.modo = "view"
+        
+        print(self.modo)
+
+    def teste(self, event):
+        tecla = event.keysym
+
+        match tecla:
+            case "Up"| "Down"| "Left"| "Right"| "Return" |"BackSpace":
+                print("necessita atualizar contador! - ", event.keysym)
+            case _:
+                return 0
 
 if __name__ == "__main__":
     root = ctk.CTk()
-    app = MainApp(root)
+    app = MainApp(root, "view")
     root.mainloop()
