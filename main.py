@@ -3,6 +3,8 @@ from tkinter import font
 import customtkinter as ctk
 import re
 
+import shortcuts
+
 class MainApp:
     def __init__(self, root):
         self.root = root
@@ -130,6 +132,7 @@ class MainApp:
         
 
         elif self.modo == "insert":
+
             match tecla:
                 case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
                     return self.atualizar_contador()
@@ -138,14 +141,28 @@ class MainApp:
 
 
     def catch_comando(self, comando):
-        chars = len(comando) - 1
+        # separando o comando em partes: numero de vezes a rodar e o comando
+        def extrair_numeros(texto):
+            numeros = re.findall(r'\d+', texto)
+            if numeros:
+                return int(''.join(numeros))
+            else:
+                return None
 
-        print(comando, chars)
+        comando_sem_numeros = re.sub(r'\d', '', comando)
+        numeros = extrair_numeros(comando)
 
-        a = re.sub(r'\d', '', comando)
-        print(a)
-        return self.bottom_command_output.delete("1.0", ctk.END)
+        # tratando o comando de fato
+        shortcuts.search_command(comando_sem_numeros, numeros, self.main_textarea)
 
+        # apagando o comando
+        self.bottom_command_output.delete("1.0", ctk.END)
+        return 0
+
+    def deletar(self):
+        print("deletado")
+        self.main_textarea.configure(state="normal")
+        self.main_textarea.delete("1.0", ctk.END)
 
 
     def atualizar_contador(self, event = None):
