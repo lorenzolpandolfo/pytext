@@ -60,8 +60,9 @@ class MainApp:
         self.mainframe.rowconfigure(0, weight=1)
 
         # initializing left text area
-        self.left_textarea = ctk.CTkTextbox(self.leftframe, width=50, wrap=ctk.CHAR, font=firacode)
+        self.left_textarea = ctk.CTkTextbox(self.leftframe, width=70, wrap=ctk.CHAR, font=firacode)
         self.left_textarea.grid(row=0, column=0, sticky="ns", padx=(10,10), pady=(20,10))
+
         # configurando o leftframe
         self.leftframe.columnconfigure(0, weight=1)
         self.leftframe.rowconfigure(0, weight=1)
@@ -79,7 +80,10 @@ class MainApp:
         self.bottomframe.columnconfigure(1, weight=1)
         # Configurando o textbox para ser menor verticalmente
         self.bottom_command_output.rowconfigure(1, weight=0)  # Ajuste para tornar a segunda linha menor
-
+        
+    def on_main_textarea_scroll(self, *args):
+        # Sincronizar a rolagem do left_textarea com o main_textarea
+        self.left_textarea.yview_moveto(*args)
 
     def capture_commands(self):
         # ele envia argumentos mesmo sem indicar
@@ -128,8 +132,7 @@ class MainApp:
             elif tecla == "Return":
                 self.catch_comando(comando)
                 self.main_textarea.focus_set()
-            
-        
+ 
 
         elif self.modo == "insert":
 
@@ -155,19 +158,39 @@ class MainApp:
         # tratando o comando de fato
         shortcuts.search_command(comando_sem_numeros, numeros, self.main_textarea)
         
-        # apagando o comando
+        # apagando o comando enviado
         self.bottom_command_output.delete("1.0", ctk.END)
         return 0
 
-    def deletar(self):
-        print("deletado")
-        self.main_textarea.configure(state="normal")
-        self.main_textarea.delete("1.0", ctk.END)
+    def atualizar_contador(self, e=None):
+        cursor_pos = self.main_textarea.index(tk.INSERT)  # Obtém a posição do cursor
+        current_line = int(cursor_pos.split(".")[0])  # Obtém o número da linha
+        self.left_textarea.configure(state="normal")
+        self.left_textarea.delete(1.0, tk.END)
+
+        for linha in range(1, int(self.main_textarea.index('end-1c').split('.')[0]) + 1):
+            distance = abs(current_line - linha)
+            self.left_textarea.insert(tk.END, f"{distance}\n")
+
+        self.left_textarea.configure(state="disabled")
+        self.move_scroll()
 
 
-    def atualizar_contador(self, event = None):
-        print("contador atualizado!", event)
-        return 0
+
+        
+    def move_scroll(self):
+        # Obtém o número da linha atual (linha onde o cursor está)
+        current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
+
+        # Calcula a posição relativa da linha em relação ao número total de linhas
+        relative_position = current_line / float(self.main_textarea.index("end").split('.')[0])
+
+        # Move o scroll para a posição relativa da linha
+        #self.main_textarea.yview_moveto(relative_position - 1)
+        self.left_textarea.yview_moveto(relative_position - 1)
+    
+
+
 
 if __name__ == "__main__":
     root = ctk.CTk()
