@@ -7,15 +7,17 @@ def search_command(comando:str, qtd:int, textbox):
     match comando:
 
         case "dd":
-            deletar_linha(f"{str(qtd + 1)}.0", textbox)
+            deletar_linha(qtd, textbox)
         
         case _:
             print("Comando não encontrado.")
 
 
-def deletar_linha(final: str, textbox):
+def deletar_linha(final: int, textbox):
+    inicio = f"{str(textbox.index(ctk.INSERT)).split('.')[0]}.0"
+    final = str(final + float(inicio))
+
     textbox.configure(state="normal")
-    print("FINAL: ", final)
-    textbox.delete("1.0", final)
+    textbox.delete(inicio, final)
     textbox.configure(state="disabled")
     return 0

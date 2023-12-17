@@ -147,14 +147,14 @@ class MainApp:
             if numeros:
                 return int(''.join(numeros))
             else:
-                return None
+                return 1
 
         comando_sem_numeros = re.sub(r'\d', '', comando)
         numeros = extrair_numeros(comando)
 
         # tratando o comando de fato
         shortcuts.search_command(comando_sem_numeros, numeros, self.main_textarea)
-
+        
         # apagando o comando
         self.bottom_command_output.delete("1.0", ctk.END)
         return 0
