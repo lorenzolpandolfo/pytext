@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import font
 import customtkinter as ctk
-
+import re
 
 class MainApp:
     def __init__(self, root):
@@ -18,7 +18,6 @@ class MainApp:
     def create_window(self):
         root.geometry("1100x780")
         self.root.title("The Pytext Editor")
-    
 
     def create_frames(self):
         # creating left frame
@@ -109,33 +108,44 @@ class MainApp:
 
     def tecla_pressionada(self, event):
         tecla = event.keysym
-        print(event)
+        #print(event)
 
-        if tecla == "colon":
-            print(": pressionado")
-            # caso esteja no modo view, e vc aperta um tecla, ele adiciona a tecla na caixa de comandos e dá o foco nela
-            if self.modo == "view":
-                if self.bottom_command_output.get("1.0", "end-1c") == "":
-                    self.bottom_command_output.focus_set()
-
-                print("Registrando comandos")
-        
-        
         if self.modo == "view":
-            match tecla:
-                case "i":
-                    return self.trocar_modo(self.modo)
+            comando = self.bottom_command_output.get("1.0", "end-1c")
+            
+            # Caso não haja comandos e aperte :
+            if comando == "":
+                if tecla == "colon":
+                    self.bottom_command_output.focus_set()
+                else:
+                    match tecla:
+                        case "i":
+                            return self.trocar_modo(self.modo)
 
+            # Caso aperte Enter para registrar o comando
+            elif tecla == "Return":
+                self.catch_comando(comando)
+                self.main_textarea.focus_set()
+            
+        
+
+        elif self.modo == "insert":
+            match tecla:
+                case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
+                    return self.atualizar_contador()
                 case _:
                     return 0
-                
-        
-        match tecla:
-            case "Up"| "Down"| "Left"| "Right"| "Return" |"BackSpace" |"Button-1":
-                print("necessita atualizar contador! - ", tecla)
-                return self.atualizar_contador()
-            case _:
-                return 0
+
+
+    def catch_comando(self, comando):
+        chars = len(comando) - 1
+
+        print(comando, chars)
+
+        a = re.sub(r'\d', '', comando)
+        print(a)
+        return self.bottom_command_output.delete("1.0", ctk.END)
+
 
 
     def atualizar_contador(self, event = None):
