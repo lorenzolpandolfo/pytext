@@ -11,8 +11,8 @@ class MainApp:
         self.create_frames()
         self.create_widgets()
         self.capture_commands()
-        # por algum motivo ele buga a primeira mudança de modo, entao ele força a mudança no começo
-        self.trocar_modo(self.modo)
+        self.combo = []
+
 
 
     def create_window(self):
@@ -51,6 +51,8 @@ class MainApp:
         self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=firacode)
         self.main_textarea.grid(row=0, column=0, sticky="nsew", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
+        self.main_textarea.configure(state="disabled")
+
 
         # configurando o mainframe
         self.mainframe.columnconfigure(0, weight=1)
@@ -80,25 +82,54 @@ class MainApp:
 
     def capture_commands(self):
         # ele envia argumentos mesmo sem indicar
-        root.bind("<Key>", self.checar_se_precisa_atualizar_contador)
+        root.bind("<Key>", self.tecla_pressionada)
         root.bind("<Button-1>", self.atualizar_contador)
         root.bind("<Escape>", lambda e: self.trocar_modo(self.modo))
     
 
     def trocar_modo(self, modo):
         if modo == "view":
+            # caso vc aperte ESC com comando definido na caixa, ele so apaga o comando. Nao troca de modo
+            if self.bottom_command_output.get("1.0", "end-1c") != "":
+                self.bottom_command_output.delete("1.0", ctk.END)
+                self.main_textarea.focus_set()
+                return 0
+
             self.modo = "insert"
-            self.main_textarea.configure(state="disabled")
+            self.main_textarea.configure(state="normal")
+            self.main_textarea.focus_set()
         else:
             self.modo = "view"
-            self.main_textarea.configure(state="normal")
+            self.main_textarea.configure(state="disabled")
         
-        return self.bottom_output_mode.configure(text=modo)
+        self.bottom_command_output.delete("1.0", ctk.END)
+        print(self.modo)
+        return self.bottom_output_mode.configure(text=self.modo)
 
-    def checar_se_precisa_atualizar_contador(self, event):
+
+    def tecla_pressionada(self, event):
         tecla = event.keysym
         print(event)
 
+        if tecla == "colon":
+            print(": pressionado")
+            # caso esteja no modo view, e vc aperta um tecla, ele adiciona a tecla na caixa de comandos e dá o foco nela
+            if self.modo == "view":
+                if self.bottom_command_output.get("1.0", "end-1c") == "":
+                    self.bottom_command_output.focus_set()
+
+                print("Registrando comandos")
+        
+        
+        if self.modo == "view":
+            match tecla:
+                case "i":
+                    return self.trocar_modo(self.modo)
+
+                case _:
+                    return 0
+                
+        
         match tecla:
             case "Up"| "Down"| "Left"| "Right"| "Return" |"BackSpace" |"Button-1":
                 print("necessita atualizar contador! - ", tecla)
