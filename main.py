@@ -68,7 +68,7 @@ class MainApp:
             "Dark": "#1d1e1e",
             "Light": "#f9f9fa"
         }
-        self.main_textarea.configure(yscrollcommand="", scrollbar_button_color=self.themes[self.theme_mode], scrollbar_button_hover_color=self.themes[self.theme_mode])
+        self.main_textarea.configure(yscrollcommand=self.arrumar_cursor(), scrollbar_button_color=self.themes[self.theme_mode], scrollbar_button_hover_color=self.themes[self.theme_mode])
 
 
         # configurando o mainframe
@@ -126,6 +126,8 @@ class MainApp:
         root.bind("<Key>", self.tecla_pressionada)
         root.bind("<Button-1>", self.atualizar_contador)
         root.bind("<Escape>", lambda e: self.trocar_modo(self.modo))
+        self.main_textarea.bind("<MouseWheel>", lambda e: "break")
+
     
 
     def trocar_modo(self, modo):
@@ -199,9 +201,25 @@ class MainApp:
         return 0
 
 
+    def arrumar_cursor(self):
+        self.main_textarea.update()
+        self.current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
+        self.main_textarea.see(f"{self.current_line}.0")
+        self.main_textarea.update()
+
+        print()
+        self.total_linhas = self.obter_numero_de_linhas()
+        self.linhas_visiveis = self.calcular_numero_de_linhas_visiveis()
+        teste = self.total_linhas - self.linhas_visiveis
+        print(f"TotalLinhas: {self.total_linhas}\nLinhasVisiveis: {self.linhas_visiveis}")
+        print("Linha que deveria ter o ME: ", teste)
+
+
     def atualizar_contador(self, e=None):
         self.current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
         
+        self.arrumar_cursor()
+
         self.total_linhas = self.obter_numero_de_linhas()
 
         self.linhas_visiveis = self.calcular_numero_de_linhas_visiveis()
