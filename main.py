@@ -65,10 +65,10 @@ class MainApp:
 
         self.theme_mode = ctk.get_appearance_mode()
         self.themes = {
-            "dark": 0,
+            "Dark": "#1d1e1e",
             "Light": "#f9f9fa"
         }
-        self.main_textarea.configure(yscrollcommand="", scrollbar_button_color=self.themes[self.theme_mode])
+        self.main_textarea.configure(yscrollcommand="", scrollbar_button_color=self.themes[self.theme_mode], scrollbar_button_hover_color=self.themes[self.theme_mode])
 
 
         # configurando o mainframe
