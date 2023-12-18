@@ -188,8 +188,24 @@ class MainApp:
         self.bottom_command_output.delete("1.0", ctk.END)
         return 0
 
+
     def atualizar_contador(self, e=None):
-        pass
+        current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
+        self.labels[current_line - 2] = 0
+        self.labels[current_line - 1] = "ME"
+        self.labels[current_line] = 0
+
+        
+        # distancia deles ate o elemento acima
+        
+        # Calcula a distância entre cada elemento e o elemento que se tornou 0
+        for i in range(len(self.labels)):
+            if self.labels[i] != "ME":
+                distance = abs(current_line - 1 - i)
+                self.labels[i] = distance
+        
+        print(self.labels)
+
     
     
     def calcular_numero_de_linhas_visiveis(self):
