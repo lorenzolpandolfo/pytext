@@ -221,11 +221,27 @@ class MainApp:
                 label.configure(text=self.num_to_labels[I])
 
 
+        def verificar_linha(self, numero_linha):
+            conteudo = self.main_textarea.get(f"{numero_linha}.0", f"{numero_linha + 1}.0")
+            return conteudo.strip()
+        
         # Ver se são linhas iguais
         try:
             if self.old_line == self.current_line:
                 print("linhas iguais", e)
-                return 0
+                if verificar_linha(self, self.current_line):
+                    if self.old_line > self.current_line:
+                        print("move pra cima")
+                        move_up(self)
+                        return update_counter(self)
+                    elif self.old_line < self.current_line:
+                        print("move pra baixo")
+                        move_down(self)
+                        return update_counter(self)
+                    else:
+                        print("nao faça nada")
+                else:
+                    return 0
                 
             else:
                 pass
