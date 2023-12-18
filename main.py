@@ -24,7 +24,7 @@ class MainApp:
     def create_frames(self):
         # creating left frame
         self.leftframe = ctk.CTkFrame(root)
-        self.leftframe.grid(row=0, column=0, sticky="ns")
+        self.leftframe.grid(row=0, column=0, sticky="ns", rowspan=10)
         # peso 0 para não expandir (janela)
         self.root.columnconfigure(0, weight=0)
 
@@ -61,7 +61,19 @@ class MainApp:
 
         # initializing left text area
         self.left_textarea = ctk.CTkTextbox(self.leftframe, width=70, wrap=ctk.CHAR, font=firacode)
-        self.left_textarea.grid(row=0, column=0, sticky="ns", padx=(10,10), pady=(20,10))
+        #self.left_textarea.grid(row=0, column=0, sticky="ns", padx=(10,10), pady=(20,10))
+
+        self.labels = []
+        for i in range(0, 39):
+            if i == 0:
+                label = ctk.CTkLabel(self.leftframe, text=str(i), font=firacode)
+                label.grid(row=i + 1, column=1, sticky="en", pady=(28.6,0))
+            else:
+                label = ctk.CTkLabel(self.leftframe, text=str(i), font=firacode)
+                label.grid(row=i + 1, column=1, sticky="en", pady=0)
+
+            label.rowconfigure(i,weight=10)
+            self.labels.append(label)
 
         # configurando o leftframe
         self.leftframe.columnconfigure(0, weight=1)
@@ -81,9 +93,6 @@ class MainApp:
         # Configurando o textbox para ser menor verticalmente
         self.bottom_command_output.rowconfigure(1, weight=0)  # Ajuste para tornar a segunda linha menor
         
-    def on_main_textarea_scroll(self, *args):
-        # Sincronizar a rolagem do left_textarea com o main_textarea
-        self.left_textarea.yview_moveto(*args)
 
     def capture_commands(self):
         # ele envia argumentos mesmo sem indicar
@@ -173,11 +182,8 @@ class MainApp:
             self.left_textarea.insert(tk.END, f"{distance}\n")
 
         self.left_textarea.configure(state="disabled")
-        self.move_scroll()
 
 
-
-        
     def move_scroll(self):
         # Obtém o número da linha atual (linha onde o cursor está)
         current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
