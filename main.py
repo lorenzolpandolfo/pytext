@@ -18,7 +18,8 @@ class MainApp:
         self.root.update()
         
         self.combo = []
-        self.num_to_labels = [str(x) for x in range(0,self.calcular_numero_de_linhas_visiveis())]
+        self.max_linhas_visiveis = self.calcular_numero_de_linhas_visiveis()
+        self.num_to_labels = [str(x) for x in range(0,self.max_linhas_visiveis)]
         self.labels = []
 
         self.criar_labels()
@@ -192,26 +193,51 @@ class MainApp:
 
 
     def atualizar_contador(self, e=None):
-        current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
+        self.current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
+        
+        self.total_linhas = self.obter_numero_de_linhas()
+
+        self.linhas_visiveis = self.calcular_numero_de_linhas_visiveis()
+
+        self.teste = self.total_linhas - self.linhas_visiveis
+        if self.teste >= 0:
+            self.current_line -= self.teste
+        print(self.teste)
+
+        print("linha atual: ", self.current_line)
 
         if self.num_to_labels.count("ME") > 1:
             self.num_to_labels = [0 if label == "ME" else label for label in self.labels]
-
-        try:
-            self.num_to_labels[current_line - 2] = 0
-            self.num_to_labels[current_line - 1] = "ME"
-            self.num_to_labels[current_line] = 0
-        except IndexError:
-            self.num_to_labels[len(self.num_to_labels) - 1] = "ME"
-            
-            return 0
         
+        try:
+            self.num_to_labels[self.current_line - 2] = 0
+            self.num_to_labels[self.current_line - 1] = "ME"
+            self.num_to_labels[self.current_line] = 0
+        except IndexError:
+            print("ERRO!")
+            print(self.num_to_labels)
+
+            if self.num_to_labels[-1] != "ME":
+                self.num_to_labels[-1] = "ME"
+
+                
+
+                # mudando o numero no label
+                for I, label in enumerate(self.labels):
+                    label.configure(text=self.num_to_labels[I])
+
+                return 0
+            # precisa deste else para ele trancar o numero 
+            else:
+                return 0
+
+
         # distancia deles ate o elemento acima
         
         # Calcula a distância entre cada elemento e o elemento que se tornou 0
         for i in range(len(self.num_to_labels)):
             if self.num_to_labels[i] != "ME":
-                distance = abs(current_line - 1 - i)
+                distance = abs(self.current_line - 1 - i)
                 self.num_to_labels[i] = distance
         
         for I, label in enumerate(self.labels):
@@ -224,11 +250,24 @@ class MainApp:
     def calcular_numero_de_linhas_visiveis(self):
         self.main_textarea.update_idletasks()  # Atualiza a geometria antes de calcular
 
-        height = self.main_textarea.winfo_height()
-        line_height = self.main_textarea.dlineinfo("1.0")[3]  # Altura da primeira linha
-        visible_lines = height // line_height
+        try:
+            height = self.main_textarea.winfo_height()
+            line_height = self.main_textarea.dlineinfo("1.0")[3]  # Altura da primeira linha
+            visible_lines = height // line_height
 
-        return visible_lines
+            return visible_lines
+        except TypeError:
+            return self.max_linhas_visiveis
+
+
+    def obter_numero_de_linhas(self):
+        # Obtém o conteúdo do TextBox como uma string
+        conteudo = self.main_textarea.get("1.0", "end-1c")
+
+        # Divide a string em linhas usando '\n' como delimitador e conta o número de elementos
+        numero_de_linhas = len(conteudo.split('\n'))
+        print(numero_de_linhas)
+        return numero_de_linhas
 
 
     def move_scroll(self):
