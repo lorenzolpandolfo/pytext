@@ -224,24 +224,41 @@ class MainApp:
         def verificar_linha(self, numero_linha):
             conteudo = self.main_textarea.get(f"{numero_linha}.0", f"{numero_linha + 1}.0")
             return conteudo.strip()
+
+        def verificar_letra(self):
+            cursor_pos = self.main_textarea.index(ctk.INSERT)
+            pos_anterior = self.main_textarea.index(f"{cursor_pos} - 1 chars")
+            letra_anterior = self.main_textarea.get(pos_anterior, cursor_pos)
+
+            return letra_anterior.strip()
         
         # Ver se são linhas iguais
         try:
             if self.old_line == self.current_line:
                 print("linhas iguais", e)
-                if verificar_linha(self, self.current_line):
-                    if self.old_line > self.current_line:
-                        print("move pra cima")
-                        move_up(self)
-                        return update_counter(self)
-                    elif self.old_line < self.current_line:
-                        print("move pra baixo")
-                        move_down(self)
-                        return update_counter(self)
-                    else:
-                        print("nao faça nada")
-                else:
+
+                # Caso vc esteja apagando algo na mesma linha
+                if e == "BackSpace":
+                    print("aq msmo")
+                    if self.current_line == self.old_line:
+                        return 0
                     return 0
+                else:
+
+                    if verificar_linha(self, self.current_line):
+                        if self.old_line > self.current_line:
+                            print("move pra cima")
+                            move_up(self)
+                            return update_counter(self)
+                        elif self.old_line < self.current_line:
+                            print("move pra baixo")
+                            move_down(self)
+                            return update_counter(self)
+                        else:
+                            print("nao faça nada")
+                        pass
+                    else:
+                        return 0
                 
             else:
                 pass
@@ -266,7 +283,13 @@ class MainApp:
             update_counter(self)
 
             return 0
-        elif e == "Up" or e == "BackSpace":
+        elif e == "Up":
+            move_up(self)
+            update_counter(self)
+            return 0
+        
+        elif e == "BackSpace":
+            print("aqui embaixo")
             move_up(self)
             update_counter(self)
             return 0
