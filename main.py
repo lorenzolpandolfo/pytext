@@ -26,7 +26,7 @@ class MainApp:
 
 
     def create_window(self):
-        root.geometry("1100x780")
+        root.geometry("1100x760")
         self.root.title("The Pytext Editor")
 
 
@@ -62,6 +62,13 @@ class MainApp:
         self.main_textarea.grid(row=0, column=0, sticky="nsew", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
         self.main_textarea.configure(state="disabled")
+
+        self.theme_mode = ctk.get_appearance_mode()
+        self.themes = {
+            "dark": 0,
+            "Light": "#f9f9fa"
+        }
+        self.main_textarea.configure(yscrollcommand="", scrollbar_button_color=self.themes[self.theme_mode])
 
 
         # configurando o mainframe
@@ -202,7 +209,9 @@ class MainApp:
         self.teste = self.total_linhas - self.linhas_visiveis
         if self.teste >= 0:
             self.current_line -= self.teste
-        print(self.teste)
+            print("ta caindo aqui 2")
+
+        print("TESTE:", self.teste)
 
         print("linha atual: ", self.current_line)
 
@@ -213,24 +222,38 @@ class MainApp:
             self.num_to_labels[self.current_line - 2] = 0
             self.num_to_labels[self.current_line - 1] = "ME"
             self.num_to_labels[self.current_line] = 0
+
         except IndexError:
             print("ERRO!")
             print(self.num_to_labels)
 
+            # se o ultimo elemento nao for o "ME"
             if self.num_to_labels[-1] != "ME":
+                # o ultimo elemento se torna o "ME"
                 self.num_to_labels[-1] = "ME"
-
+                self.labels[self.total_linhas - 1].configure(text="ME")
                 
 
-                # mudando o numero no label
-                for I, label in enumerate(self.labels):
-                    label.configure(text=self.num_to_labels[I])
+
+
 
                 return 0
+            
             # precisa deste else para ele trancar o numero 
             else:
-                return 0
+                try:
+                    self.labels[self.total_linhas - 1].configure(text="ME")
+                    self.num_to_labels[-2] = 0
+                    self.labels[self.total_linhas - 2].configure(text="0")
 
+
+                    return 0
+                except IndexError:
+
+                    self.labels[-1].configure(text="ME")
+                    self.labels[-2].configure(text="0")
+                    self.num_to_labels[-2] = 0
+                    return 0
 
         # distancia deles ate o elemento acima
         
