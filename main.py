@@ -18,8 +18,9 @@ class MainApp:
         self.root.update()
         
         self.combo = []
-        self.numlist = [str(x) for x in range(0,self.calcular_numero_de_linhas_visiveis())]
-        print(self.numlist)
+        self.num_to_labels = [str(x) for x in range(0,self.calcular_numero_de_linhas_visiveis())]
+        self.labels = []
+
         self.criar_labels()
 
 
@@ -70,12 +71,11 @@ class MainApp:
         self.left_textarea = ctk.CTkTextbox(self.leftframe, width=70, wrap=ctk.CHAR, font=self.firacode)
         #self.left_textarea.grid(row=0, column=0, sticky="ns", padx=(10,10), pady=(20,10))
 
-        self.labels = []
         
 
         # configurando o leftframe
-        self.leftframe.columnconfigure(0, weight=1)
-        self.leftframe.rowconfigure(0, weight=1)
+        self.leftframe.columnconfigure(0, weight=0)
+        self.leftframe.rowconfigure(0, weight=0)
 
         # creating the bottom label
         self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.modo, justify="center", font=self.firacode)
@@ -103,13 +103,15 @@ class MainApp:
         for i in range(0, num):
             if i == 0:
                 label = ctk.CTkLabel(self.leftframe, text=str(i), font=self.firacode)
-                label.grid(row=i + 1, column=1, sticky="en", pady=(28.6 + random.randint(0,5),0))
+                label.grid(row=i, column=0, sticky="en", pady=(28.6,0))
             else:
                 label = ctk.CTkLabel(self.leftframe, text=str(i), font=self.firacode)
-                label.grid(row=i + 1, column=1, sticky="en", pady=0)
+                label.grid(row=i, column=0, sticky="en", pady=0)
 
-            label.rowconfigure(i,weight=1)
+            #label.rowconfigure(i,weight=1)
             self.labels.append(label)
+        
+        print(self.labels)
 
     def capture_commands(self):
         # ele envia argumentos mesmo sem indicar
@@ -191,20 +193,31 @@ class MainApp:
 
     def atualizar_contador(self, e=None):
         current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
-        self.labels[current_line - 2] = 0
-        self.labels[current_line - 1] = "ME"
-        self.labels[current_line] = 0
 
+        if self.num_to_labels.count("ME") > 1:
+            self.num_to_labels = [0 if label == "ME" else label for label in self.labels]
+
+        try:
+            self.num_to_labels[current_line - 2] = 0
+            self.num_to_labels[current_line - 1] = "ME"
+            self.num_to_labels[current_line] = 0
+        except IndexError:
+            self.num_to_labels[len(self.num_to_labels) - 1] = "ME"
+            
+            return 0
         
         # distancia deles ate o elemento acima
         
         # Calcula a distância entre cada elemento e o elemento que se tornou 0
-        for i in range(len(self.labels)):
-            if self.labels[i] != "ME":
+        for i in range(len(self.num_to_labels)):
+            if self.num_to_labels[i] != "ME":
                 distance = abs(current_line - 1 - i)
-                self.labels[i] = distance
+                self.num_to_labels[i] = distance
         
-        print(self.labels)
+        for I, label in enumerate(self.labels):
+            label.configure(text=self.num_to_labels[I])
+        
+        print(self.num_to_labels)
 
     
     
