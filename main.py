@@ -177,7 +177,7 @@ class MainApp:
 
             match tecla:
                 case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
-                    return self.atualizar_contador()
+                    return self.atualizar_contador(tecla)
                 case _:
                     return 0
 
@@ -204,14 +204,54 @@ class MainApp:
 
 
     def atualizar_contador(self, e=None):
+        # pega a linha que deve ser mudada o label
         self.current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
         
+        try:
+            if self.old_line == self.current_line:
+                print("linhas iguais", e)
+                if e == "Up":
+                    # mover contador pra cima
+                    pass
+                elif e == "Down":
+                    # mover contador pra baixo
+                    pass
+                return 0
+            else:
+                pass
+        except AttributeError:
+            pass
+        # linha anterior
+        self.old_line = self.current_line
+
+        def move_up(self):
+            print("Moving up ", self.num_to_labels)
+            if 0 in [int(x) + 1 for x in self.num_to_labels]:
+                self.num_to_labels = [int(x) + 1 for x in self.num_to_labels]
+            print(self.num_to_labels)
+        
+        def move_down(self):
+            print("Moving Down ", self.num_to_labels)
+            if 0 in [int(x) - 1 for x in self.num_to_labels]:
+                self.num_to_labels = [int(x) - 1 for x in self.num_to_labels]
+            
+            print(self.num_to_labels)
+            
+        if e == "Down" or e == "Return":
+            return move_down(self)
+        elif e == "Up":
+            return move_up(self)
+
+
+
+
         self.total_linhas = self.obter_numero_de_linhas()
 
         self.linhas_visiveis = self.calcular_numero_de_linhas_visiveis()
 
         self.teste = self.total_linhas - self.linhas_visiveis
         if self.teste >= 0:
+            # isso é necessário porque senao o programa tenta usar um label que não existe
             self.current_line -= self.teste
             print("ta caindo aqui 2")
 
@@ -223,12 +263,18 @@ class MainApp:
             self.num_to_labels = [0 if label == "ME" else label for label in self.labels]
         
         try:
-            self.num_to_labels[self.current_line - 2] = 0
-            self.num_to_labels[self.current_line - 1] = "ME"
-            self.num_to_labels[self.current_line] = 0
+            if self.teste > 0:
+                print("Erro aqui né?")
+                self.num_to_labels[self.current_line - 2] = 0
+                self.num_to_labels[self.current_line - 1] = "ME"
+                self.num_to_labels[self.current_line] = 0
+            else:
+                self.num_to_labels[self.current_line - 2] = 0
+                self.num_to_labels[self.current_line - 1] = "ME"
+                self.num_to_labels[self.current_line] = 0
 
         except IndexError:
-            print("ERRO!")
+            print("Lidando com linhas abaixo!")
             print(self.num_to_labels)
 
             # se o ultimo elemento nao for o "ME"
@@ -237,23 +283,23 @@ class MainApp:
                 self.num_to_labels[-1] = "ME"
                 self.labels[self.total_linhas - 1].configure(text="ME")
                 
-
-
-
-
                 return 0
             
             # precisa deste else para ele trancar o numero 
             else:
                 try:
+                    print("Aqui")
                     self.labels[self.total_linhas - 1].configure(text="ME")
-                    self.num_to_labels[-2] = 0
-                    self.labels[self.total_linhas - 2].configure(text="0")
+                    #self.num_to_labels = [int(x) + 1 for x in self.num_to_labels if isinstance(x, int) else "ME" for x in self.num_to_labels]
+                    self.num_to_labels = [int(x) + 1 if isinstance(x, int) else "ME" for x in self.num_to_labels]
+                    for I, label in enumerate(self.labels):
+                        label.configure(text=self.num_to_labels[I])
 
-
+                    print(self.num_to_labels)
                     return 0
+                
                 except IndexError:
-
+                    print("Peido")
                     self.labels[-1].configure(text="ME")
                     self.labels[-2].configure(text="0")
                     self.num_to_labels[-2] = 0
