@@ -166,6 +166,12 @@ class MainApp:
                     match tecla:
                         case "i":
                             return self.trocar_modo(self.modo)
+                        case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
+                            return self.atualizar_contador(tecla)
+                        case _:
+                            return 0
+
+                        
 
             # Caso aperte Enter para registrar o comando
             elif tecla == "Return":
@@ -225,13 +231,13 @@ class MainApp:
             conteudo = self.main_textarea.get(f"{numero_linha}.0", f"{numero_linha + 1}.0")
             return conteudo.strip()
 
-        def verificar_letra(self):
-            cursor_pos = self.main_textarea.index(ctk.INSERT)
-            pos_anterior = self.main_textarea.index(f"{cursor_pos} - 1 chars")
-            letra_anterior = self.main_textarea.get(pos_anterior, cursor_pos)
 
-            return letra_anterior.strip()
-        
+
+        # se eu clicar em alguma linha
+        if "ButtonPress" in str(e):            
+            return 0
+
+
         # Ver se são linhas iguais
         try:
             if self.old_line == self.current_line:
@@ -407,6 +413,8 @@ class MainApp:
         #self.main_textarea.yview_moveto(relative_position - 1)
         self.left_textarea.yview_moveto(relative_position - 1)
     
+    def check_if_synced(self):
+        pass
 
 
 
