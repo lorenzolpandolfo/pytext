@@ -206,23 +206,7 @@ class MainApp:
     def atualizar_contador(self, e=None):
         # pega a linha que deve ser mudada o label
         self.current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
-        
-        try:
-            if self.old_line == self.current_line:
-                print("linhas iguais", e)
-                if e == "Up":
-                    # mover contador pra cima
-                    pass
-                elif e == "Down":
-                    # mover contador pra baixo
-                    pass
-                return 0
-            else:
-                pass
-        except AttributeError:
-            pass
-        # linha anterior
-        self.old_line = self.current_line
+
 
         def move_up(self):
             if 0 in [int(x) + 1 for x in self.num_to_labels]:
@@ -235,6 +219,30 @@ class MainApp:
         def update_counter(self):
             for I, label in enumerate(self.labels):
                 label.configure(text=self.num_to_labels[I])
+
+
+        # Ver se são linhas iguais
+        try:
+            if self.old_line == self.current_line:
+                print("linhas iguais", e)
+                return 0
+                
+            else:
+                pass
+        
+        # Caso não tenha uma linha anterior (1° interação)
+        except AttributeError:
+            print("E: ",e)
+            self.old_line = self.current_line
+            
+            if e == "Return":
+                move_down(self)
+                return update_counter(self)
+            else:
+                return 0
+            
+        # atualizar a linha anterior
+        self.old_line = self.current_line        
 
 
         if e == "Down" or e == "Return":
