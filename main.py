@@ -210,6 +210,14 @@ class MainApp:
 
 
     def atualizar_contador(self, e=None):
+            
+        def update_counter(self):
+            for I, label in enumerate(self.labels):
+                label.configure(text=self.num_to_labels[I])
+
+        self.label_value = self.get_visible_line(self.main_textarea)
+        self.labels[self.label_value - 1].configure(text=0)
+        return 0
         # pega a linha que deve ser mudada o label
         self.current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
 
@@ -221,10 +229,6 @@ class MainApp:
         def move_down(self):
             if 0 in [int(x) - 1 for x in self.num_to_labels]:
                 self.num_to_labels = [int(x) - 1 for x in self.num_to_labels]
-            
-        def update_counter(self):
-            for I, label in enumerate(self.labels):
-                label.configure(text=self.num_to_labels[I])
 
 
         def verificar_linha(self, numero_linha):
@@ -377,7 +381,20 @@ class MainApp:
         
         print(self.num_to_labels)
 
-    
+    def get_visible_line(self, text_widget):
+        # Obtém a informação da linha atual
+        cursor_pos = text_widget.index(tk.INSERT)
+        line_number = int(cursor_pos.split('.')[0])
+        
+        # Calcula a primeira linha visível na tela
+        first_visible_line = int(text_widget.index("@0,0").split('.')[0])
+        
+        # Calcula a linha visível atual
+        visible_line = line_number - first_visible_line + 1
+        
+        print(visible_line)
+        return visible_line
+
     
     def calcular_numero_de_linhas_visiveis(self):
         self.main_textarea.update_idletasks()  # Atualiza a geometria antes de calcular
