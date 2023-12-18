@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import font
 import customtkinter as ctk
 import re
+import random
 
 import shortcuts
 
@@ -13,13 +14,19 @@ class MainApp:
         self.create_frames()
         self.create_widgets()
         self.capture_commands()
+        # Sem o update ele nao consegue calcular o num de linhas
+        self.root.update()
+        
         self.combo = []
-
+        self.numlist = [str(x) for x in range(0,self.calcular_numero_de_linhas_visiveis())]
+        print(self.numlist)
+        self.criar_labels()
 
 
     def create_window(self):
         root.geometry("1100x780")
         self.root.title("The Pytext Editor")
+
 
     def create_frames(self):
         # creating left frame
@@ -46,10 +53,10 @@ class MainApp:
         # carrega a fonte
         ctk.FontManager.load_font(src)
         # agora ele reconhece a family Fira Code, porque eu carreguei antes
-        firacode = ctk.CTkFont(family="Fira Code", size=19) 
+        self.firacode = ctk.CTkFont(family="Fira Code", size=19) 
 
         # initializing main text area
-        self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=firacode)
+        self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.firacode)
         self.main_textarea.grid(row=0, column=0, sticky="nsew", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
         self.main_textarea.configure(state="disabled")
@@ -60,31 +67,22 @@ class MainApp:
         self.mainframe.rowconfigure(0, weight=1)
 
         # initializing left text area
-        self.left_textarea = ctk.CTkTextbox(self.leftframe, width=70, wrap=ctk.CHAR, font=firacode)
+        self.left_textarea = ctk.CTkTextbox(self.leftframe, width=70, wrap=ctk.CHAR, font=self.firacode)
         #self.left_textarea.grid(row=0, column=0, sticky="ns", padx=(10,10), pady=(20,10))
 
         self.labels = []
-        for i in range(0, 39):
-            if i == 0:
-                label = ctk.CTkLabel(self.leftframe, text=str(i), font=firacode)
-                label.grid(row=i + 1, column=1, sticky="en", pady=(28.6,0))
-            else:
-                label = ctk.CTkLabel(self.leftframe, text=str(i), font=firacode)
-                label.grid(row=i + 1, column=1, sticky="en", pady=0)
-
-            label.rowconfigure(i,weight=10)
-            self.labels.append(label)
+        
 
         # configurando o leftframe
         self.leftframe.columnconfigure(0, weight=1)
         self.leftframe.rowconfigure(0, weight=1)
 
         # creating the bottom label
-        self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.modo, justify="center", font=firacode)
+        self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.modo, justify="center", font=self.firacode)
         self.bottom_output_mode.grid(row=1, column=0, sticky="ew", columnspan=2)
 
         # Criando o textbox no segundo grid
-        self.bottom_command_output = ctk.CTkTextbox(self.bottomframe, font=firacode, width=100, height=2)
+        self.bottom_command_output = ctk.CTkTextbox(self.bottomframe, font=self.firacode, width=100, height=2)
         # Como o sticky é "e", ele vai ser ancorado para o leste ->
         self.bottom_command_output.grid(row=1, column=1, sticky="e", padx=(0, 10), pady=(0, 5))
 
@@ -92,7 +90,26 @@ class MainApp:
         self.bottomframe.columnconfigure(1, weight=1)
         # Configurando o textbox para ser menor verticalmente
         self.bottom_command_output.rowconfigure(1, weight=0)  # Ajuste para tornar a segunda linha menor
+
+
+    def criar_labels(self):
+        num = self.calcular_numero_de_linhas_visiveis()
+        print(num)
+
+            # Limpar labels existentes
+        for label in self.labels:
+            label.destroy()
         
+        for i in range(0, num):
+            if i == 0:
+                label = ctk.CTkLabel(self.leftframe, text=str(i), font=self.firacode)
+                label.grid(row=i + 1, column=1, sticky="en", pady=(28.6 + random.randint(0,5),0))
+            else:
+                label = ctk.CTkLabel(self.leftframe, text=str(i), font=self.firacode)
+                label.grid(row=i + 1, column=1, sticky="en", pady=0)
+
+            label.rowconfigure(i,weight=1)
+            self.labels.append(label)
 
     def capture_commands(self):
         # ele envia argumentos mesmo sem indicar
@@ -172,16 +189,17 @@ class MainApp:
         return 0
 
     def atualizar_contador(self, e=None):
-        cursor_pos = self.main_textarea.index(tk.INSERT)  # Obtém a posição do cursor
-        current_line = int(cursor_pos.split(".")[0])  # Obtém o número da linha
-        self.left_textarea.configure(state="normal")
-        self.left_textarea.delete(1.0, tk.END)
+        pass
+    
+    
+    def calcular_numero_de_linhas_visiveis(self):
+        self.main_textarea.update_idletasks()  # Atualiza a geometria antes de calcular
 
-        for linha in range(1, int(self.main_textarea.index('end-1c').split('.')[0]) + 1):
-            distance = abs(current_line - linha)
-            self.left_textarea.insert(tk.END, f"{distance}\n")
+        height = self.main_textarea.winfo_height()
+        line_height = self.main_textarea.dlineinfo("1.0")[3]  # Altura da primeira linha
+        visible_lines = height // line_height
 
-        self.left_textarea.configure(state="disabled")
+        return visible_lines
 
 
     def move_scroll(self):
