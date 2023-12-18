@@ -225,24 +225,30 @@ class MainApp:
         self.old_line = self.current_line
 
         def move_up(self):
-            print("Moving up ", self.num_to_labels)
             if 0 in [int(x) + 1 for x in self.num_to_labels]:
                 self.num_to_labels = [int(x) + 1 for x in self.num_to_labels]
-            print(self.num_to_labels)
-        
+                    
         def move_down(self):
-            print("Moving Down ", self.num_to_labels)
             if 0 in [int(x) - 1 for x in self.num_to_labels]:
                 self.num_to_labels = [int(x) - 1 for x in self.num_to_labels]
             
-            print(self.num_to_labels)
-            
+        def update_counter(self):
+            for I, label in enumerate(self.labels):
+                label.configure(text=self.num_to_labels[I])
+
+
         if e == "Down" or e == "Return":
-            return move_down(self)
-        elif e == "Up":
-            return move_up(self)
+            move_down(self)
+            update_counter(self)
 
+            return 0
+        elif e == "Up" or e == "BackSpace":
+            move_up(self)
+            update_counter(self)
+            return 0
 
+        else:
+            return
 
 
         self.total_linhas = self.obter_numero_de_linhas()
