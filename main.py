@@ -211,24 +211,60 @@ class MainApp:
 
     def atualizar_contador(self, e=None):
             
+        self.vals = [int(label.cget("text")) for label in self.labels]
+        print(self.vals)
+
+        def add_zero_to_selected_line(self):
+            # pegando o valor da linha selecionada dentre as visiveis
+            self.label_value = self.get_visible_line(self.main_textarea)
+            
+            # definindo 0 na posicao atual do cursor
+            self.labels[self.label_value - 1].configure(text=0)
+
+            # se o cursor se moveu
+            try:
+                if self.last_zero_pos != self.label_value - 1:
+                    self.labels[self.last_zero_pos].configure(text=1)
+                    
+            except Exception:
+                self.labels[self.label_value - 2].configure(text=1)
+                
+                print("deu erro aqui")
+            
+            # guardando a posicao antiga do cursor
+            self.last_zero_pos = self.label_value - 1
+
+            calcular_distancias(self.vals, self.label_value -1)
+
+        def calcular_distancias(array, posicao_zero):
+            # Encontrar a posição do elemento 0
+            # posicao_zero = array.index(0)
+            
+            # Calcular a distância entre cada elemento e o elemento 0
+            distancias = [abs(i - posicao_zero) for i in range(len(array))]
+            self.vals = distancias.copy()
+            return distancias
+
+        add_zero_to_selected_line(self)
+        
+        return 0
+    
+        def move_up(self):
+            if 0 in [int(x) + 1 for x in self.num_to_labels]:
+                self.num_to_labels = [int(x) + 1 for x in self.num_to_labels]
+        
+        # aqui eu subtraio 1 de cada elemento. Assim, o array move um pro lado. o antigo 1 vira 0, etc..
+        def move_down(self):
+            if 0 in [int(x) - 1 for x in self.num_to_labels]:
+                self.num_to_labels = [int(x) - 1 for x in self.num_to_labels]
+
         def update_counter(self):
             for I, label in enumerate(self.labels):
                 label.configure(text=self.num_to_labels[I])
-
-        self.label_value = self.get_visible_line(self.main_textarea)
-        self.labels[self.label_value - 1].configure(text=0)
-        return 0
         # pega a linha que deve ser mudada o label
         self.current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
 
 
-        def move_up(self):
-            if 0 in [int(x) + 1 for x in self.num_to_labels]:
-                self.num_to_labels = [int(x) + 1 for x in self.num_to_labels]
-                    
-        def move_down(self):
-            if 0 in [int(x) - 1 for x in self.num_to_labels]:
-                self.num_to_labels = [int(x) - 1 for x in self.num_to_labels]
 
 
         def verificar_linha(self, numero_linha):
