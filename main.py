@@ -63,6 +63,7 @@ class MainApp:
         self.main_textarea.focus_set()
         self.main_textarea.configure(state="disabled")
 
+
         # escondendo a barra de scroll
         self.theme_mode = ctk.get_appearance_mode()
         self.themes = {
@@ -112,10 +113,10 @@ class MainApp:
         for i in range(0, num):
             if i == 0:
                 label = ctk.CTkLabel(self.leftframe, text=str(i), font=self.firacode)
-                label.grid(row=i, column=0, sticky="en", pady=(28.6,0))
+                label.grid(row=i, column=0, sticky="en", pady=(28.75,0))
             else:
                 label = ctk.CTkLabel(self.leftframe, text=str(i), font=self.firacode)
-                label.grid(row=i, column=0, sticky="en", pady=0)
+                label.grid(row=i, column=0, sticky="en", pady=(0))
 
             #label.rowconfigure(i,weight=1)
             self.labels.append(label)
@@ -208,9 +209,7 @@ class MainApp:
         return 0
 
 
-
     def atualizar_contador(self, e=None):
-            
         def add_zero_to_selected_line(self):
             # pegando o valor da linha selecionada dentre as visiveis
             self.label_value = self.get_visible_line(self.main_textarea)
@@ -226,7 +225,6 @@ class MainApp:
             except Exception:
                 self.labels[self.label_value - 2].configure(text=1)
                 
-                print("deu erro aqui")
             
             # guardando a posicao antiga do cursor
             self.last_zero_pos = self.label_value - 1
@@ -235,187 +233,18 @@ class MainApp:
 
 
         def calcular_distancias(array, posicao_zero):
-            # Encontrar a posição do elemento 0
-            # posicao_zero = array.index(0)
-            
             # Calcular a distância entre cada elemento e o elemento 0
             distancias = [abs(i - posicao_zero) for i in range(len(array))]
-            print(distancias)
             return distancias
         
         self.vals = add_zero_to_selected_line(self)
 
+
+        # mostrando o contador
         for i, label in enumerate(self.labels):
             label.configure(text=self.vals[i])
         return 0
     
-        def move_up(self):
-            if 0 in [int(x) + 1 for x in self.num_to_labels]:
-                self.num_to_labels = [int(x) + 1 for x in self.num_to_labels]
-        
-        # aqui eu subtraio 1 de cada elemento. Assim, o array move um pro lado. o antigo 1 vira 0, etc..
-        def move_down(self):
-            if 0 in [int(x) - 1 for x in self.num_to_labels]:
-                self.num_to_labels = [int(x) - 1 for x in self.num_to_labels]
-
-        def update_counter(self):
-            for I, label in enumerate(self.labels):
-                label.configure(text=self.num_to_labels[I])
-        # pega a linha que deve ser mudada o label
-        self.current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
-
-
-
-
-        def verificar_linha(self, numero_linha):
-            conteudo = self.main_textarea.get(f"{numero_linha}.0", f"{numero_linha + 1}.0")
-            return conteudo.strip()
-
-
-
-        # se eu clicar em alguma linha
-        if "ButtonPress" in str(e):            
-            return 0
-
-
-        # Ver se são linhas iguais
-        try:
-            if self.old_line == self.current_line:
-                print("linhas iguais", e)
-
-                # Caso vc esteja apagando algo na mesma linha
-                if e == "BackSpace":
-                    print("aq msmo")
-                    if self.current_line == self.old_line:
-                        return 0
-                    return 0
-                else:
-
-                    if verificar_linha(self, self.current_line):
-                        if self.old_line > self.current_line:
-                            print("move pra cima")
-                            move_up(self)
-                            return update_counter(self)
-                        elif self.old_line < self.current_line:
-                            print("move pra baixo")
-                            move_down(self)
-                            return update_counter(self)
-                        else:
-                            print("nao faça nada")
-                        pass
-                    else:
-                        return 0
-                
-            else:
-                pass
-        
-        # Caso não tenha uma linha anterior (1° interação)
-        except AttributeError:
-            print("E: ",e)
-            self.old_line = self.current_line
-            
-            if e == "Return":
-                move_down(self)
-                return update_counter(self)
-            else:
-                return 0
-            
-        # atualizar a linha anterior
-        self.old_line = self.current_line        
-
-
-        if e == "Down" or e == "Return":
-            move_down(self)
-            update_counter(self)
-
-            return 0
-        elif e == "Up":
-            move_up(self)
-            update_counter(self)
-            return 0
-        
-        elif e == "BackSpace":
-            print("aqui embaixo")
-            move_up(self)
-            update_counter(self)
-            return 0
-
-        else:
-            return
-
-
-        self.total_linhas = self.obter_numero_de_linhas()
-
-        self.linhas_visiveis = self.calcular_numero_de_linhas_visiveis()
-
-        self.teste = self.total_linhas - self.linhas_visiveis
-        if self.teste >= 0:
-            # isso é necessário porque senao o programa tenta usar um label que não existe
-            self.current_line -= self.teste
-            print("ta caindo aqui 2")
-
-        print("TESTE:", self.teste)
-
-        print("linha atual: ", self.current_line)
-
-        if self.num_to_labels.count("ME") > 1:
-            self.num_to_labels = [0 if label == "ME" else label for label in self.labels]
-        
-        try:
-            if self.teste > 0:
-                print("Erro aqui né?")
-                self.num_to_labels[self.current_line - 2] = 0
-                self.num_to_labels[self.current_line - 1] = "ME"
-                self.num_to_labels[self.current_line] = 0
-            else:
-                self.num_to_labels[self.current_line - 2] = 0
-                self.num_to_labels[self.current_line - 1] = "ME"
-                self.num_to_labels[self.current_line] = 0
-
-        except IndexError:
-            print("Lidando com linhas abaixo!")
-            print(self.num_to_labels)
-
-            # se o ultimo elemento nao for o "ME"
-            if self.num_to_labels[-1] != "ME":
-                # o ultimo elemento se torna o "ME"
-                self.num_to_labels[-1] = "ME"
-                self.labels[self.total_linhas - 1].configure(text="ME")
-                
-                return 0
-            
-            # precisa deste else para ele trancar o numero 
-            else:
-                try:
-                    print("Aqui")
-                    self.labels[self.total_linhas - 1].configure(text="ME")
-                    #self.num_to_labels = [int(x) + 1 for x in self.num_to_labels if isinstance(x, int) else "ME" for x in self.num_to_labels]
-                    self.num_to_labels = [int(x) + 1 if isinstance(x, int) else "ME" for x in self.num_to_labels]
-                    for I, label in enumerate(self.labels):
-                        label.configure(text=self.num_to_labels[I])
-
-                    print(self.num_to_labels)
-                    return 0
-                
-                except IndexError:
-                    print("Peido")
-                    self.labels[-1].configure(text="ME")
-                    self.labels[-2].configure(text="0")
-                    self.num_to_labels[-2] = 0
-                    return 0
-
-        # distancia deles ate o elemento acima
-        
-        # Calcula a distância entre cada elemento e o elemento que se tornou 0
-        for i in range(len(self.num_to_labels)):
-            if self.num_to_labels[i] != "ME":
-                distance = abs(self.current_line - 1 - i)
-                self.num_to_labels[i] = distance
-        
-        for I, label in enumerate(self.labels):
-            label.configure(text=self.num_to_labels[I])
-        
-        print(self.num_to_labels)
 
     def get_visible_line(self, text_widget):
         # Obtém a informação da linha atual
