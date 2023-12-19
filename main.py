@@ -211,9 +211,6 @@ class MainApp:
 
     def atualizar_contador(self, e=None):
             
-        self.vals = [int(label.cget("text")) for label in self.labels]
-        print(self.vals)
-
         def add_zero_to_selected_line(self):
             # pegando o valor da linha selecionada dentre as visiveis
             self.label_value = self.get_visible_line(self.main_textarea)
@@ -234,7 +231,8 @@ class MainApp:
             # guardando a posicao antiga do cursor
             self.last_zero_pos = self.label_value - 1
 
-            calcular_distancias(self.vals, self.label_value -1)
+            return calcular_distancias([int(label.cget("text")) for label in self.labels], self.label_value -1)
+
 
         def calcular_distancias(array, posicao_zero):
             # Encontrar a posição do elemento 0
@@ -242,11 +240,13 @@ class MainApp:
             
             # Calcular a distância entre cada elemento e o elemento 0
             distancias = [abs(i - posicao_zero) for i in range(len(array))]
-            self.vals = distancias.copy()
+            print(distancias)
             return distancias
-
-        add_zero_to_selected_line(self)
         
+        self.vals = add_zero_to_selected_line(self)
+
+        for i, label in enumerate(self.labels):
+            label.configure(text=self.vals[i])
         return 0
     
         def move_up(self):
