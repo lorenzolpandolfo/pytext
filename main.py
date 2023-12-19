@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import font
 import customtkinter as ctk
 import re
 import random
@@ -15,14 +14,14 @@ class MainApp:
         self.create_widgets()
         self.capture_commands()
         
-        self.trocar_modo(self.modo)
+
         self.labels = []
         self.create_labels()
         
         self.combo = []
 
 
-    def create_labels(self):
+    def create_labels(self, e = None):
         # Sem o update ele nao consegue calcular o num de linhas
         self.root.update()
 
@@ -49,8 +48,6 @@ class MainApp:
         self.root.columnconfigure(1, weight=1)
         self.root.rowconfigure(0, weight=1)
 
-        self.root.rowconfigure(0, weight=1)
-
         # creating bottom frame
         self.bottomframe = ctk.CTkFrame(root)
         self.bottomframe.grid(row=1, column=0, columnspan=2, sticky="ew")
@@ -62,49 +59,14 @@ class MainApp:
         altura_janela = self.root.winfo_height()
         print(altura_janela)
         tam = self.root.winfo_height()
-        print("mainframe h: ", self.mainframe.winfo_height())
-
-
-
-        tamanho_fonte_ocupa = self.firacode.metrics()["linespace"] + 1
-
         # estranho isso, mas ta funcionando
-        tam = self.mainframe.winfo_height()
-        #tam = round(tam / tamanho_fonte_ocupa) * tamanho_fonte_ocupa
-        tam = (int(str(self.mainframe.winfo_height())[0]) * 2)
-        print("Tamanho: ", tam)
-        tam *= tamanho_fonte_ocupa
-        
-        # assim eu consigo 10 linhas de espaço
-        #tam = tamanho_fonte_ocupa * 10
+        tam = tam/1.4
+        print("Tamanho no frame: ", self.mainframe.winfo_height(), "Tam: ", tam)
 
-        #tam = tamanho_fonte_ocupa * 10
         self.main_textarea.configure(height=(tam))
+        print("Tamanho do texto alterado")
 
 
-
-        stam_ultimo_char = int(str(tam)[-1])
-        """
-        
-        if tam % 19 != 0:
-            print("aumentar uma linha")
-            tam = 37 * 3
-            #tam = (((tam // 20) + 1) * 20) + 8
-            #print("Novo tam neste caso: ", tam, tam/19)
-        """
-        self.main_textarea.configure(height=(tam))
-        print("Tam: ", tam)
-        self.ajustar_pady_primeiro_label_contador()
-
-
-    def ajustar_pady_primeiro_label_contador(self):
-        try:
-            self.root.update()
-            self.labels[0].configure(pady=0)
-            
-        # caso o contador nao tenha sido criado ainda
-        except IndexError:
-            return
 
 
     def create_widgets(self):
@@ -118,8 +80,9 @@ class MainApp:
         # initializing main text area
         # fazer com que ele tenha um tamanho sempre multiplo do tamanho das linhas
         self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.firacode)
-        self.main_textarea.grid(row=0, column=0, sticky="ew", pady=(20,10))
+        self.main_textarea.grid(row=0, column=0, sticky="new", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
+        self.main_textarea.grid_rowconfigure(0, weight=1)
 
         
 
@@ -194,30 +157,11 @@ class MainApp:
         root.bind("<Key>", self.tecla_pressionada)
         root.bind("<Button-1>", self.atualizar_contador)
         #root.bind("<Escape>", lambda e: self.trocar_modo(self.modo))
-        root.bind("<Escape>", self.atualizar_posicao_contador_por_resolucao)
+        # Atualizar as labels para ajustar na resolução
+        root.bind("<Escape>", lambda e: self.create_labels(e))
         self.main_textarea.bind("<MouseWheel>", lambda e: "break")
 
-    def teste(self):
-        self.ok = 1
-        return 1
-
-    def configure_cases(self, e):
-        print("Recebido")
-        try:
-            # caso a altura da janela atual seja diferente da antiga
-            if self.root.winfo_height() != self.height_antigo:
-                print("Arrumar janela")
-                self.atualizar_posicao_contador_por_resolucao()
-                    
-        except Exception:
-            self.height_antigo = e.height
-            # caso o height antigo nao exista ainda
-
-        self.height_antigo = e.height
-        return 0
     
-    def atualizar_posicao_contador_por_resolucao(self, e = None):
-        return self.create_labels()
 
     def trocar_modo(self, modo):
         if modo == "view":
@@ -301,25 +245,12 @@ class MainApp:
             # pegando o valor da linha selecionada dentre as visiveis
             self.label_value = self.get_visible_line(self.main_textarea)
 
-            print("qtd_labels: ", len(self.labels), "qtd linhas visiveis: ", self.calcular_numero_de_linhas_visiveis(),
-                  "linha visivel atual: ", self.label_value)
-            
-            if int(self.label_value) > len(self.labels):
-                self.label_value -= 1
-
-            else:
+            try:
                 self.labels[self.label_value - 1].configure(text=0)
-
-                """
-                print("adicionando um numero label")
-                label = ctk.CTkLabel(self.leftframe, text=9, font=self.firacode)
-                label.grid(row=len(self.labels), column=0, sticky="en", pady=(0))
-                self.labels.append(label)
-
-                tamanho = self.main_textarea.winfo_height()
-                print("tamanho: ", tamanho)
-                self.main_textarea.configure(height=int(tamanho) + 40)
-                """
+            except IndexError:
+                print("linha cortada para tentar evitar dessincronização de contador")
+                # 250 tira duas linhas, considerando tamanhos extras do widget
+                self.main_textarea.configure(height=int(self.main_textarea.winfo_height()) - 200)
 
             # se o cursor se moveu
             try:
@@ -354,7 +285,6 @@ class MainApp:
         # Obtém a informação da linha atual
         cursor_pos = text_widget.index(tk.INSERT)
         line_number = int(cursor_pos.split('.')[0])
-        print(line_number)
         
         # Calcula a primeira linha visível na tela
         first_visible_line = int(text_widget.index("@0,0").split('.')[0])
@@ -374,6 +304,7 @@ class MainApp:
             height = self.main_textarea.winfo_height()
             line_height = self.main_textarea.dlineinfo("1.0")[3]  # Altura da primeira linha
             visible_lines = height // line_height
+            print("num de linhas calculado")
             return visible_lines
 
         except TypeError:
@@ -389,16 +320,6 @@ class MainApp:
         return numero_de_linhas
 
 
-    def move_scroll(self):
-        # Obtém o número da linha atual (linha onde o cursor está)
-        current_line = int(self.main_textarea.index(tk.INSERT).split('.')[0])
-
-        # Calcula a posição relativa da linha em relação ao número total de linhas
-        relative_position = current_line / float(self.main_textarea.index("end").split('.')[0])
-
-        # Move o scroll para a posição relativa da linha
-        self.left_textarea.yview_moveto(relative_position - 1)
-    
 
 if __name__ == "__main__":
     root = ctk.CTk()
