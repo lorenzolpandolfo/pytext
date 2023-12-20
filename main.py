@@ -5,23 +5,147 @@ import random
 
 import shortcuts
 
+
+
 class MainApp:
     def __init__(self, root):
         self.root = root
         self.modo = "view"
-        self.create_window()
-        self.create_frames()
-        self.create_widgets()
-        self.capture_commands()
-        
 
-        self.labels = []
-        self.create_labels()
+        # inicializando as classes
         
+        self.gui = GUI(self.root)
+        self.command_manager = CommandManager(self.root)
+
+        self.gui.main_app_instance = self
+        self.command_manager.main_app_instance = self
+        
+        self.gui.start()
+
+        self.gui.setup(self, self.command_manager)
+        self.command_manager.setup(self, self.gui.main_textarea, self.gui.bottom_command_output, self.gui)
+
+        self.command_manager.capture_commands()        
         self.combo = []
 
 
-    def create_labels(self, e = None):
+
+class CommandManager:
+    def __init__(self, root:ctk.CTk()):
+        self.root = root
+
+    def setup(self, main_app_instance:MainApp, main_textarea:ctk.CTkTextbox, bottom_command_output:ctk.CTkTextbox,
+              gui_instance):
+        self.maintext = main_textarea
+        self.bottom_command_output = bottom_command_output
+        self.main_app_instance = main_app_instance
+        self.gui = gui_instance
+
+
+    def capture_commands(self):
+        # ele envia argumentos mesmo sem indicar
+        self.root.bind("<Key>", self.tecla_pressionada)
+        self.root.bind("<Escape>", lambda e: self.trocar_modo(self.main_app_instance.modo))
+        # Atualizar as labels para ajustar na resolução
+        self.root.bind("<Prior>", lambda e: self.gui.criar_contador(e))
+        self.maintext.bind("<MouseWheel>", lambda e: "break")
+
+    
+    def trocar_modo(self, modo):
+        if modo == "view":
+            # caso vc aperte ESC com comando definido na caixa, ele so apaga o comando. Nao troca de modo
+            comando = self.bottom_command_output.get("1.0", "end-1c")
+
+            if comando != "":
+                self.bottom_command_output.delete("1.0", ctk.END)
+                self.maintext.focus_set()
+                return 0
+
+            self.main_app_instance.modo = "insert"
+            self.maintext.configure(state="normal")
+            self.maintext.focus_set()
+        else:
+            self.main_app_instance.modo = "view"
+            self.maintext.configure(state="disabled")
+        
+        self.bottom_command_output.delete("1.0", ctk.END)
+        print(self.main_app_instance.modo)
+        return self.gui.bottom_output_mode.configure(text=self.main_app_instance.modo)
+
+
+    def tecla_pressionada(self, event):
+        self.gui.realcar_linha_selecionada(self.gui)
+        tecla = event.keysym
+        #print(event)
+
+        if self.main_app_instance.modo == "view":
+            comando = self.bottom_command_output.get("1.0", "end-1c")
+            
+            # Caso não haja comandos e aperte :
+            if comando == "":
+                if tecla == "colon":
+                    self.bottom_command_output.focus_set()
+                else:
+                    match tecla:
+                        case "i":
+                            return self.trocar_modo(self.main_app_instance.modo)
+                        case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
+                            return self.gui.atualizar_contador(tecla)
+                        case _:
+                            return 0
+
+                        
+
+            # Caso aperte Enter para registrar o comando
+            elif tecla == "Return":
+                self.catch_comando(comando)
+                self.maintext.focus_set()
+ 
+
+        elif self.main_app_instance.modo == "insert":
+
+            match tecla:
+                case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
+                    return self.gui.atualizar_contador(tecla)
+                case _:
+                    return 0
+
+
+    def catch_comando(self, comando):
+        # separando o comando em partes: numero de vezes a rodar e o comando
+        def extrair_numeros(texto):
+            numeros = re.findall(r'\d+', texto)
+            if numeros:
+                return int(''.join(numeros))
+            else:
+                return 1
+
+        comando_sem_numeros = re.sub(r'\d', '', comando)
+        numeros = extrair_numeros(comando)
+
+        # tratando o comando de fato
+        shortcuts.search_command(comando_sem_numeros, numeros, self.maintext)
+        self.gui.atualizar_contador()
+        self.gui.realcar_linha_selecionada()
+
+        
+        # apagando o comando enviado
+        self.bottom_command_output.delete("1.0", ctk.END)
+        return 0
+
+
+
+class GUI:
+    def __init__(self, root):
+        self.root = root
+        self.labels = []
+    
+
+    def setup(self, main_app_instance:MainApp, command_manager_instance:CommandManager):
+        self.main_app_instance = main_app_instance
+        self.command_manager_instance = command_manager_instance
+
+    def criar_contador(self, e = None):
         # Sem o update ele nao consegue calcular o num de linhas
         self.root.update()
 
@@ -29,28 +153,6 @@ class MainApp:
         self.criar_labels()
 
 
-    def create_window(self):
-        root.geometry("1100x760")
-        self.root.title("The Pytext Editor")
-
-
-    def create_frames(self):
-        # creating left frame
-        self.leftframe = ctk.CTkFrame(root)
-        self.leftframe.grid(row=0, column=0, sticky="ns", rowspan=10)
-        # peso 0 para não expandir (janela)
-        self.root.columnconfigure(0, weight=0)
-
-        # creating the main frame
-        self.mainframe = ctk.CTkFrame(root)
-        self.mainframe.grid(row=0, column=1, sticky="nsew")
-        # peso 1 para que ele expanda (janela)
-        self.root.columnconfigure(1, weight=1)
-        self.root.rowconfigure(0, weight=1)
-
-        # creating bottom frame
-        self.bottomframe = ctk.CTkFrame(root)
-        self.bottomframe.grid(row=1, column=0, columnspan=2, sticky="ew")
 
 
     def calcular_tamanho_caixa_de_texto(self):
@@ -67,65 +169,6 @@ class MainApp:
         print("Tamanho do texto alterado")
 
 
-
-
-    def create_widgets(self):
-        # initializing firacode font
-        src = r"fonts\firacode.ttf"
-        # carrega a fonte
-        ctk.FontManager.load_font(src)
-        # agora ele reconhece a family Fira Code, porque eu carreguei antes
-        self.firacode = ctk.CTkFont(family="Fira Code", size=19) 
-
-        # initializing main text area
-        # fazer com que ele tenha um tamanho sempre multiplo do tamanho das linhas
-        self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.firacode)
-        self.main_textarea.grid(row=0, column=0, sticky="new", padx=10, pady=(20, 10))
-        self.main_textarea.focus_set()
-        self.main_textarea.grid_rowconfigure(0, weight=1)
-
-        
-
-
-        self.main_textarea.configure(state="disabled", height=500)
-
-
-        # escondendo a barra de scroll
-        self.theme_mode = ctk.get_appearance_mode()
-        self.themes = {
-            "Dark": "#1d1e1e",
-            "Light": "#f9f9fa"
-        }
-        self.main_textarea.configure(yscrollcommand="", scrollbar_button_color=self.themes[self.theme_mode], scrollbar_button_hover_color=self.themes[self.theme_mode])
-
-
-        # configurando o mainframe
-        self.mainframe.columnconfigure(0, weight=1)
-        self.mainframe.rowconfigure(0, weight=1)
-
-        # initializing left text area
-        self.left_textarea = ctk.CTkTextbox(self.leftframe, width=70, wrap=ctk.CHAR, font=self.firacode)
-        #self.left_textarea.grid(row=0, column=0, sticky="ns", padx=(10,10), pady=(20,10))
-
-        
-
-        # configurando o leftframe
-        self.leftframe.columnconfigure(0, weight=0)
-        self.leftframe.rowconfigure(0, weight=0)
-
-        # creating the bottom label
-        self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.modo, justify="center", font=self.firacode)
-        self.bottom_output_mode.grid(row=1, column=0, sticky="ew", columnspan=2)
-
-        # Criando o textbox no segundo grid
-        self.bottom_command_output = ctk.CTkTextbox(self.bottomframe, font=self.firacode, width=100, height=2)
-        # Como o sticky é "e", ele vai ser ancorado para o leste ->
-        self.bottom_command_output.grid(row=1, column=1, sticky="e", padx=(0, 10), pady=(0, 5))
-
-        # o peso é 1 para que ele se mova para a direita
-        self.bottomframe.columnconfigure(1, weight=1)
-        # Configurando o textbox para ser menor verticalmente
-        self.bottom_command_output.rowconfigure(1, weight=0)  # Ajuste para tornar a segunda linha menor
 
 
     def criar_labels(self):
@@ -152,99 +195,7 @@ class MainApp:
             self.labels.append(label)
         
 
-    def capture_commands(self):
-        # ele envia argumentos mesmo sem indicar
-        root.bind("<Key>", self.tecla_pressionada)
-        root.bind("<Button-1>", self.atualizar_contador)
-        root.bind("<Escape>", lambda e: self.trocar_modo(self.modo))
-        # Atualizar as labels para ajustar na resolução
-        root.bind("<Prior>", lambda e: self.create_labels(e))
-        self.main_textarea.bind("<MouseWheel>", lambda e: "break")
-
-    
-
-    def trocar_modo(self, modo):
-        if modo == "view":
-            # caso vc aperte ESC com comando definido na caixa, ele so apaga o comando. Nao troca de modo
-            if self.bottom_command_output.get("1.0", "end-1c") != "":
-                self.bottom_command_output.delete("1.0", ctk.END)
-                self.main_textarea.focus_set()
-                return 0
-
-            self.modo = "insert"
-            self.main_textarea.configure(state="normal")
-            self.main_textarea.focus_set()
-        else:
-            self.modo = "view"
-            self.main_textarea.configure(state="disabled")
-        
-        self.bottom_command_output.delete("1.0", ctk.END)
-        print(self.modo)
-        return self.bottom_output_mode.configure(text=self.modo)
-
-
-    def tecla_pressionada(self, event):
-        self.realcar_linha_selecionada()
-        tecla = event.keysym
-        #print(event)
-
-        if self.modo == "view":
-            comando = self.bottom_command_output.get("1.0", "end-1c")
-            
-            # Caso não haja comandos e aperte :
-            if comando == "":
-                if tecla == "colon":
-                    self.bottom_command_output.focus_set()
-                else:
-                    match tecla:
-                        case "i":
-                            return self.trocar_modo(self.modo)
-                        case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
-                            return self.atualizar_contador(tecla)
-                        case _:
-                            return 0
-
-                        
-
-            # Caso aperte Enter para registrar o comando
-            elif tecla == "Return":
-                self.catch_comando(comando)
-                self.main_textarea.focus_set()
- 
-
-        elif self.modo == "insert":
-
-            match tecla:
-                case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
-                    return self.atualizar_contador(tecla)
-                case _:
-                    return 0
-
-
-    def catch_comando(self, comando):
-        # separando o comando em partes: numero de vezes a rodar e o comando
-        def extrair_numeros(texto):
-            numeros = re.findall(r'\d+', texto)
-            if numeros:
-                return int(''.join(numeros))
-            else:
-                return 1
-
-        comando_sem_numeros = re.sub(r'\d', '', comando)
-        numeros = extrair_numeros(comando)
-
-        # tratando o comando de fato
-        shortcuts.search_command(comando_sem_numeros, numeros, self.main_textarea)
-        self.atualizar_contador()
-        self.realcar_linha_selecionada()
-
-        
-        # apagando o comando enviado
-        self.bottom_command_output.delete("1.0", ctk.END)
-        return 0
-
-
-    def realcar_linha_selecionada(self):
+    def realcar_linha_selecionada(self, objeto = None):
         texto = self.main_textarea
         linha_atual = int(texto.index(tk.INSERT).split(".")[0])
         inicio_linha = f"{linha_atual}.0"
@@ -314,7 +265,8 @@ class MainApp:
         
         return visible_line
 
-    
+
+
     def calcular_numero_de_linhas_visiveis(self):
         self.main_textarea.update_idletasks()  # Atualiza a geometria antes de calcular
         self.main_textarea.update()
@@ -338,6 +290,98 @@ class MainApp:
         # Divide a string em linhas usando '\n' como delimitador e conta o número de elementos
         numero_de_linhas = len(conteudo.split('\n'))
         return numero_de_linhas
+
+
+    def start(self):
+        self.create_window()
+        self.create_frames()
+        self.create_widgets()
+        self.criar_contador()
+
+
+    def create_window(self):
+        root.geometry("1100x760")
+        self.root.title("The Pytext Editor")
+
+
+    def create_frames(self):
+        # creating left frame
+        self.leftframe = ctk.CTkFrame(root)
+        self.leftframe.grid(row=0, column=0, sticky="ns", rowspan=10)
+        # peso 0 para não expandir (janela)
+        self.root.columnconfigure(0, weight=0)
+
+        # creating the main frame
+        self.mainframe = ctk.CTkFrame(root)
+        self.mainframe.grid(row=0, column=1, sticky="nsew")
+        # peso 1 para que ele expanda (janela)
+        self.root.columnconfigure(1, weight=1)
+        self.root.rowconfigure(0, weight=1)
+
+        # creating bottom frame
+        self.bottomframe = ctk.CTkFrame(root)
+        self.bottomframe.grid(row=1, column=0, columnspan=2, sticky="ew")
+
+
+    def create_widgets(self):
+        # initializing firacode font
+        src = r"fonts\firacode.ttf"
+        # carrega a fonte
+        ctk.FontManager.load_font(src)
+        # agora ele reconhece a family Fira Code, porque eu carreguei antes
+        self.firacode = ctk.CTkFont(family="Fira Code", size=19) 
+
+        # initializing main text area
+        # fazer com que ele tenha um tamanho sempre multiplo do tamanho das linhas
+        self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.firacode)
+        self.main_textarea.grid(row=0, column=0, sticky="new", padx=10, pady=(20, 10))
+        self.main_textarea.focus_set()
+        self.main_textarea.grid_rowconfigure(0, weight=1)
+
+        
+
+
+        self.main_textarea.configure(state="disabled", height=500)
+
+
+        # escondendo a barra de scroll
+        self.theme_mode = ctk.get_appearance_mode()
+        self.themes = {
+            "Dark": "#1d1e1e",
+            "Light": "#f9f9fa"
+        }
+        self.main_textarea.configure(yscrollcommand="", scrollbar_button_color=self.themes[self.theme_mode], scrollbar_button_hover_color=self.themes[self.theme_mode])
+
+
+        # configurando o mainframe
+        self.mainframe.columnconfigure(0, weight=1)
+        self.mainframe.rowconfigure(0, weight=1)
+
+        # initializing left text area
+        self.left_textarea = ctk.CTkTextbox(self.leftframe, width=70, wrap=ctk.CHAR, font=self.firacode)
+        #self.left_textarea.grid(row=0, column=0, sticky="ns", padx=(10,10), pady=(20,10))
+
+        
+
+        # configurando o leftframe
+        self.leftframe.columnconfigure(0, weight=0)
+        self.leftframe.rowconfigure(0, weight=0)
+
+        # creating the bottom label
+        self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.main_app_instance.modo, justify="center", font=self.firacode)
+        self.bottom_output_mode.grid(row=1, column=0, sticky="ew", columnspan=2)
+
+        # Criando o textbox no segundo grid
+        self.bottom_command_output = ctk.CTkTextbox(self.bottomframe, font=self.firacode, width=100, height=2)
+        # Como o sticky é "e", ele vai ser ancorado para o leste ->
+        self.bottom_command_output.grid(row=1, column=1, sticky="e", padx=(0, 10), pady=(0, 5))
+
+        # o peso é 1 para que ele se mova para a direita
+        self.bottomframe.columnconfigure(1, weight=1)
+        # Configurando o textbox para ser menor verticalmente
+        self.bottom_command_output.rowconfigure(1, weight=0)  # Ajuste para tornar a segunda linha menor
+
+
 
 
 
