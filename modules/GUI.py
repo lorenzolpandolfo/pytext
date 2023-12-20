@@ -12,12 +12,11 @@ class GUI:
         self.command_manager_instance = command_manager_instance
 
 
-    def criar_contador(self, e = None):
+    def create_counter(self, e = None):
         # Sem o update ele nao consegue calcular o num de linhas
         self.root.update()
-
+        self.on_resize()
         self.max_linhas_visiveis = self.calcular_numero_de_linhas_visiveis()
-        self.criar_labels()
 
 
     def calcular_tamanho_caixa_de_texto(self):
@@ -34,7 +33,7 @@ class GUI:
         print("Tamanho do texto alterado")
 
 
-    def criar_labels(self):
+    def create_labels(self):
         self.main_textarea.update_idletasks()
         num = self.calcular_numero_de_linhas_visiveis()
 
@@ -79,7 +78,7 @@ class GUI:
             except IndexError:
                 print("linha cortada para tentar evitar dessincronização de contador")
                 # 250 tira duas linhas, considerando tamanhos extras do widget
-                self.main_textarea.configure(height=int(self.main_textarea.winfo_height()) - 200)
+                #self.main_textarea.configure(height=int(self.main_textarea.winfo_height()) - 200)
 
             # se o cursor se moveu
             try:
@@ -132,7 +131,7 @@ class GUI:
     def calcular_numero_de_linhas_visiveis(self):
         self.main_textarea.update_idletasks()  # Atualiza a geometria antes de calcular
         self.main_textarea.update()
-        self.calcular_tamanho_caixa_de_texto()
+        #self.calcular_tamanho_caixa_de_texto()
 
         try:
             height = self.main_textarea.winfo_height()
@@ -142,6 +141,7 @@ class GUI:
             return visible_lines
 
         except TypeError:
+            print("nao consegui contar")
             return self.max_linhas_visiveis
 
 
@@ -161,28 +161,34 @@ class GUI:
             return f"{numero_de_linhas}L, {num_colunas}C"
 
 
+    def teste(self, e = None):
+        self.create_counter()
+        self.create_labels()
+
+
     def start(self):
         self.create_window()
         self.create_frames()
         self.create_widgets()
-        self.criar_contador()
+        self.create_counter()
+        self.create_labels()
 
 
     def create_window(self):
-        self.root.geometry("1100x760")
+        self.root.geometry("1100x749")
         self.root.title("The Pytext Editor")
 
 
     def create_frames(self):
         # creating left frame
         self.leftframe = ctk.CTkFrame(self.root)
-        self.leftframe.grid(row=0, column=0, sticky="ns", rowspan=10)
+        self.leftframe.grid(row=0, column=0, sticky="ns")
         # peso 0 para não expandir (janela)
         self.root.columnconfigure(0, weight=0)
 
         # creating the main frame
         self.mainframe = ctk.CTkFrame(self.root)
-        self.mainframe.grid(row=0, column=1, sticky="nsew")
+        self.mainframe.grid(row=0, column=1, sticky="new")
         # peso 1 para que ele expanda (janela)
         self.root.columnconfigure(1, weight=1)
         self.root.rowconfigure(0, weight=1)
@@ -190,6 +196,12 @@ class GUI:
         # creating bottom frame
         self.bottomframe = ctk.CTkFrame(self.root)
         self.bottomframe.grid(row=1, column=0, columnspan=2, sticky="ew")
+
+
+    def on_resize(self, e = None):
+        font_size = self.firacode.metrics()['linespace']
+        print((self.root.winfo_height() // font_size))
+        self.main_textarea.configure(height=(self.root.winfo_height() // font_size)*font_size)
 
 
     def create_widgets(self):
@@ -203,12 +215,9 @@ class GUI:
         # initializing main text area
         # fazer com que ele tenha um tamanho sempre multiplo do tamanho das linhas
         self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.firacode)
-        self.main_textarea.grid(row=0, column=0, sticky="new", padx=10, pady=(20, 10))
+        self.main_textarea.grid(row=0, column=0, sticky="news", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
         self.main_textarea.grid_rowconfigure(0, weight=1)
-
-        
-
 
         self.main_textarea.configure(state="disabled", height=500)
 

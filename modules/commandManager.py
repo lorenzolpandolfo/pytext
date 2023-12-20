@@ -23,7 +23,7 @@ class CommandManager:
         self.root.bind("<KeyRelease>", self.atualizar_contador_de_linhas_e_colunas_globais)
         self.root.bind("<Escape>", lambda e: self.trocar_modo(self.main_app_instance.modo))
         # Atualizar as labels para ajustar na resolução
-        self.root.bind("<Prior>", lambda e: self.gui.criar_contador(e))
+        self.root.bind("<Prior>", lambda e: self.gui.teste(e))
         self.maintext.bind("<MouseWheel>", lambda e: "break")
 
 
