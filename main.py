@@ -12,27 +12,32 @@ class MainApp:
         self.root = root
         self.modo = "view"
 
-        # inicializando as classes
-        
+        # carregando as instancias das outras classes 
         self.gui = GUI(self.root)
         self.command_manager = CommandManager(self.root)
 
+        # enviando para as outras classes a sua instancia
         self.gui.main_app_instance = self
         self.command_manager.main_app_instance = self
         
+        # inicia a criação da GUI
         self.gui.start()
 
+        # envia para GUI a instancia do command_manager
         self.gui.setup(self, self.command_manager)
+
+        # envia instancias para o command_manager
         self.command_manager.setup(self, self.gui.main_textarea, self.gui.bottom_command_output, self.gui)
 
-        self.command_manager.capture_commands()        
-        self.combo = []
+        # inicia a função de capturar keybinds
+        self.command_manager.capture_keybinds()
 
 
 
 class CommandManager:
     def __init__(self, root:ctk.CTk()):
         self.root = root
+
 
     def setup(self, main_app_instance:MainApp, main_textarea:ctk.CTkTextbox, bottom_command_output:ctk.CTkTextbox,
               gui_instance):
@@ -42,15 +47,19 @@ class CommandManager:
         self.gui = gui_instance
 
 
-    def capture_commands(self):
-        # ele envia argumentos mesmo sem indicar
+    def capture_keybinds(self):
         self.root.bind("<Key>", self.tecla_pressionada)
+        self.root.bind("<KeyRelease>", self.atualizar_contador_de_linhas_e_colunas_globais)
         self.root.bind("<Escape>", lambda e: self.trocar_modo(self.main_app_instance.modo))
         # Atualizar as labels para ajustar na resolução
         self.root.bind("<Prior>", lambda e: self.gui.criar_contador(e))
         self.maintext.bind("<MouseWheel>", lambda e: "break")
 
-    
+
+    def atualizar_contador_de_linhas_e_colunas_globais(self, e = None):
+        return self.gui.bottom_output_doc_info.configure(text=self.gui.obter_numero_de_linhas_e_colunas(f=True))
+
+
     def trocar_modo(self, modo):
         if modo == "view":
             # caso vc aperte ESC com comando definido na caixa, ele so apaga o comando. Nao troca de modo
@@ -70,7 +79,7 @@ class CommandManager:
             self.maintext.configure(state="disabled")
         
         self.bottom_command_output.delete("1.0", ctk.END)
-        print(self.main_app_instance.modo)
+        #print(self.main_app_instance.modo)
         return self.gui.bottom_output_mode.configure(text=self.main_app_instance.modo)
 
 
@@ -100,7 +109,7 @@ class CommandManager:
 
             # Caso aperte Enter para registrar o comando
             elif tecla == "Return":
-                self.catch_comando(comando)
+                self.catch_command(comando)
                 self.maintext.focus_set()
  
 
@@ -113,7 +122,7 @@ class CommandManager:
                     return 0
 
 
-    def catch_comando(self, comando):
+    def catch_command(self, comando):
         # separando o comando em partes: numero de vezes a rodar e o comando
         def extrair_numeros(texto):
             numeros = re.findall(r'\d+', texto)
@@ -130,7 +139,6 @@ class CommandManager:
         self.gui.atualizar_contador()
         self.gui.realcar_linha_selecionada()
 
-        
         # apagando o comando enviado
         self.bottom_command_output.delete("1.0", ctk.END)
         return 0
@@ -147,6 +155,7 @@ class GUI:
         self.main_app_instance = main_app_instance
         self.command_manager_instance = command_manager_instance
 
+
     def criar_contador(self, e = None):
         # Sem o update ele nao consegue calcular o num de linhas
         self.root.update()
@@ -155,22 +164,18 @@ class GUI:
         self.criar_labels()
 
 
-
-
     def calcular_tamanho_caixa_de_texto(self):
         # precisa deste update para ele registrar o valor correto da resolução
         self.root.update()
         altura_janela = self.root.winfo_height()
-        print(altura_janela)
+        #print(altura_janela)
         tam = self.root.winfo_height()
         # estranho isso, mas ta funcionando
         tam = tam/1.4
-        print("Tamanho no frame: ", self.mainframe.winfo_height(), "Tam: ", tam)
+        #print("Tamanho no frame: ", self.mainframe.winfo_height(), "Tam: ", tam)
 
         self.main_textarea.configure(height=(tam))
         print("Tamanho do texto alterado")
-
-
 
 
     def criar_labels(self):
@@ -268,7 +273,6 @@ class GUI:
         return visible_line
 
 
-
     def calcular_numero_de_linhas_visiveis(self):
         self.main_textarea.update_idletasks()  # Atualiza a geometria antes de calcular
         self.main_textarea.update()
@@ -278,14 +282,14 @@ class GUI:
             height = self.main_textarea.winfo_height()
             line_height = self.main_textarea.dlineinfo("1.0")[3]  # Altura da primeira linha
             visible_lines = height // line_height
-            print("num de linhas calculado")
+            #print("num de linhas calculado")
             return visible_lines
 
         except TypeError:
             return self.max_linhas_visiveis
 
 
-    def obter_numero_de_linhas_e_colunas(self):
+    def obter_numero_de_linhas_e_colunas(self, f = False):
         # Obtém o conteúdo do TextBox como uma string
         conteudo = self.main_textarea.get("1.0", "end-1c")
         linhas = conteudo.split('\n')
@@ -294,8 +298,11 @@ class GUI:
 
         # maior valor de comprimento de linha por cada linha
         num_colunas = max(len(linha) for linha in linhas)
-
-        return (numero_de_linhas, num_colunas)
+        
+        if not f:
+            return (numero_de_linhas, num_colunas)
+        else:
+            return f"{numero_de_linhas}L, {num_colunas}C"
 
 
     def start(self):
@@ -377,7 +384,7 @@ class GUI:
 
         self.bottom_output_detail = ctk.CTkLabel(self.bottomframe, text="", justify="left", font=self.firacode)
         self.bottom_output_detail.grid(row=1, column=1, sticky="e", padx=10)
-        self.bottom_output_doc_info = ctk.CTkLabel(self.bottomframe, text="(10,56)", justify="left", font=self.firacode)
+        self.bottom_output_doc_info = ctk.CTkLabel(self.bottomframe, text=self.obter_numero_de_linhas_e_colunas(f=True), justify="left", font=self.firacode)
         self.bottom_output_doc_info.grid(row=1, column=0, sticky="e", padx=10)
         # Criando o textbox no segundo grid
         self.bottom_command_output = ctk.CTkTextbox(self.bottomframe, font=self.firacode, width=100, height=2)
