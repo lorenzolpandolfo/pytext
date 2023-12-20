@@ -118,7 +118,7 @@ class CommandManager:
             if numeros:
                 return int(''.join(numeros))
             else:
-                return 1
+                return 0
 
         comando_sem_numeros = re.sub(r'\d', '', comando)
         numeros = extrair_numeros(comando)

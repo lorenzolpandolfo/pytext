@@ -2,11 +2,14 @@ import re
 import customtkinter as ctk
 
 def search_command(comando:str, qtd:int, textbox):
+    # Se o qtd não for indicado, vai ser entendido como 0
+    # limitando à apenas caracteres de texto
     comando = re.sub(r'[^a-zA-Z]', '', comando)
 
     match comando:
 
         case "dd":
+            print(qtd)
             deletar_linha(qtd, textbox)
         
         case "w" | "a" | "s" | "d":
@@ -22,12 +25,8 @@ def search_command(comando:str, qtd:int, textbox):
 # dd
 def deletar_linha(final: int, textbox):
     inicio = f"{str(textbox.index(ctk.INSERT)).split('.')[0]}.0"
-
-    if final == 1:
-        final = str(final + float(inicio))
-
-    else:
-        final = str(final + float(inicio) + 1)
+    print(final)
+    final = str(final + float(inicio) + 1)
 
     textbox.configure(state="normal")
     textbox.delete(inicio, final)
@@ -35,8 +34,12 @@ def deletar_linha(final: int, textbox):
     return 0
 
 
-# w
+# wasd
 def mover_cursor(pos, qtd, textbox):
+    # caso vc apenas insira o comando de movimento, sem qtd
+    if qtd == 0:
+        qtd = 1
+    
     linha_atual = int(textbox.index(ctk.INSERT).split(".")[0])
     coluna_atual = int(textbox.index(ctk.INSERT).split(".")[1])
     match pos:
