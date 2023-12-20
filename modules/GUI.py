@@ -77,11 +77,6 @@ class GUI:
                 self.labels[self.label_value - 1].configure(text=999)
             except IndexError:
                 print("linha cortada para tentar evitar dessincronização de contador")
-                print("Antigo tamanho da caixa: ", self.main_textarea.winfo_height())
-                self.main_textarea.configure(height=int(self.main_textarea.winfo_height()) - 180)
-                self.root.update()
-                print("Novo tamanho da caixa: ", self.main_textarea.winfo_height())
-                
                 # 250 tira duas linhas, considerando tamanhos extras do widget
                 #self.main_textarea.configure(height=int(self.main_textarea.winfo_height()) - 200)
 
@@ -177,7 +172,6 @@ class GUI:
         self.create_widgets()
         self.create_counter()
         self.create_labels()
-        print(self.main_textarea.winfo_height())
 
 
     def create_window(self):
@@ -205,19 +199,9 @@ class GUI:
 
 
     def on_resize(self, e = None):
-        self.font_size = self.firacode.metrics()['linespace']
-        print((self.root.winfo_height() // self.font_size))
-
-        # a altura é o multiplo do tamanho da fonte mais próximo do tamanho tamanho da janela
-        altura = (self.mainframe.winfo_height() // self.font_size)*self.font_size
-
-        if altura > self.mainframe.winfo_height():
-            print("Nesse caso")
-            altura = self.mainframe.winfo_height()
-
-        self.main_textarea.configure(height=(int(altura) // self.font_size)*self.font_size)
-        print("o tamanho da caixa: ", (int(altura) // self.font_size)*self.font_size)
-        print("tamanho da fonte: ", self.font_size)
+        font_size = self.firacode.metrics()['linespace']
+        print((self.root.winfo_height() // font_size))
+        self.main_textarea.configure(height=(self.root.winfo_height() // font_size)*font_size)
 
 
     def create_widgets(self):
