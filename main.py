@@ -64,6 +64,7 @@ class CommandManager:
             self.main_app_instance.modo = "insert"
             self.maintext.configure(state="normal")
             self.maintext.focus_set()
+            self.gui.bottom_output_detail.configure(text="")
         else:
             self.main_app_instance.modo = "view"
             self.maintext.configure(state="disabled")
@@ -85,16 +86,17 @@ class CommandManager:
             if comando == "":
                 if tecla == "colon":
                     self.bottom_command_output.focus_set()
+
                 else:
                     match tecla:
                         case "i":
                             return self.trocar_modo(self.main_app_instance.modo)
+                        
                         case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
                             return self.gui.atualizar_contador(tecla)
+                        
                         case _:
                             return 0
-
-                        
 
             # Caso aperte Enter para registrar o comando
             elif tecla == "Return":
@@ -124,7 +126,7 @@ class CommandManager:
         numeros = extrair_numeros(comando)
 
         # tratando o comando de fato
-        shortcuts.search_command(comando_sem_numeros, numeros, self.maintext)
+        self.gui.bottom_output_detail.configure(text=shortcuts.search_command(comando_sem_numeros, numeros, self.maintext))
         self.gui.atualizar_contador()
         self.gui.realcar_linha_selecionada()
 
@@ -283,13 +285,17 @@ class GUI:
             return self.max_linhas_visiveis
 
 
-    def obter_numero_de_linhas(self):
+    def obter_numero_de_linhas_e_colunas(self):
         # Obtém o conteúdo do TextBox como uma string
         conteudo = self.main_textarea.get("1.0", "end-1c")
+        linhas = conteudo.split('\n')
+        
+        numero_de_linhas = len(linhas)
 
-        # Divide a string em linhas usando '\n' como delimitador e conta o número de elementos
-        numero_de_linhas = len(conteudo.split('\n'))
-        return numero_de_linhas
+        # maior valor de comprimento de linha por cada linha
+        num_colunas = max(len(linha) for linha in linhas)
+
+        return (numero_de_linhas, num_colunas)
 
 
     def start(self):
@@ -361,8 +367,6 @@ class GUI:
         self.left_textarea = ctk.CTkTextbox(self.leftframe, width=70, wrap=ctk.CHAR, font=self.firacode)
         #self.left_textarea.grid(row=0, column=0, sticky="ns", padx=(10,10), pady=(20,10))
 
-        
-
         # configurando o leftframe
         self.leftframe.columnconfigure(0, weight=0)
         self.leftframe.rowconfigure(0, weight=0)
@@ -371,17 +375,19 @@ class GUI:
         self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.main_app_instance.modo, justify="center", font=self.firacode)
         self.bottom_output_mode.grid(row=1, column=0, sticky="ew", columnspan=2)
 
+        self.bottom_output_detail = ctk.CTkLabel(self.bottomframe, text="", justify="left", font=self.firacode)
+        self.bottom_output_detail.grid(row=1, column=1, sticky="e", padx=10)
+        self.bottom_output_doc_info = ctk.CTkLabel(self.bottomframe, text="(10,56)", justify="left", font=self.firacode)
+        self.bottom_output_doc_info.grid(row=1, column=0, sticky="e", padx=10)
         # Criando o textbox no segundo grid
         self.bottom_command_output = ctk.CTkTextbox(self.bottomframe, font=self.firacode, width=100, height=2)
         # Como o sticky é "e", ele vai ser ancorado para o leste ->
-        self.bottom_command_output.grid(row=1, column=1, sticky="e", padx=(0, 10), pady=(0, 5))
+        self.bottom_command_output.grid(row=1, column=2, sticky="e", padx=(0, 10), pady=(0, 5))
 
         # o peso é 1 para que ele se mova para a direita
         self.bottomframe.columnconfigure(1, weight=1)
         # Configurando o textbox para ser menor verticalmente
         self.bottom_command_output.rowconfigure(1, weight=0)  # Ajuste para tornar a segunda linha menor
-
-
 
 
 

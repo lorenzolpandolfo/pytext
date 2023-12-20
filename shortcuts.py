@@ -10,28 +10,33 @@ def search_command(comando:str, qtd:int, textbox):
 
         case "dd":
             print(qtd)
-            deletar_linha(qtd, textbox)
+            return deletar_linha(qtd, textbox)
         
         case "w" | "a" | "s" | "d":
-            mover_cursor(comando, qtd, textbox)
+            return mover_cursor(comando, qtd, textbox)
         
         case "Q":
             exit()
 
         case _:
-            print("Comando não encontrado.")
+            return "Comando não encontrado."
 
 
 # dd
 def deletar_linha(final: int, textbox):
     inicio = f"{str(textbox.index(ctk.INSERT)).split('.')[0]}.0"
-    print(final)
+    
     final = str(final + float(inicio) + 1)
 
     textbox.configure(state="normal")
     textbox.delete(inicio, final)
     textbox.configure(state="disabled")
-    return 0
+
+    final = final.replace(".0", "")
+    inicio = inicio.replace(".0", "")
+
+    final = int(final) - int(inicio) - 1
+    return f"{final} linhas apagadas".replace("0", "1")
 
 
 # wasd
@@ -42,23 +47,30 @@ def mover_cursor(pos, qtd, textbox):
     
     linha_atual = int(textbox.index(ctk.INSERT).split(".")[0])
     coluna_atual = int(textbox.index(ctk.INSERT).split(".")[1])
+    detail_output = ""
+
     match pos:
         case "w":
             nova_posicao = max(linha_atual - qtd, 1)  # Garante que a posição não seja menor que 1
             nova_posicao = f"{nova_posicao}.{coluna_atual}"
+            detail_output = f"Cursor movido {qtd} linhas acima"
 
         case "a":
             nova_posicao = max(coluna_atual - qtd, 0)
             nova_posicao = f"{linha_atual}.{nova_posicao}"
+            detail_output = f"Cursor movido {qtd} colunas à esquerda"
 
         case "s":
             nova_posicao = max(linha_atual + qtd, 1)
             nova_posicao = f"{nova_posicao}.{coluna_atual}"
+            detail_output = f"Cursor movido {qtd} linhas abaixo"
 
         case "d":
             nova_posicao = max(coluna_atual + qtd, 0)
             nova_posicao = f"{linha_atual}.{nova_posicao}"
+            detail_output = f"Cursor movido {qtd} colunas à direita"
 
     textbox.mark_set(ctk.INSERT, nova_posicao)
     textbox.see(nova_posicao)
+    return detail_output
 
