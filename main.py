@@ -156,9 +156,9 @@ class MainApp:
         # ele envia argumentos mesmo sem indicar
         root.bind("<Key>", self.tecla_pressionada)
         root.bind("<Button-1>", self.atualizar_contador)
-        #root.bind("<Escape>", lambda e: self.trocar_modo(self.modo))
+        root.bind("<Escape>", lambda e: self.trocar_modo(self.modo))
         # Atualizar as labels para ajustar na resolução
-        root.bind("<Escape>", lambda e: self.create_labels(e))
+        root.bind("<Prior>", lambda e: self.create_labels(e))
         self.main_textarea.bind("<MouseWheel>", lambda e: "break")
 
     
@@ -184,6 +184,7 @@ class MainApp:
 
 
     def tecla_pressionada(self, event):
+        self.realcar_linha_selecionada()
         tecla = event.keysym
         #print(event)
 
@@ -234,10 +235,24 @@ class MainApp:
 
         # tratando o comando de fato
         shortcuts.search_command(comando_sem_numeros, numeros, self.main_textarea)
+        self.atualizar_contador()
+        self.realcar_linha_selecionada()
+
         
         # apagando o comando enviado
         self.bottom_command_output.delete("1.0", ctk.END)
         return 0
+
+
+    def realcar_linha_selecionada(self):
+        texto = self.main_textarea
+        linha_atual = int(texto.index(tk.INSERT).split(".")[0])
+        inicio_linha = f"{linha_atual}.0"
+        fim_linha = f"{linha_atual + 1}.0"
+        
+        texto.tag_remove("realce", "1.0", tk.END)
+        texto.tag_add("realce", inicio_linha, fim_linha)
+        texto.tag_config("realce", background="#2b2b2b")
 
 
     def atualizar_contador(self, e=None):
@@ -246,7 +261,7 @@ class MainApp:
             self.label_value = self.get_visible_line(self.main_textarea)
 
             try:
-                self.labels[self.label_value - 1].configure(text=0)
+                self.labels[self.label_value - 1].configure(text=999)
             except IndexError:
                 print("linha cortada para tentar evitar dessincronização de contador")
                 # 250 tira duas linhas, considerando tamanhos extras do widget
@@ -270,6 +285,11 @@ class MainApp:
         def calcular_distancias(array, posicao_zero):
             # Calcular a distância entre cada elemento e o elemento 0
             distancias = [abs(i - posicao_zero) for i in range(len(array))]
+            
+            for i, valor in enumerate(distancias):
+                if valor == 0:
+                    distancias[i] = int(self.main_textarea.index(ctk.INSERT).split(".")[0])
+
             return distancias
         
         self.vals = add_zero_to_selected_line(self)
