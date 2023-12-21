@@ -28,9 +28,8 @@ class MainApp:
 
         # envia para GUI a instancia do command_manager
         self.gui.setup(self, self.command_manager, self.user_config)
-
         # envia instancias para o command_manager
-        self.command_manager.setup(self, self.gui.main_textarea, self.gui.bottom_command_output, self.gui)
+        self.command_manager.setup(self, self.gui.main_textarea, self.gui.bottom_command_output, self.gui, self.user_config)
 
         # inicia a função de capturar keybinds
         self.command_manager.capture_keybinds()

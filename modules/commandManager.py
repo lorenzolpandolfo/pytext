@@ -11,11 +11,12 @@ class CommandManager:
 
 
     def setup(self, main_app_instance, main_textarea:ctk.CTkTextbox, bottom_command_output:ctk.CTkTextbox,
-              gui_instance):
+              gui_instance, user_config_instance):
         self.maintext = main_textarea
         self.bottom_command_output = bottom_command_output
         self.main_app_instance = main_app_instance
         self.gui = gui_instance
+        self.user_config_instance = user_config_instance
 
 
     def capture_keybinds(self):
@@ -77,7 +78,6 @@ class CommandManager:
     def tecla_pressionada(self, event):
         self.gui.realcar_linha_selecionada(self.gui)
         tecla = event.keysym
-        #print(event)
 
         if self.main_app_instance.modo == "view":
             comando = self.bottom_command_output.get("1.0", "end-1c")
@@ -105,6 +105,7 @@ class CommandManager:
  
 
         elif self.main_app_instance.modo == "insert":
+            self.user_config_instance.check_delimiter_chars(event, self.maintext)        
 
             match tecla:
                 case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
