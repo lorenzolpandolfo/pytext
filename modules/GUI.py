@@ -172,6 +172,7 @@ class GUI:
         self.create_widgets()
         self.create_counter()
         self.create_labels()
+        print("Num labels: ", len(self.labels))
 
 
     def create_window(self):
@@ -198,10 +199,17 @@ class GUI:
         self.bottomframe.grid(row=1, column=0, columnspan=2, sticky="ew")
 
 
-    def on_resize(self, e = None):
+    def on_resize(self, e=None):
+        altura_janela = self.root.winfo_height()
         font_size = self.firacode.metrics()['linespace']
-        print((self.root.winfo_height() // font_size))
-        self.main_textarea.configure(height=(self.root.winfo_height() // font_size)*font_size)
+
+        # Calcula o número de linhas visíveis desejado
+        num_linhas_visiveis = altura_janela // font_size
+
+        # Configura a altura do widget Text em pixels, garantindo que seja um múltiplo do font_size
+        altura_desejada = num_linhas_visiveis * font_size
+        self.main_textarea.configure(height=altura_desejada)
+
 
 
     def create_widgets(self):
@@ -215,7 +223,7 @@ class GUI:
         # initializing main text area
         # fazer com que ele tenha um tamanho sempre multiplo do tamanho das linhas
         self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.firacode)
-        self.main_textarea.grid(row=0, column=0, sticky="news", padx=10, pady=(20, 10))
+        self.main_textarea.grid(row=0, column=0, sticky="new", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
         self.main_textarea.grid_rowconfigure(0, weight=1)
 
