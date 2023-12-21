@@ -24,7 +24,27 @@ class CommandManager:
         self.root.bind("<Escape>", lambda e: self.trocar_modo(self.main_app_instance.modo))
         # Atualizar as labels para ajustar na resolução
         self.root.bind("<Prior>", lambda e: self.gui.teste(e))
+        self.root.bind("<Configure>", lambda e: self.ajustar_resolucao(e))
         self.maintext.bind("<MouseWheel>", lambda e: "break")
+        self.ok = 1
+
+
+    def ajustar_resolucao(self, e = None):
+        #print("att e ok: ", self.ok)
+        try:
+            #print(f"atual: {int(self.root.winfo_height())} anterior: {int(self.lastheight)}")
+            if int(self.root.winfo_height()) == int(self.lastheight):
+                #print("igual")
+                pass
+            elif self.ok == 1:
+                self.ok = 0
+                self.root.update()
+                print("mudança na resolução")
+                self.gui.teste()
+        except Exception:
+            #print("nao encontrei lastheight")
+            self.lastheight = self.root.winfo_height()
+
 
 
     def atualizar_contador_de_linhas_e_colunas_globais(self, e = None):

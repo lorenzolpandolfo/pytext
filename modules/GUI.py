@@ -143,6 +143,8 @@ class GUI:
 
         except TypeError:
             print("nao consegui contar")
+            # cuidar aqui, isso pode nao funcionar. Fazer testes para encontrar a fonte desse erro
+            self.root.configure(height=int(self.root.winfo_height()) - self.font_size)
             return self.max_linhas_visiveis
 
 
@@ -165,8 +167,15 @@ class GUI:
     def teste(self, e = None):
         self.create_counter()
         self.create_labels()
+        return self.root.after(1000, self.a)
 
 
+    def a(self):
+        self.command_manager_instance.ok = 1
+        print("ok definido: ", self.command_manager_instance.ok)
+        print('definindo para: ', self.root.winfo_height())
+        self.command_manager_instance.lastheight = self.root.winfo_height()
+        
     def start(self):
         self.create_window()
         self.create_frames()
