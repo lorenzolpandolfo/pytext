@@ -29,7 +29,6 @@ class GUI:
         tam = tam/1.4
         #print("Tamanho no frame: ", self.mainframe.winfo_height(), "Tam: ", tam)
 
-        self.main_textarea.configure(height=(tam))
         print("Tamanho do texto alterado")
 
 
@@ -207,8 +206,7 @@ class GUI:
         num_linhas_visiveis = altura_janela // font_size
 
         # Configura a altura do widget Text em pixels, garantindo que seja um múltiplo do font_size
-        altura_desejada = num_linhas_visiveis * font_size
-        self.main_textarea.configure(height=altura_desejada)
+        self.main_textarea._textbox.configure(height=num_linhas_visiveis -9)
 
 
 
@@ -222,12 +220,13 @@ class GUI:
 
         # initializing main text area
         # fazer com que ele tenha um tamanho sempre multiplo do tamanho das linhas
-        self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.firacode)
+        self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.firacode, height=0)
         self.main_textarea.grid(row=0, column=0, sticky="new", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
         self.main_textarea.grid_rowconfigure(0, weight=1)
 
-        self.main_textarea.configure(state="disabled", height=500)
+
+        self.main_textarea.configure(state="disabled")
 
 
         # escondendo a barra de scroll

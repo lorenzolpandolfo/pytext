@@ -17,7 +17,7 @@ class App:
 
         print(event.height)
         print(self.root.winfo_height() // 19)
-        self.textbox.configure(height=(self.root.winfo_height() // 19))
+        self.textbox._textbox.configure(height=((self.root.winfo_height() // 19)-19))
         
 
 if __name__ == "__main__":
