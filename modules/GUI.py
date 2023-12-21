@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import math
 
 
 class GUI:
@@ -201,7 +202,8 @@ class GUI:
 
     def on_resize(self, e=None):
         font_size = self.firacode.metrics()['linespace']
-        altura_janela = self.root.winfo_height()
+        # testando aqui um valor alto para ele ajustar depois
+        altura_janela = self.root.winfo_height() * 2
 
         print("Altura: ",altura_janela)
         # Calcula o número de linhas visíveis desejado
