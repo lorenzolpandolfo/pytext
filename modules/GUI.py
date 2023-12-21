@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import math
-
+import json
 
 class GUI:
     def __init__(self, root):
@@ -8,9 +8,10 @@ class GUI:
         self.labels = []
     
 
-    def setup(self, main_app_instance, command_manager_instance):
+    def setup(self, main_app_instance, command_manager_instance, user_config_instance):
         self.main_app_instance = main_app_instance
         self.command_manager_instance = command_manager_instance
+        self.user_config_instance = user_config_instance
 
 
     def create_counter(self, e = None):
@@ -66,7 +67,7 @@ class GUI:
         
         texto.tag_remove("realce", "1.0", ctk.END)
         texto.tag_add("realce", inicio_linha, fim_linha)
-        texto.tag_config("realce", background="#2b2b2b")
+        texto.tag_config("realce", background=self.user_config_instance.selected_line_background_color)
 
 
     def atualizar_contador(self, e=None):
