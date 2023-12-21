@@ -17,6 +17,7 @@ class GUI:
         self.root.update()
         self.on_resize()
         self.max_linhas_visiveis = self.calcular_numero_de_linhas_visiveis()
+        self.main_textarea._textbox.configure(height=self.max_linhas_visiveis)
 
 
     def calcular_tamanho_caixa_de_texto(self):
@@ -200,7 +201,7 @@ class GUI:
 
     def on_resize(self, e=None):
         font_size = self.firacode.metrics()['linespace']
-        altura_janela = self.root.winfo_height() * 0.7
+        altura_janela = self.root.winfo_height()
 
         print("Altura: ",altura_janela)
         # Calcula o número de linhas visíveis desejado
@@ -210,6 +211,7 @@ class GUI:
 
         # Configura a altura do widget Text em pixels, garantindo que seja um múltiplo do font_size
         self.main_textarea._textbox.configure(height=num_linhas_visiveis)
+        self.calcular_numero_de_linhas_visiveis()
 
 
 
