@@ -22,6 +22,7 @@ class MainApp:
         # enviando para as outras classes a sua instancia
         self.gui.main_app_instance = self
         self.command_manager.main_app_instance = self
+        self.user_config.main_app_instance = self
         
         # inicia a criação da GUI
         self.gui.start()
@@ -31,6 +32,7 @@ class MainApp:
         # envia instancias para o command_manager
         self.command_manager.setup(self, self.gui.main_textarea, self.gui.bottom_command_output, self.gui, self.user_config)
 
+        self.user_config.setup(self.gui)
         # inicia a função de capturar keybinds
         self.command_manager.capture_keybinds()
 

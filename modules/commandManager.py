@@ -105,11 +105,16 @@ class CommandManager:
  
 
         elif self.main_app_instance.modo == "insert":
+            # checa se é um delimitador
             self.user_config_instance.check_delimiter_chars(event, self.maintext)        
 
             match tecla:
-                case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
+                case "Up" | "Down" | "Left" | "Right" | "BackSpace" | "Button-1":
                     return self.gui.atualizar_contador(tecla)
+                
+                case "Return":
+                    self.user_config_instance.check_char_for_language_format(event, self.gui.obter_caractere_anterior(self.maintext, enter=True))
+
                 case _:
                     return 0
 

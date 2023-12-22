@@ -70,6 +70,37 @@ class GUI:
         texto.tag_config("realce", background=self.user_config_instance.selected_line_background_color)
 
 
+    def obter_caractere_anterior(self, text_widget, enter = False):
+        if enter:
+            # Obtém a posição atual do cursor (marcador "insert")
+            cursor_pos = text_widget.index(ctk.INSERT)
+
+            # Divide a posição para obter o número da linha e a coluna
+            numero_linha, coluna = map(int, cursor_pos.split('.'))
+
+            # Se estamos na primeira linha, não há linha acima para obter o último caractere
+            if numero_linha <= 1:
+                return None
+
+            # Calcula a posição do último caractere da linha anterior
+            posicao_ultimo_caractere_linha_anterior = f"{numero_linha - 1}.end - 1 char"
+
+            # Obtém o último caractere da linha anterior
+            ultimo_caractere_linha_anterior = text_widget.get(posicao_ultimo_caractere_linha_anterior)
+
+            return ultimo_caractere_linha_anterior
+        else:
+            # Obtém a posição atual do cursor (marcador "insert")
+            cursor_pos = text_widget.index(ctk.INSERT)
+
+            # Calcula a posição do caractere anterior
+            posicao_anterior = f"{cursor_pos} - 1 char"
+
+            # Obtém o caractere anterior
+            caractere_anterior = text_widget.get(posicao_anterior, cursor_pos)
+            
+        return caractere_anterior
+
     def atualizar_contador(self, e=None):
         def add_zero_to_selected_line(self):
             # pegando o valor da linha selecionada dentre as visiveis
