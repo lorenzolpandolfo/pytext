@@ -93,7 +93,10 @@ class CommandManager:
                             return self.trocar_modo(self.main_app_instance.modo)
                         
                         case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
-                            return self.gui.atualizar_contador(tecla)
+                            self.gui.mover_tela()
+                            self.gui.obter_numero_de_colunas_atual()
+                            self.gui.atualizar_contador(tecla)
+                        
                         
                         case _:
                             return 0
@@ -110,10 +113,14 @@ class CommandManager:
 
             match tecla:
                 case "Up" | "Down" | "Left" | "Right" | "BackSpace" | "Button-1":
-                    return self.gui.atualizar_contador(tecla)
-                
+                    self.gui.mover_tela()
+                    self.gui.atualizar_contador(tecla)
+
+
                 case "Return":
                     self.user_config_instance.check_char_for_language_format(event, self.gui.obter_caractere_anterior(self.maintext, enter=True))
+                    return self.gui.atualizar_contador(tecla)
+
 
                 case _:
                     return 0

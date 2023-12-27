@@ -70,6 +70,19 @@ class GUI:
         texto.tag_config("realce", background=self.user_config_instance.selected_line_background_color)
 
 
+    def mover_tela(self):
+        linha_visivel = int(self.get_visible_line(self.main_textarea))
+        maximo_linhas_total = len(self.labels)
+
+        min = int(maximo_linhas_total/10) * 3
+        max = int(maximo_linhas_total/10) * 7
+
+        if linha_visivel <= min:
+            self.main_textarea.yview_scroll(-1, "units")
+        elif linha_visivel >= max:
+            self.main_textarea.yview_scroll(1, "units")
+
+
     def obter_caractere_anterior(self, text_widget, enter = False):
         if enter:
             # Obtém a posição atual do cursor (marcador "insert")
@@ -176,8 +189,14 @@ class GUI:
         except TypeError:
             print("nao consegui contar")
             # cuidar aqui, isso pode nao funcionar. Fazer testes para encontrar a fonte desse erro
-            self.root.configure(height=int(self.root.winfo_height()) - self.font_size)
+            self.root.configure(height=int(self.root.winfo_height()) - self.firacode.metrics()['linespace'])
             return self.max_linhas_visiveis
+
+
+    def obter_numero_de_colunas_atual(self):
+        linha = self.main_textarea.get(ctk.INSERT+" linestart", ctk.INSERT+" lineend")
+        colunas = len(linha)
+        return colunas
 
 
     def obter_numero_de_linhas_e_colunas(self, f = False):
