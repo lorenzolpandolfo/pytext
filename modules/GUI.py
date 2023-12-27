@@ -138,7 +138,7 @@ class GUI:
             # guardando a posicao antiga do cursor
             self.last_zero_pos = self.label_value - 1
 
-            return calcular_distancias([int(label.cget("text")) for label in self.labels], self.label_value -1)
+            return calcular_distancias([label.cget("text") for label in self.labels], self.label_value -1)
 
 
         def calcular_distancias(array, posicao_zero):
@@ -157,8 +157,26 @@ class GUI:
         # mostrando o contador
         for i, label in enumerate(self.labels):
             label.configure(text=self.vals[i])
+
+        print("wid: ", 2*(self.main_textarea.winfo_width()/self.firacode.metrics()['linespace']))
+        # se a linha de baixo for a linha atual (linha grande quebrada em 2)
+        if self.obter_numero_de_colunas_atual() > 2.2*(self.main_textarea.winfo_width()/self.firacode.metrics()['linespace']):
+            print("linha grande")
+            for i, label in enumerate(self.labels):
+                if label.cget("text") == 1:
+                    self.labels[i + 2].configure(text="")
+                    break
+
+        if self.obter_numero_de_colunas_atual() > 999999:
+            for i, label in enumerate(self.labels):
+                if label.cget("text") == 1:
+                    self.labels[i + 2].configure(text="")
+                    break
+
         return 0
     
+    def obter_maximo_coluna_por_linha(self):
+        pass
 
     def get_visible_line(self, text_widget):
         # Obtém a informação da linha atual
@@ -197,6 +215,12 @@ class GUI:
         linha = self.main_textarea.get(ctk.INSERT+" linestart", ctk.INSERT+" lineend")
         colunas = len(linha)
         return colunas
+
+    def obter_numero_de_linha_atual(self, c = 0):
+        num_linha = int(self.main_textarea.index(ctk.INSERT).split(".")[0])
+        num_linha += c
+        print(num_linha)
+        return num_linha
 
 
     def obter_numero_de_linhas_e_colunas(self, f = False):

@@ -94,7 +94,6 @@ class CommandManager:
                         
                         case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
                             self.gui.mover_tela()
-                            self.gui.obter_numero_de_colunas_atual()
                             self.gui.atualizar_contador(tecla)
                         
                         

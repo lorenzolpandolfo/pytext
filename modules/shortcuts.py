@@ -40,7 +40,7 @@ def deletar_linha(final: int, textbox):
 
 
 # wasd
-def mover_cursor(pos, qtd, textbox):
+def mover_cursor(pos, qtd,  textbox):
     # caso vc apenas insira o comando de movimento, sem qtd
     if qtd == 0:
         qtd = 1
