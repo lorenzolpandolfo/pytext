@@ -6,17 +6,18 @@ import re
 
 
 class CommandManager:
-    def __init__(self, root:ctk.CTk()):
-        self.root = root
-
-
-    def setup(self, main_app_instance, main_textarea:ctk.CTkTextbox, bottom_command_output:ctk.CTkTextbox,
-              gui_instance, user_config_instance):
-        self.maintext = main_textarea
-        self.bottom_command_output = bottom_command_output
+    def __init__(self, main_app_instance):
         self.main_app_instance = main_app_instance
+        self.root = main_app_instance.root
+
+
+    def setup(self, gui_instance, user_config_instance, Counter):
         self.gui = gui_instance
+
+        self.maintext = self.gui.main_textarea
+        self.bottom_command_output = self.gui.bottom_command_output
         self.user_config_instance = user_config_instance
+        self.Counter = Counter
 
 
     def capture_keybinds(self):
@@ -94,7 +95,7 @@ class CommandManager:
                         
                         case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
                             self.gui.mover_tela()
-                            self.gui.atualizar_contador(tecla)
+                            self.Counter.atualizar_contador(tecla)
                         
                         
                         case _:
@@ -113,12 +114,12 @@ class CommandManager:
             match tecla:
                 case "Up" | "Down" | "Left" | "Right" | "BackSpace" | "Button-1":
                     self.gui.mover_tela()
-                    self.gui.atualizar_contador(tecla)
+                    self.Counter.atualizar_contador(tecla)
 
 
                 case "Return":
                     self.user_config_instance.check_char_for_language_format(event, self.gui.obter_caractere_anterior(self.maintext, enter=True))
-                    return self.gui.atualizar_contador(tecla)
+                    return self.Counter.atualizar_contador(tecla)
 
 
                 case _:
@@ -145,7 +146,7 @@ class CommandManager:
             exit()
         else:
             self.gui.bottom_output_detail.configure(text=command_output)
-            self.gui.atualizar_contador()
+            self.Counter.atualizar_contador()
             self.gui.realcar_linha_selecionada()
 
             # apagando o comando enviado

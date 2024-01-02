@@ -3,13 +3,17 @@ import math
 import json
 
 class GUI:
-    def __init__(self, root):
-        self.root = root
+    def __init__(self, main_app_instance):
+        self.main_app_instance = main_app_instance
+        self.root = main_app_instance.root
+
+        self.Font = self.main_app_instance.Font
+        self.Counter = self.main_app_instance.Counter
+
         self.labels = []
     
 
-    def setup(self, main_app_instance, command_manager_instance, user_config_instance):
-        self.main_app_instance = main_app_instance
+    def setup(self, command_manager_instance, user_config_instance):
         self.command_manager_instance = command_manager_instance
         self.user_config_instance = user_config_instance
 
@@ -20,6 +24,10 @@ class GUI:
         self.on_resize()
         self.max_linhas_visiveis = self.calcular_numero_de_linhas_visiveis()
         self.main_textarea._textbox.configure(height=self.max_linhas_visiveis)
+
+
+
+
 
 
     def calcular_tamanho_caixa_de_texto(self):
@@ -35,31 +43,8 @@ class GUI:
         print("Tamanho do texto alterado")
 
 
-    def create_labels(self):
-        self.main_textarea.update_idletasks()
-        num = self.calcular_numero_de_linhas_visiveis()
 
-        for label in self.labels:
-            label.destroy()
-
-        # resetando o array
-        self.labels = []
-
-        self.main_textarea.update_idletasks()
-
-        for i in range(0, num):
-            if i == 0:
-                label = ctk.CTkLabel(self.leftframe, text=str(i), font=self.firacode)
-                label.grid(row=i, column=0, sticky="en", pady=(28.75,0))
-            else:
-                label = ctk.CTkLabel(self.leftframe, text=str(i), font=self.firacode)
-                label.grid(row=i, column=0, sticky="en", pady=(0))
-
-            #label.rowconfigure(i,weight=1)
-            self.labels.append(label)
-        
-
-    def realcar_linha_selecionada(self, objeto = None):
+    def realcar_linha_selecionada(self, *args):
         texto = self.main_textarea
         linha_atual = int(texto.index(ctk.INSERT).split(".")[0])
         inicio_linha = f"{linha_atual}.0"
@@ -71,15 +56,22 @@ class GUI:
 
 
     def mover_tela(self):
-        linha_visivel = int(self.get_visible_line(self.main_textarea))
-        maximo_linhas_total = len(self.labels)
+        linha_visivel = int(self.Counter.get_visible_line(self.main_textarea))
+        maximo_linhas_total = len(self.Counter.labels)
 
-        min = int(maximo_linhas_total/10) * 3
-        max = int(maximo_linhas_total/10) * 7
+        print(maximo_linhas_total)
+
+        min = int((maximo_linhas_total / 10) * 3)
+        max = int((maximo_linhas_total / 10) * 7)
+
+
+        print(linha_visivel, min, max, maximo_linhas_total)
 
         if linha_visivel <= min:
+            print("Subindo")
             self.main_textarea.yview_scroll(-1, "units")
         elif linha_visivel >= max:
+            print("Descendo")
             self.main_textarea.yview_scroll(1, "units")
 
 
@@ -158,9 +150,9 @@ class GUI:
         for i, label in enumerate(self.labels):
             label.configure(text=self.vals[i])
 
-        print("wid: ", 2*(self.main_textarea.winfo_width()/self.firacode.metrics()['linespace']))
+        print("wid: ", 2*(self.main_textarea.winfo_width()/self.Font.size))
         # se a linha de baixo for a linha atual (linha grande quebrada em 2)
-        if self.obter_numero_de_colunas_atual() > 2.2*(self.main_textarea.winfo_width()/self.firacode.metrics()['linespace']):
+        if self.obter_numero_de_colunas_atual() > 2.2*(self.main_textarea.winfo_width()/self.Font.size):
             print("linha grande")
             for i, label in enumerate(self.labels):
                 if label.cget("text") == 1:
@@ -178,19 +170,6 @@ class GUI:
     def obter_maximo_coluna_por_linha(self):
         pass
 
-    def get_visible_line(self, text_widget):
-        # Obtém a informação da linha atual
-        cursor_pos = text_widget.index(ctk.INSERT)
-        line_number = int(cursor_pos.split('.')[0])
-        
-        # Calcula a primeira linha visível na tela
-        first_visible_line = int(text_widget.index("@0,0").split('.')[0])
-        
-        # Calcula a linha visível atual
-        visible_line = line_number - first_visible_line + 1
-        
-        return visible_line
-
 
     def calcular_numero_de_linhas_visiveis(self):
         self.main_textarea.update_idletasks()  # Atualiza a geometria antes de calcular
@@ -207,7 +186,7 @@ class GUI:
         except TypeError:
             print("nao consegui contar")
             # cuidar aqui, isso pode nao funcionar. Fazer testes para encontrar a fonte desse erro
-            self.root.configure(height=int(self.root.winfo_height()) - self.firacode.metrics()['linespace'])
+            self.root.configure(height=int(self.root.winfo_height()) - self.Font.size)
             return self.max_linhas_visiveis
 
 
@@ -215,6 +194,7 @@ class GUI:
         linha = self.main_textarea.get(ctk.INSERT+" linestart", ctk.INSERT+" lineend")
         colunas = len(linha)
         return colunas
+
 
     def obter_numero_de_linha_atual(self, c = 0):
         num_linha = int(self.main_textarea.index(ctk.INSERT).split(".")[0])
@@ -239,25 +219,35 @@ class GUI:
             return f"{numero_de_linhas}L, {num_colunas}C"
 
 
-    def teste(self, e = None):
-        self.create_counter()
-        self.create_labels()
+    def teste(self, *args):
+        #self.create_counter()
+        #self.create_labels()
+        
+
+        self.Counter.create_counter()
+        self.Counter.create_labels()
+        
         return self.root.after(1000, self.a)
 
 
     def a(self):
+        # serve basicamente para redefinir a variavel ok para 1, para que seja possivel
+        # reatualizar a resolução
         self.command_manager_instance.ok = 1
         print("ok definido: ", self.command_manager_instance.ok)
         print('definindo para: ', self.root.winfo_height())
         self.command_manager_instance.lastheight = self.root.winfo_height()
-        
+
+
     def start(self):
         self.create_window()
         self.create_frames()
         self.create_widgets()
-        self.create_counter()
-        self.create_labels()
-        print("Num labels: ", len(self.labels))
+        self.Counter.create_counter()
+        #self.create_counter()
+        self.Counter.create_labels()
+        #self.create_labels()
+        #print("Num labels: ", len(self.labels))
 
 
     def create_window(self):
@@ -285,13 +275,12 @@ class GUI:
 
 
     def on_resize(self, e=None):
-        font_size = self.firacode.metrics()['linespace']
         # testando aqui um valor alto para ele ajustar depois
         altura_janela = self.root.winfo_height() * 2
 
         print("Altura: ",altura_janela)
         # Calcula o número de linhas visíveis desejado
-        num_linhas_visiveis = altura_janela // font_size
+        num_linhas_visiveis = altura_janela // self.Font.size
 
         print(num_linhas_visiveis)
 
@@ -300,18 +289,10 @@ class GUI:
         self.calcular_numero_de_linhas_visiveis()
 
 
-
     def create_widgets(self):
-        # initializing firacode font
-        src = r"fonts\firacode.ttf"
-        # carrega a fonte
-        ctk.FontManager.load_font(src)
-        # agora ele reconhece a family Fira Code, porque eu carreguei antes
-        self.firacode = ctk.CTkFont(family="Fira Code", size=19) 
-
         # initializing main text area
         # fazer com que ele tenha um tamanho sempre multiplo do tamanho das linhas
-        self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.firacode, height=0)
+        self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.Font.font, height=0)
         self.main_textarea.grid(row=0, column=0, sticky="new", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
         self.main_textarea.grid_rowconfigure(0, weight=1)
@@ -334,7 +315,7 @@ class GUI:
         self.mainframe.rowconfigure(0, weight=1)
 
         # initializing left text area
-        self.left_textarea = ctk.CTkTextbox(self.leftframe, width=70, wrap=ctk.CHAR, font=self.firacode)
+        self.left_textarea = ctk.CTkTextbox(self.leftframe, width=70, wrap=ctk.CHAR, font=self.Font.font)
         #self.left_textarea.grid(row=0, column=0, sticky="ns", padx=(10,10), pady=(20,10))
 
         # configurando o leftframe
@@ -342,15 +323,15 @@ class GUI:
         self.leftframe.rowconfigure(0, weight=0)
 
         # creating the bottom label
-        self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.main_app_instance.modo, justify="center", font=self.firacode)
+        self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.main_app_instance.modo, justify="center", font=self.Font.font)
         self.bottom_output_mode.grid(row=1, column=0, sticky="ew", columnspan=2)
 
-        self.bottom_output_detail = ctk.CTkLabel(self.bottomframe, text="", justify="left", font=self.firacode)
+        self.bottom_output_detail = ctk.CTkLabel(self.bottomframe, text="", justify="left", font=self.Font.font)
         self.bottom_output_detail.grid(row=1, column=1, sticky="e", padx=10)
-        self.bottom_output_doc_info = ctk.CTkLabel(self.bottomframe, text=self.obter_numero_de_linhas_e_colunas(f=True), justify="left", font=self.firacode)
+        self.bottom_output_doc_info = ctk.CTkLabel(self.bottomframe, text=self.obter_numero_de_linhas_e_colunas(f=True), justify="left", font=self.Font.font)
         self.bottom_output_doc_info.grid(row=1, column=0, sticky="e", padx=10)
         # Criando o textbox no segundo grid
-        self.bottom_command_output = ctk.CTkTextbox(self.bottomframe, font=self.firacode, width=100, height=2)
+        self.bottom_command_output = ctk.CTkTextbox(self.bottomframe, font=self.Font.font, width=100, height=2)
         # Como o sticky é "e", ele vai ser ancorado para o leste ->
         self.bottom_command_output.grid(row=1, column=2, sticky="e", padx=(0, 10), pady=(0, 5))
 
