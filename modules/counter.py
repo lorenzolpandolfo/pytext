@@ -109,16 +109,19 @@ class Counter:
         colunas = self.gui.obter_numero_de_colunas_atual()
 
         print("div 80: ", colunas//80)
-        self.tes()
         for i, valor in enumerate(distancias):
             if valor == 0:
-                distancias[i] = int(self.gui.main_textarea.index(ctk.INSERT).split(".")[0])     
-
-            self.labels[i].configure(text=distancias[i])
+                distancias[i] = int(self.gui.main_textarea.index(ctk.INSERT).split(".")[0])
+            
+            if i in self.tes():
+                self.labels[i].configure(text="")
+            else:
+                self.labels[i].configure(text=distancias[i])
         
         return distancias
 
     def tes(self):
+        linhas_grandes = []
         first_visible_line = int(self.gui.main_textarea.index("@0,0").split('.')[0])
         # pegando a ultima linha visivel com tamanho em px da fonte * max de linhas visiveis
         last_visible_line = int(self.gui.main_textarea.index(f"@0,{self.Font.size * self.max_linhas_visiveis}").split('.')[0])
@@ -127,5 +130,10 @@ class Counter:
 
         linhas_visiveis = self.gui.main_textarea.get(f"{first_visible_line}.0"+" linestart", f"{last_visible_line}.0"+" lineend")
         for i, linha in enumerate(linhas_visiveis.split("\n")):
-            if len(linha) > 80:
+            if len(linha) // 96 >= 1:
                 print(i, " eh grande")
+
+                for x in range(0, len(linha) // 80):
+                    linhas_grandes.append(i + 1)
+        
+        return linhas_grandes
