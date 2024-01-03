@@ -83,8 +83,12 @@ class Counter:
 
         print(self.gui.obter_numero_de_colunas_atual())
 
+
         # preciso encontrar uma forma de retornar o numero de caracteres que o texto de acordo com a resolução suporta
         # ou então comparar e ver se as linhas visiveis são a mesma linha absoluta
+
+        linha = repr(self.gui.main_textarea.get(ctk.INSERT+" linestart", ctk.INSERT+" lineend"))
+        print(linha.split("\n"))
 
         posicao_atual = self.gui.main_textarea.index(ctk.INSERT)
         numero_linha_atual = int(posicao_atual.split('.')[0])
@@ -98,12 +102,30 @@ class Counter:
     def calcular_distancias(self, array, posicao_zero):
         # Calcular a distância entre cada elemento e o elemento 0
         distancias = [abs(i - posicao_zero) for i in range(len(array))]
-        
+
+        posicao_atual = self.gui.main_textarea.index(ctk.INSERT)
+        numero_linha_atual = int(posicao_atual.split('.')[0])
+
+        colunas = self.gui.obter_numero_de_colunas_atual()
+
+        print("div 80: ", colunas//80)
+        self.tes()
         for i, valor in enumerate(distancias):
             if valor == 0:
                 distancias[i] = int(self.gui.main_textarea.index(ctk.INSERT).split(".")[0])     
-            
-            self.labels[i].configure(text=distancias[i])
 
+            self.labels[i].configure(text=distancias[i])
         
         return distancias
+
+    def tes(self):
+        first_visible_line = int(self.gui.main_textarea.index("@0,0").split('.')[0])
+        # pegando a ultima linha visivel com tamanho em px da fonte * max de linhas visiveis
+        last_visible_line = int(self.gui.main_textarea.index(f"@0,{self.Font.size * self.max_linhas_visiveis}").split('.')[0])
+
+        print(first_visible_line, last_visible_line)
+
+        linhas_visiveis = self.gui.main_textarea.get(f"{first_visible_line}.0"+" linestart", f"{last_visible_line}.0"+" lineend")
+        for i, linha in enumerate(linhas_visiveis.split("\n")):
+            if len(linha) > 80:
+                print(i, " eh grande")
