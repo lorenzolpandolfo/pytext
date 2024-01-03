@@ -44,8 +44,6 @@ class Counter:
 
 
     def create_labels(self):
-        num = self.max_linhas_visiveis
-
         for label in self.labels:
             label.destroy()
 
@@ -53,7 +51,7 @@ class Counter:
         self.labels = []
 
 
-        for i in range(0, num):
+        for i in range(0, self.max_linhas_visiveis):
             if i == 0:
                 label = ctk.CTkLabel(self.gui.leftframe, text=str(i), font=self.Font.font)
                 label.grid(row=i, column=0, sticky="en", pady=(28.75,0))
@@ -82,6 +80,11 @@ class Counter:
 
     def atualizar_contador(self, *args):
         self.label_value = self.get_visible_line(self.gui.main_textarea) - 1
+
+        print(self.gui.obter_numero_de_colunas_atual())
+
+        # preciso encontrar uma forma de retornar o numero de caracteres que o texto de acordo com a resolução suporta
+        # ou então comparar e ver se as linhas visiveis são a mesma linha absoluta
 
         posicao_atual = self.gui.main_textarea.index(ctk.INSERT)
         numero_linha_atual = int(posicao_atual.split('.')[0])

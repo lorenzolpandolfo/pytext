@@ -18,30 +18,6 @@ class GUI:
         self.user_config_instance = user_config_instance
 
 
-    def create_counter(self, e = None):
-        # Sem o update ele nao consegue calcular o num de linhas
-        self.root.update()
-        self.on_resize()
-        self.max_linhas_visiveis = self.calcular_numero_de_linhas_visiveis()
-        self.main_textarea._textbox.configure(height=self.max_linhas_visiveis)
-
-
-
-
-
-
-    def calcular_tamanho_caixa_de_texto(self):
-        # precisa deste update para ele registrar o valor correto da resolução
-        self.root.update()
-        altura_janela = self.root.winfo_height()
-        #print(altura_janela)
-        tam = self.root.winfo_height()
-        # estranho isso, mas ta funcionando
-        tam = tam/1.4
-        #print("Tamanho no frame: ", self.mainframe.winfo_height(), "Tam: ", tam)
-
-        print("Tamanho do texto alterado")
-
 
 
     def realcar_linha_selecionada(self, *args):
@@ -106,101 +82,15 @@ class GUI:
             
         return caractere_anterior
 
-    def atualizar_contador(self, e=None):
-        def add_zero_to_selected_line(self):
-            # pegando o valor da linha selecionada dentre as visiveis
-            self.label_value = self.get_visible_line(self.main_textarea)
-
-            try:
-                self.labels[self.label_value - 1].configure(text=999)
-            except IndexError:
-                print("linha cortada para tentar evitar dessincronização de contador")
-                # 250 tira duas linhas, considerando tamanhos extras do widget
-                #self.main_textarea.configure(height=int(self.main_textarea.winfo_height()) - 200)
-
-            # se o cursor se moveu
-            try:
-                if self.last_zero_pos != self.label_value - 1:
-                    self.labels[self.last_zero_pos].configure(text=1)
-                    
-            except Exception:
-                self.labels[self.label_value - 2].configure(text=1)
-                
-            
-            # guardando a posicao antiga do cursor
-            self.last_zero_pos = self.label_value - 1
-
-            return calcular_distancias([label.cget("text") for label in self.labels], self.label_value -1)
-
-
-        def calcular_distancias(array, posicao_zero):
-            # Calcular a distância entre cada elemento e o elemento 0
-            distancias = [abs(i - posicao_zero) for i in range(len(array))]
-            
-            for i, valor in enumerate(distancias):
-                if valor == 0:
-                    distancias[i] = int(self.main_textarea.index(ctk.INSERT).split(".")[0])
-
-            return distancias
-        
-        self.vals = add_zero_to_selected_line(self)
-
-
-        # mostrando o contador
-        for i, label in enumerate(self.labels):
-            label.configure(text=self.vals[i])
-
-        print("wid: ", 2*(self.main_textarea.winfo_width()/self.Font.size))
-        # se a linha de baixo for a linha atual (linha grande quebrada em 2)
-        if self.obter_numero_de_colunas_atual() > 2.2*(self.main_textarea.winfo_width()/self.Font.size):
-            print("linha grande")
-            for i, label in enumerate(self.labels):
-                if label.cget("text") == 1:
-                    self.labels[i + 2].configure(text="")
-                    break
-
-        if self.obter_numero_de_colunas_atual() > 999999:
-            for i, label in enumerate(self.labels):
-                if label.cget("text") == 1:
-                    self.labels[i + 2].configure(text="")
-                    break
-
-        return 0
     
     def obter_maximo_coluna_por_linha(self):
         pass
-
-
-    def calcular_numero_de_linhas_visiveis(self):
-        self.main_textarea.update_idletasks()  # Atualiza a geometria antes de calcular
-        self.main_textarea.update()
-        #self.calcular_tamanho_caixa_de_texto()
-
-        try:
-            height = self.main_textarea.winfo_height()
-            line_height = self.main_textarea.dlineinfo("1.0")[3]  # Altura da primeira linha
-            visible_lines = height // line_height
-            #print("num de linhas calculado")
-            return visible_lines
-
-        except TypeError:
-            print("nao consegui contar")
-            # cuidar aqui, isso pode nao funcionar. Fazer testes para encontrar a fonte desse erro
-            self.root.configure(height=int(self.root.winfo_height()) - self.Font.size)
-            return self.max_linhas_visiveis
 
 
     def obter_numero_de_colunas_atual(self):
         linha = self.main_textarea.get(ctk.INSERT+" linestart", ctk.INSERT+" lineend")
         colunas = len(linha)
         return colunas
-
-
-    def obter_numero_de_linha_atual(self, c = 0):
-        num_linha = int(self.main_textarea.index(ctk.INSERT).split(".")[0])
-        num_linha += c
-        print(num_linha)
-        return num_linha
 
 
     def obter_numero_de_linhas_e_colunas(self, f = False):
@@ -272,21 +162,6 @@ class GUI:
         # creating bottom frame
         self.bottomframe = ctk.CTkFrame(self.root)
         self.bottomframe.grid(row=1, column=0, columnspan=2, sticky="ew")
-
-
-    def on_resize(self, e=None):
-        # testando aqui um valor alto para ele ajustar depois
-        altura_janela = self.root.winfo_height() * 2
-
-        print("Altura: ",altura_janela)
-        # Calcula o número de linhas visíveis desejado
-        num_linhas_visiveis = altura_janela // self.Font.size
-
-        print(num_linhas_visiveis)
-
-        # Configura a altura do widget Text em pixels, garantindo que seja um múltiplo do font_size
-        self.main_textarea._textbox.configure(height=num_linhas_visiveis)
-        self.calcular_numero_de_linhas_visiveis()
 
 
     def create_widgets(self):
