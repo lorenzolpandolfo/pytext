@@ -47,7 +47,7 @@ class UserConfig:
               case "Python":
                    match tecla.keysym:
                         case "Return":
-                             print("char anterior: ", char_anterior)
+                             #print("char anterior: ", char_anterior)
                              match char_anterior:
                                   case ":", "'", '"':
                                        self.adicionar_linha_com_tab(self.maintext)

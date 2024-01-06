@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import math
 import json
+from modules.CTkEasyTextBox import CTkEasyTextBox
 
 class GUI:
     def __init__(self, main_app_instance):
@@ -35,19 +36,19 @@ class GUI:
         linha_visivel = int(self.Counter.get_visible_line(self.main_textarea))
         maximo_linhas_total = len(self.Counter.labels)
 
-        print(maximo_linhas_total)
+        #print(maximo_linhas_total)
 
         min = int((maximo_linhas_total / 10) * 3)
         max = int((maximo_linhas_total / 10) * 7)
 
 
-        print(linha_visivel, min, max, maximo_linhas_total)
+        #print(linha_visivel, min, max, maximo_linhas_total)
 
         if linha_visivel <= min:
-            print("Subindo")
+            #print("Subindo")
             self.main_textarea.yview_scroll(-1, "units")
         elif linha_visivel >= max:
-            print("Descendo")
+            #print("Descendo")
             self.main_textarea.yview_scroll(1, "units")
 
 
