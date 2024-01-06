@@ -1,7 +1,7 @@
 from customtkinter import CTkTextbox, CTkFont
-from string import printable
 from tkinter import Event
 from typing import Callable
+
 # Standard Solution. Handles all interections well.
 
 class CTkEasyTextBox(CTkTextbox):
@@ -31,7 +31,8 @@ class CTkEasyTextBox(CTkTextbox):
         self._wrap_command      = wrap_callable
 
         # Adding character validation by default
-        #self.bind("<Key>", lambda _: self._handle_pressed_button())
+        # Ao ativar aqui, ele confere se a linha atual selecionada é wrapped
+        # self.bind("<Key>", lambda _: self._handle_pressed_button())
 
     def getCursoredExtremes(self) -> (str, str):
         first_index = self.index("insert linestart")
@@ -46,10 +47,12 @@ class CTkEasyTextBox(CTkTextbox):
         def check():
             wrap = self._isWrapped(*self.getCursoredExtremes())
             if wrap:
-                self._wrap_command({"line": self.getCursoredLine(), "wrapped_lines": wrap})
+                if self._wrap_command: self._wrap_command({"line": self.getCursoredLine(), "wrapped_lines": wrap})
             else:
-                self._wrap_command({"line": self.getCursoredLine(), "wrapped_lines": 0})
+                if self._wrap_command: self._wrap_command({"line": self.getCursoredLine(), "wrapped_lines": 0})
 
+        # Let the character be updated to the text box.
+        # Then attempting the checking
         self.after(2, check)
 
     def getTotalLines(self) -> int:
@@ -82,7 +85,7 @@ class CTkEasyTextBox(CTkTextbox):
         self.nametowidget(".").update()
 
     def getLineExtremes(self, line_number: int) -> (float, float):
-        """Returns first and last characters' indeces."""
+        """Returns first and last characters' indeces of a line."""
         first_index = self.index(f"{line_number}.0 linestart")
         last_index  = self.index(first_index + " lineend")
 
@@ -90,15 +93,19 @@ class CTkEasyTextBox(CTkTextbox):
     
     def _isWrapped(self, first_index: str, last_index: str):
         first_position, last_positon = self.bbox(first_index)[1], self.bbox(last_index)[1]
+        print(first_position, last_positon)
         if first_position == last_positon:
             return False
         else:
             difference = last_positon - first_position
             constant   = self.bbox(last_index)[3]         # Height of the line
             lines      = difference/constant 
+
+            print("Linhas: ", int(lines))
             return int(lines)
         
     def isWrapped(self, line_number: int) -> bool | int:
+        # O line_number é absoluto e precisa ser visivel
         """Returns `False` if line is not wrapped else number of the wrapped lines."""
         if line_number <= 0: return False
 

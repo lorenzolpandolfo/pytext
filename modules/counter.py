@@ -62,7 +62,6 @@ class Counter:
                 label = ctk.CTkLabel(self.gui.leftframe, text=str(i), font=self.Font.font)
                 label.grid(row=i, column=0, sticky="en", pady=(0))
 
-            #label.rowconfigure(i,weight=1)
             self.labels.append(label)
 
 
@@ -120,32 +119,80 @@ class Counter:
                 self.distancias[i] = int(self.gui.main_textarea.index(ctk.INSERT).split(".")[0])
             
             self.labels[i].configure(text=self.distancias[i])
-            
-        for i in self.tes():
-            self.labels[i].configure(text="")
+
+        self.p()  
+        #for i in self.tes():
+        #    self.labels[i].configure(text="")
 
         return 
+
+
+    def p(self):
+        # both first n last in relative number (0 to 21 for example), (1, 22), (2, 23), (3, 24), ... (10, 31)
+        first_visible_line = int(self.gui.main_textarea.index("@0,0").split('.')[0])
+        last_visible_line = int(self.gui.main_textarea.index(f"@0,{self.Font.size * (self.max_linhas_visiveis)}").split('.')[0])
+
+        # getting all content in visible lines to iterate per line
+        linhas_visiveis = self.gui.main_textarea.get(f"{first_visible_line}.0"+" linestart", f"{last_visible_line}.0"+" lineend")
+
+        print("-------------------------------------")
+        # ele pode estar chamando o isWrapped em uma linha invisivel
+        for i in range(first_visible_line, last_visible_line + 1):
+            # print(i - first_visible_line) # i - first_visible_line is 0
+            print(self.gui.main_textarea.isWrapped(i))
+            pass
+        #for i, linha in enumerate(linhas_visiveis.split("\n")):
+            # printa o index das linhas visiveis
+            #print(i, linha)
+            #print
+
 
     def tes(self):
         linhas_grandes = []
         first_visible_line = int(self.gui.main_textarea.index("@0,0").split('.')[0])
         # pegando a ultima linha visivel com tamanho em px da fonte * max de linhas visiveis
-        last_visible_line = int(self.gui.main_textarea.index(f"@0,{self.Font.size * self.max_linhas_visiveis}").split('.')[0])
-
-        #print(first_visible_line, last_visible_line)
-
+        
+        print("FVL: ", first_visible_line)
+        # o TypeError tá aqui nessa linha   
+        last_visible_line = int(self.gui.main_textarea.index(f"@0,{self.Font.size * (self.max_linhas_visiveis)}").split('.')[0])
         linhas_visiveis = self.gui.main_textarea.get(f"{first_visible_line}.0"+" linestart", f"{last_visible_line}.0"+" lineend")
         for i, linha in enumerate(linhas_visiveis.split("\n")):
 
+            cursor_pos = i + 1
+            print(f"se {cursor_pos} - {first_visible_line} entre {first_visible_line} e {last_visible_line}")
+
+            if last_visible_line >= cursor_pos - first_visible_line >= first_visible_line:
+                print(f"{cursor_pos} é visivel")
+            else:
+                print(f"{cursor_pos} não é visivel")
+            # i é a posição das linhas visiveis, se eu mandar pra absolutas pode funcionar
+            # a função isWrapped() dá erro se vc usar uma linha absoulta que não está visível
+            
+            #if self.check_if_line_is_visible(i - first_visible_line):
+                #print(linha, ": ", self.gui.main_textarea.isWrapped(i + first_visible_line + 1))
+                #print(linha, "eh visivel")
+            """
             # precisa encontrar o numero de colunas que o texto aguenta aqui e trocar pelo 94
             if len(linha) // 94 >= 1:
                 #print(i, " eh grande")
 
                 for x in range(0, len(linha) // 94):
-                    linhas_grandes.append(i + x + 1 + len(linhas_grandes))
+                    linhas_grandes.append(i + x + 1 + len(linhas_grandes))"""
         
         return linhas_grandes
     
+    def check_if_line_is_visible(self, line_to_check: int):
+        first_visible_line = int(self.gui.main_textarea.index("@0,0").split('.')[0])
+        last_visible_line = int(self.gui.main_textarea.index(f"@0,{self.Font.size * (self.max_linhas_visiveis)}").split('.')[0])
+        line_to_check += 1
+
+        print("----------------------------")
+        for i in range(first_visible_line, last_visible_line + 1):
+            print(f"se {i} + {first_visible_line} == {line_to_check}")
+
+            #return i + first_visible_line == line_to_check
+
+
     def count_visible_lines(self):
         first_visible_line = int(self.gui.main_textarea.index("@0,0").split('.')[0])
         last_visible_line = int(self.gui.main_textarea.index(f"@0,{self.Font.size * self.max_linhas_visiveis}").split('.')[0])

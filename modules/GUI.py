@@ -168,7 +168,8 @@ class GUI:
     def create_widgets(self):
         # initializing main text area
         # fazer com que ele tenha um tamanho sempre multiplo do tamanho das linhas
-        self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.Font.font, height=0)
+        #self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.Font.font, height=0)
+        self.main_textarea = CTkEasyTextBox(self.mainframe, wrap=ctk.WORD, font=self.Font.font, height=0)
         self.main_textarea.grid(row=0, column=0, sticky="new", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
         self.main_textarea.grid_rowconfigure(0, weight=1)
