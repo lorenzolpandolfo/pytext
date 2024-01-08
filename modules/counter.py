@@ -80,7 +80,23 @@ class Counter:
 
 
 
+    def check_if_wrapped_line(self):
+        first_visible_line = int(self.gui.main_textarea.index("@0,0").split('.')[0])
+        last_visible_line = int(self.gui.main_textarea.index(f"@0,{self.Font.size * (self.max_linhas_visiveis)}").split('.')[0])
+
+        for i in range(first_visible_line, last_visible_line + 1):
+            print(self.gui.main_textarea.isWrapped(i))
+
+
+
+        # getting all content in visible lines to iterate per line
+        linhas_visiveis = self.gui.main_textarea.get(f"{first_visible_line}.0"+" linestart", f"{last_visible_line}.0"+" lineend")
+
+
+
     def atualizar_contador(self, *args):
+        self.check_if_wrapped_line()
+        return
         #self.count_visible_lines()
         self.label_value = self.get_visible_line(self.gui.main_textarea) - 1
 

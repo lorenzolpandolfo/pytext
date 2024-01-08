@@ -135,10 +135,7 @@ class GUI:
         self.create_frames()
         self.create_widgets()
         self.Counter.create_counter()
-        #self.create_counter()
         self.Counter.create_labels()
-        #self.create_labels()
-        #print("Num labels: ", len(self.labels))
 
 
     def create_window(self):
