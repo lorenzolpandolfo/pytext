@@ -32,7 +32,7 @@ class CTkEasyTextBox(CTkTextbox):
         self._wrap_command      = wrap_callable
 
         self.drop_target_register(DND_ALL)
-		self.dnd_bind(f"<<Drop>>", self.__drop_file_into_textbox__)
+	self.dnd_bind(f"<<Drop>>", self.__drop_file_into_textbox__)
 
         # Adding character validation by default
         # Ao ativar aqui, ele confere se a linha atual selecionada é wrapped
