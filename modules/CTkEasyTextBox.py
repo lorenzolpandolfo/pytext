@@ -122,7 +122,7 @@ class CTkEasyTextBox(CTkTextbox):
         return self._isWrapped(first_index, last_index)
 
     def __drop_file_into_textbox__(self, event: str | None = None) -> None:
-		self.delete(f"1.0", tkinter.END)
+		self.delete(f"1.0", END)
 		try:
 		    with open(event.data, f"r+", encoding=f"UTF-8") as self.openned_file:
 				self.insert(f"1.0", self.openned_file.read())
