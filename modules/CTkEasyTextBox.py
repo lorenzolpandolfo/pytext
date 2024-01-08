@@ -93,7 +93,6 @@ class CTkEasyTextBox(CTkTextbox):
     
     def _isWrapped(self, first_index: str, last_index: str):
         first_position, last_positon = self.bbox(first_index)[1], self.bbox(last_index)[1]
-        print(first_position, last_positon)
         if first_position == last_positon:
             return False
         else:
@@ -101,7 +100,6 @@ class CTkEasyTextBox(CTkTextbox):
             constant   = self.bbox(last_index)[3]         # Height of the line
             lines      = difference/constant 
 
-            print("Linhas: ", int(lines))
             return int(lines)
         
     def isWrapped(self, line_number: int) -> bool | int:

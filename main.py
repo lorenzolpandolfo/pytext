@@ -1,10 +1,10 @@
 import customtkinter as ctk
 
 from modules.commandManager import CommandManager
-from modules.GUI import GUI
-from modules.userConfig import UserConfig
-from modules.counter import Counter
-from modules.font import Font
+from modules.GUI            import GUI
+from modules.userConfig     import UserConfig
+from modules.counter        import Counter
+from modules.font           import Font
 
 
 class MainApp:

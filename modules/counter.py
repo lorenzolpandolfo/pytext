@@ -85,7 +85,8 @@ class Counter:
         last_visible_line = int(self.gui.main_textarea.index(f"@0,{self.Font.size * (self.max_linhas_visiveis)}").split('.')[0])
 
         for i in range(first_visible_line, last_visible_line + 1):
-            print(self.gui.main_textarea.isWrapped(i))
+            if self.gui.main_textarea.isWrapped(i):
+                print(f"{i} eh wrapped")
 
 
 
