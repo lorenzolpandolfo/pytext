@@ -41,7 +41,7 @@ class MainApp:
         self.CommandManager.capture_keybinds()
 
 class Root(ctk.CTk, TkinterDnD.DnDWrapper):
-    def __init__(self: typing.Self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         ctk.CTk.__init__(self, *args, **kwargs)
         self.TkdndVersion = TkinterDnD._require(self)
 
