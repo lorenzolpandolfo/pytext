@@ -1,6 +1,7 @@
 from customtkinter import CTkTextbox, CTkFont
-from tkinter import Event
+from tkinter import Event, END
 from typing import Callable
+from tkinterdnd2 import *
 
 # Standard Solution. Handles all interections well.
 
@@ -29,6 +30,9 @@ class CTkEasyTextBox(CTkTextbox):
         # Line specific storage
         self._current_line: int = 1
         self._wrap_command      = wrap_callable
+
+        self.drop_target_register(DND_ALL)
+        self.dnd_bind(f"<<Drop>>", self.__drop_file_into_textbox__)
 
         # Adding character validation by default
         # Ao ativar aqui, ele confere se a linha atual selecionada é wrapped
@@ -114,3 +118,11 @@ class CTkEasyTextBox(CTkTextbox):
         first_index, last_index = self.getLineExtremes(line_number)
 
         return self._isWrapped(first_index, last_index)
+
+    def __drop_file_into_textbox__(self, event: str | None = None) -> None:
+        self.delete(f"1.0", END)
+        try:
+            with open(event.data, f"r+", encoding=f"UTF-8") as self.openned_file:
+                self.insert(f"1.0", self.openned_file.read())
+
+        except FileNotFoundError: pass
