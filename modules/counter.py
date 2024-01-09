@@ -85,9 +85,27 @@ class Counter:
         last_visible_line = int(self.gui.main_textarea.index(f"@0,{self.Font.size * (self.max_linhas_visiveis)}").split('.')[0])
 
         for i in range(first_visible_line, last_visible_line + 1):
-            if self.gui.main_textarea.isWrapped(i):
-                print(f"{i} eh wrapped")
+            
+            print(self.gui.main_textarea.get("1.0", "end"))
+            return
 
+            check_if_is_wrapped = self.gui.main_textarea.isWrapped(i)
+            if check_if_is_wrapped:
+                #print(f"{i} eh wrapped")
+                while check_if_is_wrapped > 0:
+                    
+                    for label in range(i + check_if_is_wrapped, len(self.labels)):
+                        
+                        if label < len(self.labels) - 1:
+                            self.labels[label].configure(text=self.labels[label + 1].cget("text"))
+
+                    self.labels[i + check_if_is_wrapped - 1].configure(text="")
+
+
+                    check_if_is_wrapped -= 1
+
+            
+            self.old_linha_visivel = i
 
 
         # getting all content in visible lines to iterate per line

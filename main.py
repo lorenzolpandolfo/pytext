@@ -6,7 +6,7 @@ from modules.userConfig     import UserConfig
 from modules.counter        import Counter
 from modules.font           import Font
 
-from tkinterdnd2 import *
+from tkinterdnd2 import TkinterDnD
 
 class MainApp:
     def __init__(self, root):
@@ -40,10 +40,12 @@ class MainApp:
         self.UserConfig.setup(self.GUI)
         self.CommandManager.capture_keybinds()
 
+
 class Root(ctk.CTk, TkinterDnD.DnDWrapper):
     def __init__(self, *args, **kwargs):
         ctk.CTk.__init__(self, *args, **kwargs)
         self.TkdndVersion = TkinterDnD._require(self)
+
 
 if __name__ == "__main__":
     root = Root()
