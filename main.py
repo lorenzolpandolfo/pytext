@@ -1,25 +1,31 @@
 import customtkinter as ctk
+from tkinterdnd2 import TkinterDnD
+
+import sys
+import os
 
 from modules.commandManager import CommandManager
-from modules.GUI            import GUI
+from modules.gui            import GUI
 from modules.userConfig     import UserConfig
 from modules.counter        import Counter
 from modules.font           import Font
-
-from tkinterdnd2 import TkinterDnD
+from modules.file           import File
 
 class MainApp:
-    def __init__(self, root):
+    def __init__(self, root, file_name = False):
+        self.file_name = file_name
         self.root = root
         self.modo = "view"
 
         self.setup_instances()
         self.init_gui()
         self.init_command_manager()
-
+        if self.file_name:
+            self.File.open_existent_file(self.file_name, self.GUI.main_textarea)
 
     def setup_instances(self):
         # loading instances from another classes
+        self.File           = File(self.file_name, os.getcwd())
         self.UserConfig     = UserConfig(self)
         self.Font           = Font(self)
         self.Counter        = Counter(self)
@@ -47,7 +53,14 @@ class Root(ctk.CTk, TkinterDnD.DnDWrapper):
         self.TkdndVersion = TkinterDnD._require(self)
 
 
+def check_if_filename():
+    return len(sys.argv) > 1
+
+
 if __name__ == "__main__":
     root = Root()
-    app = MainApp(root)
+    if check_if_filename():
+        app = MainApp(root, sys.argv[1])
+
+    else: app = MainApp(root)
     root.mainloop()

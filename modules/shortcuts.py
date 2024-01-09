@@ -1,7 +1,8 @@
 import re
 import customtkinter as ctk
+import os
 
-def search_command(comando:str, qtd:int, textbox):
+def search_command(comando:str, qtd:int, textbox, mainapp):
     # Se o qtd não for indicado, vai ser entendido como 0
     # limitando à apenas caracteres de texto
     comando = re.sub(r'[^a-zA-Z]', '', comando)
@@ -17,12 +18,19 @@ def search_command(comando:str, qtd:int, textbox):
         
         case "Q":
             return "sair"
+        
+        case "S":
+            return save(textbox, mainapp)
+        
+        case "SQ" | "QS" | "WQ" | "wq":
+            if save(textbox, mainapp):
+                return "sair"
 
         case _:
             return "Comando não encontrado."
 
 
-# dd
+# dd   - delete lines
 def deletar_linha(final: int, textbox):
     inicio = f"{str(textbox.index(ctk.INSERT)).split('.')[0]}.0"
     
@@ -39,8 +47,8 @@ def deletar_linha(final: int, textbox):
     return f"{final} linhas apagadas".replace("0", "1")
 
 
-# wasd
-def mover_cursor(pos, qtd,  textbox):
+# wasd - move through lines
+def mover_cursor(pos, qtd, textbox):
     # caso vc apenas insira o comando de movimento, sem qtd
     if qtd == 0:
         qtd = 1
@@ -74,3 +82,16 @@ def mover_cursor(pos, qtd,  textbox):
     textbox.see(nova_posicao)
     return detail_output
 
+
+# S    - save the current file to a directory
+def save(textbox, mainapp):
+    content = textbox.get("1.0", ctk.END)
+    
+    if mainapp.file_name:
+        full_path = os.path.join(mainapp.File.terminal_directory, mainapp.File.file_name)
+
+        with open(full_path, "w", encoding="utf8") as new_file:
+            new_file.write(content)
+            return f"{mainapp.File.file_name} salvo"
+
+    else: return False

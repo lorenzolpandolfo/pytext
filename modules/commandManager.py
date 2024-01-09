@@ -139,7 +139,7 @@ class CommandManager:
         numeros = extrair_numeros(comando)
 
         # tratando o comando de fato
-        command_output = shortcuts.search_command(comando_sem_numeros, numeros, self.maintext)
+        command_output = shortcuts.search_command(comando_sem_numeros, numeros, self.maintext, self.main_app_instance)
 
         if command_output == "sair":
             self.root.destroy()

@@ -51,6 +51,8 @@ class GUI:
             #print("Descendo")
             self.main_textarea.yview_scroll(1, "units")
 
+    def inserir(self, texto):
+        return self.main_textarea.insert("1.0", texto)
 
     def obter_caractere_anterior(self, text_widget, enter = False):
         if enter:

@@ -1,4 +1,5 @@
 import customtkinter as ctk
+import os
 
 class Font:
     def __init__(self, mainApp):
@@ -16,8 +17,9 @@ class Font:
         font_family    = font["family"]
         font_size      = font["size"]
 
-        # getting the font directory    
+        # getting the font directory
         src = r"fonts\{}.ttf".format(font_file_name)
+        os.chdir("..")
 
         # load font
         ctk.FontManager.load_font(src)

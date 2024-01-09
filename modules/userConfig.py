@@ -1,10 +1,13 @@
 import json
 import customtkinter as ctk
 
+import os
+
 class UserConfig:
     def __init__(self, mainApp):
         self.main_app_instance = mainApp
         self.root = mainApp.root
+        self.file = mainApp.File
         self.load()
 
 
@@ -14,6 +17,9 @@ class UserConfig:
 
 
     def load(self):
+        # moving to the root script directory to access the config.json file
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        
         with open("config.json", "r") as file:
             self.config = json.load(file)
         
@@ -22,7 +28,7 @@ class UserConfig:
         self.auto_insert_delimiters             = self.config["auto_insert_delimiters"]
 
         self.font                               = self.config["font"]
-        print(self.config)
+        print("actual user config: ", self.config)
     
 
     def check_delimiter_chars(self, event, maintext):
