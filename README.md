@@ -17,10 +17,30 @@ If you add Pytext to PATH, you can launch it in terminal with `pytext <file_name
 - If you want to change Pytext directory, don't forget to edit the `pytext.bat` file after adding the custom directory to PATH.
 - You can edit the `modules/config.json` file to change some personal preferences.
 
-# Current key-bindings
+# Current keybindings
+You can add numbers after or before the keybind to run it more than one time. More keybinds will be added with time, as well as way to
+remap them.
 - **dd**: delete current line
 - **wasd**: move through lines
 - **S**: save file
 - **Q**: quit
 
-In future, keybinds will be customizable.
+# Current TO-DO:
+These features are not sure to be in the final version, but they look like a good idea at time.
+- New GUI improvements, showing the current directory and file title
+- Line counter modes:
+  - number
+  - relativenumber
+  - numberelative number
+- A **keybinds.json** file to remap the standard Pytext keybinds.
+- New keybindings, such as:
+   - **gg**: move to the first absolute line
+   - **bb**: move to the last absolute line
+- Add **CTRL +**
+  - **Z**: undo
+  - **X**: cut current line
+  - **+** and **-**: change font size
+- Add **Alt +**
+  - **Arrow Keys**: move current line
+  - **Shift + Arrow Keys**: copy and paste current line
+- **Workplaces** from 1 to 10
