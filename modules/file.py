@@ -1,5 +1,6 @@
 import os
 import customtkinter as ctk
+from time import sleep
 
 class File():
     def __init__(self, file_name, terminal_directory):
@@ -40,10 +41,8 @@ class File():
 
 
     def load_local_files_to_open(self, textbox, mainapp, path_to_open:str = ""):
-        """Runs when user Open the current directory"""
+        """Runs when user Opens the current directory"""
         try:
-            localdirpreset = os.path.join(os.getcwd(), ".temp", "__pytextLocaldir__.txt")
-            
             # if you need to open a specific path
             if path_to_open == "":
                 current_terminal_directory = mainapp.File.terminal_directory
@@ -52,53 +51,72 @@ class File():
             else:
                 current_terminal_directory = path_to_open
 
+            textbox.configure(state="normal")
+            textbox.delete("1.0", "end")
+            all_tags = []
+
             files_in_current_dir = os.listdir(current_terminal_directory)
+            for i, file in enumerate(files_in_current_dir):
+                cur_line = int(textbox.index(ctk.INSERT).split(".")[0])
 
-            with open(localdirpreset, "w", encoding="utf8") as localdirpreset:
-                textbox.configure(state="normal")
-                textbox.delete("1.0", "end")
+                # check if its the last element. True if i = len(files_in_current_dir) - 1
+                is_last_element = i == len(files_in_current_dir) - 1
 
-                all_tags = []
+                #check if it is a directory
+                is_dir = os.path.isdir(os.path.join(current_terminal_directory, file))
 
-                for i, file in enumerate(files_in_current_dir):
-                    cur_line = int(textbox.index(ctk.INSERT).split(".")[0])
+                file_type_prefix = "▼ " if is_dir else ""
+                file_type_sufix = "/" if is_dir else ""
 
-                    # check if its the last element. True if i == len(files_in_current_dir) - 1
-                    is_last_element = i == len(files_in_current_dir) - 1
-
-                    is_dir = os.path.isdir(os.path.join(current_terminal_directory, file))
-
-                    file_type_prefix = "▼ " if is_dir else ""
-                    file_type_sufix = "/" if is_dir else ""
-
-                    textbox.insert(f"{i + 1}.0", f"{file_type_prefix}{file}{file_type_sufix}" + ("" if is_last_element else "\n"))
-                    
-                    tag_name = f"dir_color{i}" if is_dir else f"file_color{i}"
-                    textbox.tag_add(tag_name, f"{cur_line}.0", f"{cur_line}.end")
-                    all_tags.append(tag_name)
-
+                textbox.insert(f"{i + 1}.0", f"{file_type_prefix}{file}{file_type_sufix}" + ("" if is_last_element else "\n"))
                 
-                for tag in all_tags:
-                    if "file" in tag:
-                        textbox.tag_config(tag, foreground="red")
-                    elif "dir" in tag:
-                        textbox.tag_config(tag, foreground="blue")
+                tag_name = f"dir_color{i}" if is_dir else f"file_color{i}"
+                textbox.tag_add(tag_name, f"{cur_line}.0", f"{cur_line}.end")
+                all_tags.append(tag_name)
 
-                textbox.insert(f"1.0", f"{current_terminal_directory}\n")
-                textbox.tag_add("curdir", "1.0", "1.end")
-                textbox.tag_config("curdir", foreground="green")
+            for tag in all_tags:
+                if "file" in tag:
+                    textbox.tag_config(tag, foreground="red")
+                elif "dir" in tag:
+                    textbox.tag_config(tag, foreground="blue")
 
-                textbox.configure(state="disabled")
-                
-                mainapp.File.file_name = "__pytextLocaldir__"
+            # insert the current terminal directory in the first line
+            textbox.insert(f"1.0", f"{current_terminal_directory}\n")
+            textbox.tag_add("curdir", "1.0", "1.end")
+            textbox.tag_config("curdir", foreground="green")
 
-                # Saving the current terminal directory after it sucessfully opens.
-                self.terminal_directory = current_terminal_directory
-
-                textbox.mark_set(ctk.INSERT, "2.0")
+            textbox.configure(state="disabled")
+            mainapp.File.file_name = "__pytextLocaldir__"
+            # Saving the current terminal directory after it sucessfully opens.
+            self.terminal_directory = current_terminal_directory
+            textbox.mark_set(ctk.INSERT, "2.0")
+            mainapp.GUI.realcar_linha_selecionada()
 
         except PermissionError:
             print("Pytext doesn't have permission to open this file: ", path_to_open)
 
+
     def get_up_directory(self):
         return os.path.dirname(self.terminal_directory)
+
+
+    def create_new_file(self, gui):
+        self.file_name = None
+        return gui.write_another_file_content("", file_name=None, auto_insert=True)
+
+
+    def create_new_directory(self, dir_name:str, textbox, mainapp):
+        full_path = os.path.join(self.terminal_directory, dir_name)
+        if not os.path.exists(full_path):
+            os.makedirs(full_path)
+        #self.open_local_directory_or_file("teste", args[0], args[1], args[2])
+        self.load_local_files_to_open(textbox, mainapp, path_to_open=self.terminal_directory)
+    
+
+    def insert_new_dir_title(self, gui):
+        newDirTitlepreset = os.path.join(os.getcwd(), ".temp", "__pytextNewDirTitle__.txt")
+
+        with open(newDirTitlepreset, "r", encoding="utf8") as file:
+            content = file.read()
+            gui.write_another_file_content(content, True)
+            self.file_name = "__pytextNewDirTitle__"
