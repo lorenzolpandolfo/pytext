@@ -111,7 +111,7 @@ def save(textbox, mainapp, gui):
             # check if you just added a title to a non-title file
             if mainapp.File.file_name == textbox.get("1.0", "1.end"):
                 # Loading the old file 
-                gui.write_another_file_content(gui.buffer_content)
+                gui.write_another_file_content(gui.buffer_content, file_name=textbox.get("1.0", "1.end"))
 
             return f"{mainapp.File.file_name} salvo"
 
