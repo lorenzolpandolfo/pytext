@@ -24,6 +24,7 @@ remap them.
 - **wasd**: move through lines
 - **S**: save file
 - **Q**: quit
+- **O**: **Open**/**On local directory**: List all files and folders in the current directory. You can select them with Return (enter) to navigate through directories and files.
 
 # Current TO-DO:
 These features are not sure to be in the final version, but they look like a good idea at time.
