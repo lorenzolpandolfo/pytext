@@ -114,8 +114,8 @@ class Counter:
 
 
     def atualizar_contador(self, *args):
-        self.check_if_wrapped_line()
         return
+        self.check_if_wrapped_line()
         #self.count_visible_lines()
         self.label_value = self.get_visible_line(self.gui.main_textarea) - 1
 

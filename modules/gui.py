@@ -20,11 +20,17 @@ class GUI:
         self.user_config_instance = user_config_instance
 
 
-    def write_another_file_content(self, content:str):
+    def write_another_file_content(self, content:str, auto_insert:bool = False):
         self.main_textarea.configure(state="normal")
         self.main_textarea.delete("1.0", "end")
         self.main_textarea.insert(ctk.END, content)
         self.main_textarea.configure(state="disabled")
+        self.main_textarea.mark_set(ctk.INSERT, "1.0")
+        if auto_insert:
+            # ver pq q tem q ter 2 vezes
+            self.command_manager_instance.trocar_modo(self.main_app_instance.modo)
+            self.command_manager_instance.trocar_modo(self.main_app_instance.modo)
+
 
 
     def realcar_linha_selecionada(self, *args):
@@ -57,8 +63,10 @@ class GUI:
             #print("Descendo")
             self.main_textarea.yview_scroll(1, "units")
 
+
     def inserir(self, texto):
         return self.main_textarea.insert("1.0", texto)
+
 
     def obter_caractere_anterior(self, text_widget, enter = False):
         if enter:
@@ -91,10 +99,6 @@ class GUI:
             
         return caractere_anterior
 
-    
-    def obter_maximo_coluna_por_linha(self):
-        pass
-
 
     def obter_numero_de_colunas_atual(self):
         linha = self.main_textarea.get(ctk.INSERT+" linestart", ctk.INSERT+" lineend")
@@ -119,10 +123,6 @@ class GUI:
 
 
     def teste(self, *args):
-        #self.create_counter()
-        #self.create_labels()
-        
-
         self.Counter.create_counter()
         self.Counter.create_labels()
         

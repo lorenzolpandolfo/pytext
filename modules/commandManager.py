@@ -23,20 +23,30 @@ class CommandManager:
     def capture_keybinds(self):
         self.root.bind("<Key>", self.tecla_pressionada)
         self.root.bind("<KeyRelease>", self.atualizar_contador_de_linhas_e_colunas_globais)
-        self.root.bind("<Escape>", lambda e: self.trocar_modo(self.main_app_instance.modo))
+        self.root.bind("<Escape>", lambda _: self.escape_deal())
         # Atualizar as labels para ajustar na resolução
         self.root.bind("<Prior>", lambda e: self.gui.teste(e))
         self.root.bind("<Configure>", lambda e: self.ajustar_resolucao(e))
-        self.maintext.bind("<MouseWheel>", lambda e: "break")
+        self.maintext.bind("<MouseWheel>", lambda _: "break")
         self.ok = 1
 
 
-    def ajustar_resolucao(self, e = None):
-        #print("att e ok: ", self.ok)
+    def escape_deal(self):
+        # if you're in a localdir Open file
+        if self.main_app_instance.File.file_name == "__pytextLocaldir__":
+            updir = self.main_app_instance.File.get_up_directory()
+            self.main_app_instance.File.open_local_directory_or_file(updir, self.maintext, self.main_app_instance, self.gui, updir = True)
+
+            pass
+        
+        else:
+            self.trocar_modo(self.main_app_instance.modo)
+
+
+
+    def ajustar_resolucao(self, *args):
         try:
-            #print(f"atual: {int(self.root.winfo_height())} anterior: {int(self.lastheight)}")
             if int(self.root.winfo_height()) == int(self.lastheight):
-                #print("igual")
                 pass
             elif self.ok == 1:
                 self.ok = 0
@@ -44,12 +54,11 @@ class CommandManager:
                 print("mudança na resolução")
                 self.gui.teste()
         except Exception:
-            #print("nao encontrei lastheight")
             self.lastheight = self.root.winfo_height()
 
 
 
-    def atualizar_contador_de_linhas_e_colunas_globais(self, e = None):
+    def atualizar_contador_de_linhas_e_colunas_globais(self, *args):
         return self.gui.bottom_output_doc_info.configure(text=self.gui.obter_numero_de_linhas_e_colunas(f=True))
 
 
@@ -88,6 +97,14 @@ class CommandManager:
                 if tecla == "colon":
                     self.bottom_command_output.focus_set()
 
+
+                elif tecla == "Return":
+                    if self.main_app_instance.File.file_name == "__pytextLocaldir__":
+                        posicao_linha_atual = self.gui.main_textarea.index(ctk.INSERT).split('.')[0]
+                        conteudo_linha_atual = self.gui.main_textarea.get(f"{posicao_linha_atual}.0", f"{posicao_linha_atual}.end")
+                        self.main_app_instance.File.open_local_directory_or_file(conteudo_linha_atual, self.maintext, self.main_app_instance, self.gui)
+                    return
+                
                 else:
                     match tecla:
                         case "i":

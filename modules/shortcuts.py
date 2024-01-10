@@ -10,7 +10,6 @@ def search_command(comando:str, qtd:int, textbox, mainapp, gui):
     match comando:
 
         case "dd":
-            print(qtd)
             return deletar_linha(qtd, textbox)
         
         case "w" | "a" | "s" | "d":
@@ -25,9 +24,16 @@ def search_command(comando:str, qtd:int, textbox, mainapp, gui):
         case "SQ" | "QS" | "WQ" | "wq":
             if save(textbox, mainapp, gui):
                 return "sair"
+        
+        case "O":
+            return mainapp.File.load_local_files_to_open(textbox, mainapp)
+
 
         case _:
             return "Comando não encontrado."
+
+
+
 
 
 # dd   - delete lines
@@ -91,7 +97,6 @@ def save(textbox, mainapp, gui):
         if mainapp.file_name == "__pytextSavePreset__":
             mainapp.file_name = textbox.get("1.0", "1.end")
             content = gui.buffer_content
-            print("CONTEUDO: ", content)
             
         else:
             # Get all the content in this current file
@@ -117,11 +122,8 @@ def save(textbox, mainapp, gui):
         
         savepreset = os.path.join(os.getcwd(), ".temp", "__pytextSavePreset__.txt")
 
-        with open(savepreset, "w", encoding="utf8") as savepresetfile:
-            savepresetfile.write("\n# Write in the first line your file title with its extension. Then, run the save keybind to confirm.")
-        
         with open(savepreset, "r", encoding="utf8") as savepresetfile:
             content = savepresetfile.read()
-            gui.write_another_file_content(content)
+            gui.write_another_file_content(content, True)
         
         mainapp.file_name = "__pytextSavePreset__"
