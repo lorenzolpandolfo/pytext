@@ -40,7 +40,10 @@ These features are not sure to be in the final version, but they look like a goo
   - **Z**: undo
   - **X**: cut current line
   - **+** and **-**: change font size
+  - **Shift** + **N**: create a new file (maybe useless because of workspaces)
+  - **Enter**: if it is a script, run it
 - Add **Alt +**
   - **Arrow Keys**: move current line
   - **Shift + Arrow Keys**: copy and paste current line
 - **Workplaces** from 1 to 10
+- Colors to key words for each programming language. Make the colors custom too!
