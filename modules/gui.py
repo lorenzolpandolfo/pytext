@@ -10,6 +10,7 @@ class GUI:
 
         self.Font = self.main_app_instance.Font
         self.Counter = self.main_app_instance.Counter
+        self.buffer_content = ""
 
         self.labels = []
     
@@ -19,6 +20,11 @@ class GUI:
         self.user_config_instance = user_config_instance
 
 
+    def write_another_file_content(self, content:str):
+        self.main_textarea.configure(state="normal")
+        self.main_textarea.delete("1.0", "end")
+        self.main_textarea.insert(ctk.END, content)
+        self.main_textarea.configure(state="disabled")
 
 
     def realcar_linha_selecionada(self, *args):

@@ -21,5 +21,4 @@ class File():
                 textarea.insert(ctk.END, content)
                 textarea.configure(state="disabled")
 
-        except FileNotFoundError: 
-            return False
+        except FileNotFoundError: return False

@@ -12,7 +12,7 @@ from modules.font           import Font
 from modules.file           import File
 
 class MainApp:
-    def __init__(self, root, file_name = False):
+    def __init__(self, root, file_name = None):
         self.file_name = file_name
         self.root = root
         self.modo = "view"
@@ -61,6 +61,5 @@ if __name__ == "__main__":
     root = Root()
     if check_if_filename():
         app = MainApp(root, sys.argv[1])
-
     else: app = MainApp(root)
     root.mainloop()
