@@ -36,8 +36,6 @@ class CommandManager:
         if self.main_app_instance.File.file_name == "__pytextLocaldir__":
             updir = self.main_app_instance.File.get_up_directory()
             self.main_app_instance.File.open_local_directory_or_file(updir, self.maintext, self.main_app_instance, self.gui, updir = True)
-
-            pass
         
         else:
             self.trocar_modo(self.main_app_instance.modo)
@@ -108,7 +106,8 @@ class CommandManager:
                 else:
                     match tecla:
                         case "i":
-                            return self.trocar_modo(self.main_app_instance.modo)
+                            if not self.main_app_instance.File.file_name == "__pytextLocaldir__":
+                                return self.trocar_modo(self.main_app_instance.modo)
                         
                         case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
                             self.gui.mover_tela()

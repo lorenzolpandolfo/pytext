@@ -20,12 +20,13 @@ class GUI:
         self.user_config_instance = user_config_instance
 
 
-    def write_another_file_content(self, content:str, auto_insert:bool = False):
+    def write_another_file_content(self, content:str, file_name:str, auto_insert:bool = False):
         self.main_textarea.configure(state="normal")
         self.main_textarea.delete("1.0", "end")
         self.main_textarea.insert(ctk.END, content)
         self.main_textarea.configure(state="disabled")
         self.main_textarea.mark_set(ctk.INSERT, "1.0")
+        self.main_app_instance.File.file_name = file_name
         if auto_insert:
             # ver pq q tem q ter 2 vezes
             self.command_manager_instance.trocar_modo(self.main_app_instance.modo)
