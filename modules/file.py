@@ -58,26 +58,45 @@ class File():
                 textbox.configure(state="normal")
                 textbox.delete("1.0", "end")
 
+                all_tags = []
+
                 for i, file in enumerate(files_in_current_dir):
-                    # if it is the last element
-                    if i == len(files_in_current_dir) - 1:
-                        # write in the file without the \n
-                        if os.path.isdir(os.path.join(current_terminal_directory, file)):
-                            textbox.insert(f"{i + 1}.0", f"▼ {file}/")
-                        else:
-                            textbox.insert(f"{i + 1}.0", f"{file}")
+                    cur_line = int(textbox.index(ctk.INSERT).split(".")[0])
+
+                    # check if its the last element. True if i == len(files_in_current_dir) - 1
+                    is_last_element = i == len(files_in_current_dir) - 1
+
+                    is_dir = os.path.isdir(os.path.join(current_terminal_directory, file))
+
+                    file_type_prefix = "▼ " if is_dir else ""
+                    file_type_sufix = "/" if is_dir else ""
+
+                    textbox.insert(f"{i + 1}.0", f"{file_type_prefix}{file}{file_type_sufix}" + ("" if is_last_element else "\n"))
                     
-                    else:
-                        if os.path.isdir(os.path.join(current_terminal_directory, file)):
-                            textbox.insert(f"{i + 1}.0", f"▼ {file}/\n")
-                        else:
-                            textbox.insert(f"{i + 1}.0", f"{file}\n")
+                    tag_name = f"dir_color{i}" if is_dir else f"file_color{i}"
+                    textbox.tag_add(tag_name, f"{cur_line}.0", f"{cur_line}.end")
+                    all_tags.append(tag_name)
+
                 
+                for tag in all_tags:
+                    if "file" in tag:
+                        textbox.tag_config(tag, foreground="red")
+                    elif "dir" in tag:
+                        textbox.tag_config(tag, foreground="blue")
+
                 textbox.insert(f"1.0", f"{current_terminal_directory}\n")
+                textbox.tag_add("curdir", "1.0", "1.end")
+                textbox.tag_config("curdir", foreground="green")
+
                 textbox.configure(state="disabled")
+                
                 mainapp.File.file_name = "__pytextLocaldir__"
+
                 # Saving the current terminal directory after it sucessfully opens.
                 self.terminal_directory = current_terminal_directory
+
+                textbox.mark_set(ctk.INSERT, "2.0")
+
         except PermissionError:
             print("Pytext doesn't have permission to open this file: ", path_to_open)
 
