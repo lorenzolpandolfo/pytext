@@ -50,3 +50,4 @@ These features are not sure to be in the final version, but they look like a goo
   - **Shift + Arrow Keys**: copy and paste current line
 - **Workplaces** from 1 to 10
 - Colors to key words for each programming language. Make the colors custom too!
+- Add a git support to check the repository info
