@@ -92,10 +92,10 @@ def mover_cursor(pos, qtd, textbox):
 # S    - save the current file to a directory
 def save(textbox, mainapp, gui):
     
-    if mainapp.file_name is not None:
+    if mainapp.File.file_name is not None:
         # In this case, you're saving the SavePreset file
-        if mainapp.file_name == "__pytextSavePreset__":
-            mainapp.file_name = textbox.get("1.0", "1.end")
+        if mainapp.File.file_name == "__pytextSavePreset__":
+            mainapp.File.file_name = textbox.get("1.0", "1.end")
             content = gui.buffer_content
             
         else:
@@ -103,17 +103,17 @@ def save(textbox, mainapp, gui):
             content = textbox.get("1.0", ctk.END)
             gui.buffer_content = content
 
-        full_path = os.path.join(mainapp.File.terminal_directory, mainapp.file_name)
+        full_path = os.path.join(mainapp.File.terminal_directory, mainapp.File.file_name)
 
         with open(full_path, "w", encoding="utf8") as new_file:
             new_file.write(content)
 
             # check if you just added a title to a non-title file
-            if mainapp.file_name == textbox.get("1.0", "1.end"):
+            if mainapp.File.file_name == textbox.get("1.0", "1.end"):
                 # Loading the old file 
                 gui.write_another_file_content(gui.buffer_content)
 
-            return f"{mainapp.file_name} salvo"
+            return f"{mainapp.File.file_name} salvo"
 
     # this runs when you save a file that doesn't have a title yet
     else:
@@ -126,4 +126,4 @@ def save(textbox, mainapp, gui):
             content = savepresetfile.read()
             gui.write_another_file_content(content, True)
         
-        mainapp.file_name = "__pytextSavePreset__"
+        mainapp.File.file_name = "__pytextSavePreset__"
