@@ -15,7 +15,7 @@ If you add Pytext to PATH, you can launch it in terminal with `pytext <file_name
 
 # Preferences
 - If you want to change Pytext directory, don't forget to edit the `pytext.bat` file after adding the custom directory to PATH.
-- You can edit the `modules/config.json` file to change some personal preferences.
+- You can edit the `user/config.json` and `user/theme.json` files to change some personal preferences.
 
 # Current keybindings
 You can add numbers after or before the keybind to run it more than one time. More keybinds will be added with time, as well as way to
