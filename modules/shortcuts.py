@@ -34,7 +34,7 @@ def search_command(comando:str, qtd:int, textbox, mainapp, gui):
             mainapp.File.insert_new_dir_title(gui)
 
         case _:
-            return "Command not found."
+            return "Command not found"
 
 
 
@@ -125,7 +125,7 @@ def save(textbox, mainapp, gui):
                 # Loading the old file 
                 gui.write_another_file_content(gui.buffer_content, file_name=textbox.get("1.0", "1.end"))
 
-            return f"{mainapp.File.file_name} saved."
+            return f"{mainapp.File.file_name} saved"
 
     # this runs when you save a file that doesn't have a title yet
     else:

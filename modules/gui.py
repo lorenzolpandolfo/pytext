@@ -26,7 +26,10 @@ class GUI:
         self.main_textarea.insert(ctk.END, content)
         self.main_textarea.configure(state="disabled")
         self.main_textarea.mark_set(ctk.INSERT, "1.0")
+        self.realcar_linha_selecionada()
         self.main_app_instance.File.file_name = file_name
+        self.bottom_current_dir.configure(text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.terminal_directory, self.main_app_instance.File.file_name))
+
         if auto_insert:
             # ver pq q tem q ter 2 vezes
             self.command_manager_instance.trocar_modo(self.main_app_instance.modo)
@@ -197,11 +200,11 @@ class GUI:
         self.leftframe.rowconfigure(0, weight=0)
 
         # creating the bottom label
-        self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.main_app_instance.modo, justify="center", font=self.Font.gui_font)
+        self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.main_app_instance.modo, justify="center", font=self.Font.font)
         self.bottom_output_mode.grid(row=1, column=0, sticky="ew", columnspan=2)
 
-        self.abc = ctk.CTkLabel(self.bottomframe,text=self.main_app_instance.File.get_current_directory(), font=self.Font.gui_font)
-        self.abc.grid(row=2,column=1, sticky="w", padx=10)
+        self.bottom_current_dir = ctk.CTkLabel(self.bottomframe,text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.get_current_directory(), self.main_app_instance.File.file_name), font=self.Font.gui_font)
+        self.bottom_current_dir.grid(row=2,column=1, sticky="w", padx=10, pady=0)
 
         # creating the detailed command output label 
         self.bottom_output_detail = ctk.CTkLabel(self.bottomframe, text="", justify="left", font=self.Font.gui_font)

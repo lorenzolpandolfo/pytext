@@ -7,6 +7,14 @@ class File():
         self.current_directory = self.get_current_directory()
         self.file_name = file_name
         self.terminal_directory = terminal_directory
+        self.setup_files_to_not_show_in_gui()
+
+
+    def setup_files_to_not_show_in_gui(self):
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        os.chdir("..")
+        os.chdir(os.path.join(os.curdir, ".temp"))
+        self.files_to_not_show_in_gui = [file[:-4] for file in os.listdir()]
 
 
     def get_current_directory(self):
@@ -40,7 +48,7 @@ class File():
         """Runs when user Opens the current directory"""
         try:
             # path_to_open is used to open a custom path
-            current_terminal_directory = self.current_directory if path_to_open == "" else path_to_open
+            current_terminal_directory = self.terminal_directory if path_to_open == "" else path_to_open
             files_in_current_dir = os.listdir(current_terminal_directory)
             
             textbox.configure(state="normal")
@@ -80,9 +88,11 @@ class File():
             self.terminal_directory = current_terminal_directory
             textbox.mark_set(ctk.INSERT, "2.0")
             mainapp.GUI.realcar_linha_selecionada()
+            mainapp.GUI.bottom_current_dir.configure(text=self.get_formatted_to_gui_cur_dir(self.terminal_directory, self.file_name))
 
         except PermissionError:
             print("Pytext doesn't have permission to open this file: ", path_to_open)
+        
 
 
     def get_up_directory(self):
@@ -108,3 +118,12 @@ class File():
             content = file.read()
             gui.write_another_file_content(content, True)
             self.file_name = "__pytextNewDirTitle__"
+
+
+    def get_formatted_to_gui_cur_dir(self, curdir:str, curfile:str):
+        """ Format correctly to gui the current directory and file """
+        if curfile in self.files_to_not_show_in_gui:
+            curfile = ""
+
+        formatted_to_gui:str = curdir + f" ({curfile})" if curfile else curdir
+        return formatted_to_gui.replace("\\","/")
