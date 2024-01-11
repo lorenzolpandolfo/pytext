@@ -39,9 +39,12 @@ class File():
         # if user is trying to open a file
         elif os.path.isfile(fulldir):
             with open(fulldir, "r", encoding="utf8") as file:
-                content = file.read()
+                try: content = file.read()
+                except UnicodeDecodeError: return gui.bottom_output_detail.configure(text=f"Invalid file extension ({dir_name})")
             return gui.write_another_file_content(content, file_name=dir_name, auto_insert=True)
-        #else: print("Path is not a file or a directory. ", fulldir, fulldir_path_format)
+        else:
+            return gui.bottom_output_detail.configure(text="Path is not a file or a directory")
+            # print("Path is not a file or a directory. ", fulldir, fulldir_path_format)
         
 
     def load_local_files_to_open(self, textbox, mainapp, path_to_open:str = ""):
@@ -91,6 +94,7 @@ class File():
             mainapp.GUI.bottom_current_dir.configure(text=self.get_formatted_to_gui_cur_dir(self.terminal_directory, self.file_name))
 
         except PermissionError:
+            return mainapp.GUI.bottom_output_detail.configure(text="Pytext doesn't have permission to open this file")
             print("Pytext doesn't have permission to open this file: ", path_to_open)
         
 
