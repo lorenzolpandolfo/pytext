@@ -107,7 +107,7 @@ class GUI:
         return colunas
 
 
-    def obter_numero_de_linhas_e_colunas(self, f = False):
+    def obter_numero_de_linhas_e_colunas(self, formatted_to_gui = False):
         # Obtém o conteúdo do TextBox como uma string
         conteudo = self.main_textarea.get("1.0", "end-1c")
         linhas = conteudo.split('\n')
@@ -117,7 +117,7 @@ class GUI:
         # maior valor de comprimento de linha por cada linha
         num_colunas = max(len(linha) for linha in linhas)
         
-        if not f:
+        if not formatted_to_gui:
             return (numero_de_linhas, num_colunas)
         else:
             return f"{numero_de_linhas}L, {num_colunas}C"
@@ -173,50 +173,49 @@ class GUI:
 
     def create_widgets(self):
         # initializing main text area
-        # fazer com que ele tenha um tamanho sempre multiplo do tamanho das linhas
-        #self.main_textarea = ctk.CTkTextbox(self.mainframe, wrap=ctk.WORD, font=self.Font.font, height=0)
         self.main_textarea = CTkEasyTextBox(self.mainframe, wrap=ctk.WORD, font=self.Font.font, height=0)
         self.main_textarea.grid(row=0, column=0, sticky="new", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
         self.main_textarea.grid_rowconfigure(0, weight=1)
-
-
         self.main_textarea.configure(state="disabled")
 
-
         # escondendo a barra de scroll
-        self.theme_mode = ctk.get_appearance_mode()
-        self.themes = {
+        theme_mode = ctk.get_appearance_mode()
+        themes = {
             "Dark": "#1d1e1e",
             "Light": "#f9f9fa"
         }
-        self.main_textarea.configure(yscrollcommand="", scrollbar_button_color=self.themes[self.theme_mode], scrollbar_button_hover_color=self.themes[self.theme_mode])
+        self.main_textarea.configure(yscrollcommand="", scrollbar_button_color=themes[theme_mode], scrollbar_button_hover_color=themes[theme_mode])
 
 
         # configurando o mainframe
         self.mainframe.columnconfigure(0, weight=1)
         self.mainframe.rowconfigure(0, weight=1)
 
-        # initializing left text area
-        self.left_textarea = ctk.CTkTextbox(self.leftframe, width=70, wrap=ctk.CHAR, font=self.Font.font)
-        #self.left_textarea.grid(row=0, column=0, sticky="ns", padx=(10,10), pady=(20,10))
-
         # configurando o leftframe
         self.leftframe.columnconfigure(0, weight=0)
         self.leftframe.rowconfigure(0, weight=0)
 
         # creating the bottom label
-        self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.main_app_instance.modo, justify="center", font=self.Font.font)
+        self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.main_app_instance.modo, justify="center", font=self.Font.gui_font)
         self.bottom_output_mode.grid(row=1, column=0, sticky="ew", columnspan=2)
 
-        self.bottom_output_detail = ctk.CTkLabel(self.bottomframe, text="", justify="left", font=self.Font.font)
-        self.bottom_output_detail.grid(row=1, column=1, sticky="e", padx=10)
-        self.bottom_output_doc_info = ctk.CTkLabel(self.bottomframe, text=self.obter_numero_de_linhas_e_colunas(f=True), justify="left", font=self.Font.font)
-        self.bottom_output_doc_info.grid(row=1, column=0, sticky="e", padx=10)
+        self.abc = ctk.CTkLabel(self.bottomframe,text=self.main_app_instance.File.get_current_directory(), font=self.Font.gui_font)
+        self.abc.grid(row=2,column=1, sticky="w", padx=10)
+
+        # creating the detailed command output label 
+        self.bottom_output_detail = ctk.CTkLabel(self.bottomframe, text="", justify="left", font=self.Font.gui_font)
+        self.bottom_output_detail.grid(row=2, column=1, sticky="e", padx=10)
+
+        # creating the absolute line and column label
+        self.doc_abs_line_and_columns = ctk.CTkLabel(self.bottomframe, text=self.obter_numero_de_linhas_e_colunas(formatted_to_gui=True), justify="left", font=self.Font.gui_font)
+        self.doc_abs_line_and_columns.grid(row=2, column=0, sticky="e", padx=10)
+
+
         # Criando o textbox no segundo grid
-        self.bottom_command_output = ctk.CTkTextbox(self.bottomframe, font=self.Font.font, width=100, height=2)
+        self.bottom_command_output = ctk.CTkTextbox(self.bottomframe, font=self.Font.gui_font, width=100, height=1)
         # Como o sticky é "e", ele vai ser ancorado para o leste ->
-        self.bottom_command_output.grid(row=1, column=2, sticky="e", padx=(0, 10), pady=(0, 5))
+        self.bottom_command_output.grid(row=2, column=2, sticky="e", padx=(0, 10), pady=(0, 5))
 
         # o peso é 1 para que ele se mova para a direita
         self.bottomframe.columnconfigure(1, weight=1)

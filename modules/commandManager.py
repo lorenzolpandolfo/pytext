@@ -57,7 +57,7 @@ class CommandManager:
 
 
     def atualizar_contador_de_linhas_e_colunas_globais(self, *args):
-        return self.gui.bottom_output_doc_info.configure(text=self.gui.obter_numero_de_linhas_e_colunas(f=True))
+        return self.gui.doc_abs_line_and_columns.configure(text=self.gui.obter_numero_de_linhas_e_colunas(formatted_to_gui=True))
 
 
     def trocar_modo(self, modo):

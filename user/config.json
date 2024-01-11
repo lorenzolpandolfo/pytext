@@ -2,10 +2,12 @@
 	"line_background_color":        "#2b2b2b",
 	"programming_language_format":  "Python",
 	"auto_insert_delimiters":       true,
-	"font": {
+	"font": 
+	{
 		"file_name" : "firacode",
 		"family"    : "Fira Code",
-		"size"      : 23
-    		}
+		"size"      : 22,
+		"gui_size"	: 19
+    }
 }
 

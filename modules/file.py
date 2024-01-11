@@ -18,51 +18,42 @@ class File():
         fulldir = os.path.join(self.terminal_directory, dir_name)
         fulldir_path_format = os.path.join(self.terminal_directory, dir_name[2:-1])
 
-        if not updir:
-            # if user is trying to open a directory
-            if os.path.isdir(fulldir_path_format):
-                print(fulldir_path_format)
-                self.load_local_files_to_open(textbox, mainapp, path_to_open=fulldir_path_format)
-
-            # if user is trying to open a file
-            elif os.path.isfile(fulldir):
-                with open(fulldir, "r", encoding="utf8") as file:
-                    content = file.read()
-                return gui.write_another_file_content(content, file_name=dir_name, auto_insert=True)
-            else:
-                print("Path is not a file or a directory. ", fulldir, fulldir_path_format)
-        
-        # if user is trying to open a up directory
-        else:
+        # if user is trying to open a up directory (..)
+        if updir:
             if os.path.isdir(fulldir):
-                self.load_local_files_to_open(textbox, mainapp, path_to_open=fulldir)
-            else:
-                print("Root directory not found: ", fulldir)
+                return self.load_local_files_to_open(textbox, mainapp, path_to_open=fulldir)
+            # else: print("Root directory not found: ", fulldir)
 
+        # if user is trying to open a directory
+        if os.path.isdir(fulldir_path_format):
+            return self.load_local_files_to_open(textbox, mainapp, path_to_open=fulldir_path_format)
+
+        # if user is trying to open a file
+        elif os.path.isfile(fulldir):
+            with open(fulldir, "r", encoding="utf8") as file:
+                content = file.read()
+            return gui.write_another_file_content(content, file_name=dir_name, auto_insert=True)
+        #else: print("Path is not a file or a directory. ", fulldir, fulldir_path_format)
+        
 
     def load_local_files_to_open(self, textbox, mainapp, path_to_open:str = ""):
         """Runs when user Opens the current directory"""
         try:
-            # if you need to open a specific path
-            if path_to_open == "":
-                current_terminal_directory = mainapp.File.terminal_directory
-
-            # in this case, opens the local terminal path
-            else:
-                current_terminal_directory = path_to_open
-
+            # path_to_open is used to open a custom path
+            current_terminal_directory = self.current_directory if path_to_open == "" else path_to_open
+            files_in_current_dir = os.listdir(current_terminal_directory)
+            
             textbox.configure(state="normal")
             textbox.delete("1.0", "end")
             all_tags = []
-
-            files_in_current_dir = os.listdir(current_terminal_directory)
+        
             for i, file in enumerate(files_in_current_dir):
                 cur_line = int(textbox.index(ctk.INSERT).split(".")[0])
 
                 # check if its the last element. True if i = len(files_in_current_dir) - 1
                 is_last_element = i == len(files_in_current_dir) - 1
 
-                #check if it is a directory
+                # check if it is a directory
                 is_dir = os.path.isdir(os.path.join(current_terminal_directory, file))
 
                 file_type_prefix = "▼ " if is_dir else ""
@@ -75,10 +66,8 @@ class File():
                 all_tags.append(tag_name)
 
             for tag in all_tags:
-                if "file" in tag:
-                    textbox.tag_config(tag, foreground="red")
-                elif "dir" in tag:
-                    textbox.tag_config(tag, foreground="blue")
+                color = "red" if "file" in tag else "blue"
+                textbox.tag_config(tag, foreground=color)
 
             # insert the current terminal directory in the first line
             textbox.insert(f"1.0", f"{current_terminal_directory}\n")
@@ -87,7 +76,7 @@ class File():
 
             textbox.configure(state="disabled")
             mainapp.File.file_name = "__pytextLocaldir__"
-            # Saving the current terminal directory after it sucessfully opens.
+            # Saving the current terminal directory after it sucessfully opens
             self.terminal_directory = current_terminal_directory
             textbox.mark_set(ctk.INSERT, "2.0")
             mainapp.GUI.realcar_linha_selecionada()
@@ -109,7 +98,6 @@ class File():
         full_path = os.path.join(self.terminal_directory, dir_name)
         if not os.path.exists(full_path):
             os.makedirs(full_path)
-        #self.open_local_directory_or_file("teste", args[0], args[1], args[2])
         self.load_local_files_to_open(textbox, mainapp, path_to_open=self.terminal_directory)
     
 
