@@ -19,14 +19,17 @@ class UserConfig:
     def load(self):
         # moving to the root script directory to access the config.json file
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        
+        # moving to pytext directory
+        os.chdir("..")
+        # moving to user directory
+        os.chdir(os.path.join(os.curdir, "user"))
+
         with open("config.json", "r") as file:
             self.config = json.load(file)
         
         self.selected_line_background_color     = self.config["line_background_color"]
         self.programming_language_format        = self.config["programming_language_format"]
         self.auto_insert_delimiters             = self.config["auto_insert_delimiters"]
-
         self.font                               = self.config["font"]
         print("actual user config: ", self.config)
     
@@ -59,7 +62,6 @@ class UserConfig:
               case "Python":
                    match tecla.keysym:
                         case "Return":
-                             #print("char anterior: ", char_anterior)
                              match char_anterior:
                                   case ":", "'", '"':
                                        self.adicionar_linha_com_tab(self.maintext)
