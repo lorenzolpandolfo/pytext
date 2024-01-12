@@ -1,4 +1,6 @@
 import customtkinter as ctk
+from tkinter import ttk
+
 
 class Counter:
     def __init__(self, main_app_instance):
@@ -58,7 +60,8 @@ class Counter:
         for i in range(0, self.max_linhas_visiveis):
             _pady = (28.75,0) if i == 0 else (0,0)
             _text = self.main_app_instance.UserConfig.config["nonexistent_char"] if i >= max_lines else str(i)
-            label = ctk.CTkLabel(self.gui.leftframe, text=_text, font=self.Font.font)
+            _text_color = self.main_app_instance.UserConfig.theme["nonexistent_char_color"] if i >= max_lines else self.main_app_instance.UserConfig.theme["line_counter_color"]
+            label = ctk.CTkLabel(self.gui.leftframe, text=_text, font=self.Font.font, text_color=_text_color)
             label.grid(row=i, column=0, sticky="en", pady=_pady)
             self.labels.append(label)
 
@@ -113,12 +116,16 @@ class Counter:
 
     def atualizar_contador(self, *args):
         first_visible_line = int(self.gui.main_textarea.index("@0,0").split('.')[0])
+        max_lines = self.main_app_instance.GUI.obter_numero_de_linhas_e_colunas()[0]
+
+        nonexistent_char        = self.main_app_instance.UserConfig.config["nonexistent_char"]
+        nonexistent_char_color  = self.main_app_instance.UserConfig.theme["nonexistent_char_color"]
+        line_counter_color      = self.main_app_instance.UserConfig.theme["line_counter_color"]
 
         for i, label in enumerate(self.labels):
-            if i >= self.main_app_instance.GUI.obter_numero_de_linhas_e_colunas()[0]:
-                label.configure(text=self.main_app_instance.UserConfig.config["nonexistent_char"])
-            else:
-                label.configure(text=first_visible_line + i)
+            _text =  nonexistent_char if i >= max_lines else first_visible_line + i
+            _text_color = nonexistent_char_color if i >= max_lines else line_counter_color
+            label.configure(text=_text, text_color=_text_color)
 
         return
         self.check_if_wrapped_line()

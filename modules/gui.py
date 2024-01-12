@@ -187,7 +187,7 @@ class GUI:
         self.main_textarea.grid(row=0, column=0, sticky="new", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
         self.main_textarea.grid_rowconfigure(0, weight=1)
-        self.main_textarea.configure(state="disabled")
+        self.main_textarea.configure(state="disabled", tabs=(self.main_app_instance.Font.font.measure(" ") *self.user_config_instance.config["tab_width"],))
 
         # escondendo a barra de scroll
         theme_mode = ctk.get_appearance_mode()

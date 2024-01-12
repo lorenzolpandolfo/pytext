@@ -1,7 +1,8 @@
 {
-	"programming_language_format"			: "Python",
-	"auto_insert_delimiters"				: true,
-	"nonexistent_char"				: "~",
+	"programming_language_format": "Python",
+	"auto_insert_delimiters": true,
+	"nonexistent_char":"~",
+	"tab_width": 4,
 	"window": {
 		"width"  : 1100,
 		"height" : 749
@@ -13,6 +14,8 @@
 		"gui_size"  : 16
     	}
 }
+
+
 
 
 

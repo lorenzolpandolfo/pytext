@@ -132,7 +132,7 @@ def save(textbox, mainapp, gui):
         # Saving the current file content so you can edit the SavePreset file
         gui.buffer_content = textbox.get("1.0", ctk.END) 
         
-        savepreset = os.path.join(os.getcwd(), ".temp", "__pytextSavePreset__.txt")
+        savepreset = os.path.join(os.getcwd(), "pytext", ".temp", "__pytextSavePreset__.txt")
 
         with open(savepreset, "r", encoding="utf8") as savepresetfile:
             content = savepresetfile.read()
