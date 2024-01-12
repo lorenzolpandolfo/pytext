@@ -27,9 +27,9 @@ class UserConfig:
         with open("config.json", "r", encoding="utf8") as configFile:
             self.config = json.load(configFile)
         
-        self.programming_language_format        = self.config["programming_language_format"]
-        self.auto_insert_delimiters             = self.config["auto_insert_delimiters"]
-        self.font                               = self.config["font"]
+        self.programming_language_format = self.config["programming_language_format"]
+        self.auto_insert_delimiters      = self.config["auto_insert_delimiters"]
+        self.font                        = self.config["font"]
         print("actual user config: ", self.config)
 
         with open("theme.json", "r", encoding="utf8") as themeFile:

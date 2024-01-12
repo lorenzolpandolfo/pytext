@@ -47,21 +47,19 @@ class Counter:
 
 
     def create_labels(self):
+        max_lines = self.main_app_instance.GUI.obter_numero_de_linhas_e_colunas()[0]
+
         for label in self.labels:
             label.destroy()
 
         # resetando o array
         self.labels = []
 
-
         for i in range(0, self.max_linhas_visiveis):
-            if i == 0:
-                label = ctk.CTkLabel(self.gui.leftframe, text=str(i), font=self.Font.font)
-                label.grid(row=i, column=0, sticky="en", pady=(28.75,0))
-            else:
-                label = ctk.CTkLabel(self.gui.leftframe, text=str(i), font=self.Font.font)
-                label.grid(row=i, column=0, sticky="en", pady=(0))
-
+            _pady = (28.75,0) if i == 0 else (0,0)
+            _text = self.main_app_instance.UserConfig.config["nonexistent_char"] if i >= max_lines else str(i)
+            label = ctk.CTkLabel(self.gui.leftframe, text=_text, font=self.Font.font)
+            label.grid(row=i, column=0, sticky="en", pady=_pady)
             self.labels.append(label)
 
 
@@ -114,6 +112,14 @@ class Counter:
 
 
     def atualizar_contador(self, *args):
+        first_visible_line = int(self.gui.main_textarea.index("@0,0").split('.')[0])
+
+        for i, label in enumerate(self.labels):
+            if i >= self.main_app_instance.GUI.obter_numero_de_linhas_e_colunas()[0]:
+                label.configure(text=self.main_app_instance.UserConfig.config["nonexistent_char"])
+            else:
+                label.configure(text=first_visible_line + i)
+
         return
         self.check_if_wrapped_line()
         #self.count_visible_lines()

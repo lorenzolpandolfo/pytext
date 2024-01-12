@@ -93,6 +93,7 @@ class File():
             textbox.mark_set(ctk.INSERT, "2.0")
             mainapp.GUI.realcar_linha_selecionada()
             mainapp.GUI.bottom_current_dir.configure(text=self.get_formatted_to_gui_cur_dir(self.terminal_directory, self.file_name))
+            mainapp.Counter.atualizar_contador()
 
         except PermissionError:
             return mainapp.GUI.bottom_output_detail.configure(text="Pytext doesn't have permission to open this file")

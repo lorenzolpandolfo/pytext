@@ -1,13 +1,12 @@
 {
 	"programming_language_format"	: "Python",
 	"auto_insert_delimiters"		: true,
-	"window":
-	{
+	"nonexistent_char"				: "~",
+	"window": {
 		"width"  : 1100,
 		"height" : 749
 	},
-	"font":
-	{
+	"font": {
 		"file_name" : "firacode",
 		"family"    : "Fira Code",
 		"size"      : 22,

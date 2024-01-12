@@ -31,6 +31,7 @@ class GUI:
         self.realcar_linha_selecionada()
         self.main_app_instance.File.file_name = file_name
         self.bottom_current_dir.configure(text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.terminal_directory, self.main_app_instance.File.file_name))
+        self.main_app_instance.Counter.atualizar_contador()
 
         if auto_insert:
             # ver pq q tem q ter 2 vezes
