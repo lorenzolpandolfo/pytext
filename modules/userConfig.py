@@ -12,8 +12,8 @@ class UserConfig:
 
 
     def setup(self, gui):
-         self.gui = gui
-         self.maintext = self.gui.main_textarea
+        self.gui = gui
+        self.maintext = self.gui.main_textarea
 
 
     def load(self):
@@ -24,14 +24,17 @@ class UserConfig:
         # moving to user directory
         os.chdir(os.path.join(os.curdir, "user"))
 
-        with open("config.json", "r") as file:
-            self.config = json.load(file)
+        with open("config.json", "r", encoding="utf8") as configFile:
+            self.config = json.load(configFile)
         
         self.selected_line_background_color     = self.config["line_background_color"]
         self.programming_language_format        = self.config["programming_language_format"]
         self.auto_insert_delimiters             = self.config["auto_insert_delimiters"]
         self.font                               = self.config["font"]
         print("actual user config: ", self.config)
+
+        with open("theme.json", "r", encoding="utf8") as themeFile:
+            self.theme = json.load(themeFile)
     
 
     def check_delimiter_chars(self, event, maintext):

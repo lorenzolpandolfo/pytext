@@ -10,6 +10,7 @@ class File():
         self.setup_files_to_not_show_in_gui()
 
 
+
     def setup_files_to_not_show_in_gui(self):
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         os.chdir("..")
@@ -77,7 +78,7 @@ class File():
                 all_tags.append(tag_name)
 
             for tag in all_tags:
-                color = "red" if "file" in tag else "blue"
+                color = mainapp.UserConfig.theme["file_color"] if "file" in tag else mainapp.UserConfig.theme["dir_color"]
                 textbox.tag_config(tag, foreground=color)
 
             # insert the current terminal directory in the first line
@@ -95,7 +96,7 @@ class File():
 
         except PermissionError:
             return mainapp.GUI.bottom_output_detail.configure(text="Pytext doesn't have permission to open this file")
-            print("Pytext doesn't have permission to open this file: ", path_to_open)
+            # print("Pytext doesn't have permission to open this file: ", path_to_open)
         
 
 
