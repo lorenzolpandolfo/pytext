@@ -1,6 +1,6 @@
 {
-	"programming_language_format"	: "Python",
-	"auto_insert_delimiters"		: true,
+	"programming_language_format"			: "Python",
+	"auto_insert_delimiters"				: true,
 	"nonexistent_char"				: "~",
 	"window": {
 		"width"  : 1100,
@@ -13,6 +13,7 @@
 		"gui_size"  : 16
     	}
 }
+
 
 
 
