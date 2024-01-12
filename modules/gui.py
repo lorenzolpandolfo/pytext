@@ -11,9 +11,11 @@ class GUI:
         self.Font = self.main_app_instance.Font
         self.Counter = self.main_app_instance.Counter
         self.buffer_content = ""
-
         self.labels = []
-    
+
+        # resolution auto sizing
+        self.can_adjust = True
+        self.lastheight = 0
 
     def setup(self, command_manager_instance, user_config_instance):
         self.command_manager_instance = command_manager_instance
@@ -45,7 +47,7 @@ class GUI:
         
         texto.tag_remove("realce", "1.0", ctk.END)
         texto.tag_add("realce", inicio_linha, fim_linha)
-        texto.tag_config("realce", background=self.user_config_instance.selected_line_background_color)
+        texto.tag_config("realce", background=self.user_config_instance.theme["line_background_color"])
 
 
     def mover_tela(self):
@@ -119,27 +121,31 @@ class GUI:
 
         # maior valor de comprimento de linha por cada linha
         num_colunas = max(len(linha) for linha in linhas)
-        
-        if not formatted_to_gui:
-            return (numero_de_linhas, num_colunas)
-        else:
-            return f"{numero_de_linhas}L, {num_colunas}C"
+        return (numero_de_linhas, num_colunas) if not formatted_to_gui else f"{numero_de_linhas}L, {num_colunas}C"
 
-
-    def teste(self, *args):
+    def update_labels_to_current_resolution(self, *args):
         self.Counter.create_counter()
         self.Counter.create_labels()
-        
-        return self.root.after(1000, self.a)
+        return self.root.after(700, self.make_label_update_available)
 
 
-    def a(self):
+    def make_label_update_available(self):
         # serve basicamente para redefinir a variavel ok para 1, para que seja possivel
         # reatualizar a resolução
-        self.command_manager_instance.ok = 1
-        print("ok definido: ", self.command_manager_instance.ok)
+        self.can_adjust = True
+        print("can adjust: ", self.can_adjust)
         print('definindo para: ', self.root.winfo_height())
-        self.command_manager_instance.lastheight = self.root.winfo_height()
+        self.lastheight = self.root.winfo_height()
+
+
+    def adjust_widgets_to_resolution(self, *args):
+        if int(self.root.winfo_height()) == int(self.lastheight):
+            pass
+        elif self.can_adjust:
+            self.can_adjust = False
+            # print("resolution changed")
+            self.update_labels_to_current_resolution()
+
 
 
     def start(self):
@@ -151,7 +157,7 @@ class GUI:
 
 
     def create_window(self):
-        self.root.geometry("1100x749")
+        self.root.geometry(f"{self.user_config_instance.config["window"]["width"]}x{self.user_config_instance.config["window"]["height"]}")
         self.root.title("The Pytext Editor")
 
 

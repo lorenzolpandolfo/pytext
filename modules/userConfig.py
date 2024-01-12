@@ -27,7 +27,6 @@ class UserConfig:
         with open("config.json", "r", encoding="utf8") as configFile:
             self.config = json.load(configFile)
         
-        self.selected_line_background_color     = self.config["line_background_color"]
         self.programming_language_format        = self.config["programming_language_format"]
         self.auto_insert_delimiters             = self.config["auto_insert_delimiters"]
         self.font                               = self.config["font"]
