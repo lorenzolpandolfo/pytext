@@ -23,6 +23,7 @@ class GUI:
 
 
     def write_another_file_content(self, content:str, file_name:str, auto_insert:bool = False):
+        self.main_app_instance.File.pos_per_dir.append(self.main_textarea.index(ctk.INSERT))
         self.main_textarea.configure(state="normal")
         self.main_textarea.delete("1.0", "end")
         self.main_textarea.insert(ctk.END, content)
@@ -51,7 +52,7 @@ class GUI:
         texto.tag_config("realce", background=self.user_config_instance.theme["line_background_color"])
 
 
-    def mover_tela(self):
+    def mover_tela(self, move_to_center = False):
         linha_visivel = int(self.Counter.get_visible_line(self.main_textarea))
         maximo_linhas_total = len(self.Counter.labels)
 
@@ -60,9 +61,21 @@ class GUI:
         min = int((maximo_linhas_total / 10) * 3)
         max = int((maximo_linhas_total / 10) * 7)
 
+        # in this case, user needs to move the current screen position to the center
+        if move_to_center:
+            lines_to_move = 0
 
-        #print(linha_visivel, min, max, maximo_linhas_total)
-
+            while linha_visivel <= min:
+                lines_to_move -= 1
+                linha_visivel += 1
+                
+            
+            while linha_visivel >= max:
+                lines_to_move += 1
+                linha_visivel -= 1
+            
+            return self.main_textarea.yview_scroll(lines_to_move, "units")
+        
         if linha_visivel <= min:
             #print("Subindo")
             self.main_textarea.yview_scroll(-1, "units")

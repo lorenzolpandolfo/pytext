@@ -8,6 +8,7 @@ class File():
         self.file_name = file_name
         self.terminal_directory = terminal_directory
         self.setup_files_to_not_show_in_gui()
+        self.pos_per_dir = []
 
 
 
@@ -35,7 +36,7 @@ class File():
 
         # if user is trying to open a directory
         if os.path.isdir(fulldir_path_format):
-            return self.load_local_files_to_open(textbox, mainapp, path_to_open=fulldir_path_format)
+            return self.load_local_files_to_open(textbox, mainapp, path_to_open=fulldir_path_format, cursor_pos=textbox.index(ctk.INSERT))
 
         # if user is trying to open a file
         elif os.path.isfile(fulldir):
@@ -48,13 +49,16 @@ class File():
             # print("Path is not a file or a directory. ", fulldir, fulldir_path_format)
         
 
-    def load_local_files_to_open(self, textbox, mainapp, path_to_open:str = ""):
+    def load_local_files_to_open(self, textbox, mainapp, path_to_open:str = "", cursor_pos = "2.0"):
         """Runs when user Opens the current directory"""
         try:
             # path_to_open is used to open a custom path
             current_terminal_directory = self.terminal_directory if path_to_open == "" else path_to_open
             files_in_current_dir = os.listdir(current_terminal_directory)
             
+            componentes_caminho = os.path.normpath(current_terminal_directory).split(os.path.sep)
+            upper_dir_count = len(componentes_caminho) - 1
+
             textbox.configure(state="normal")
             textbox.delete("1.0", "end")
             all_tags = []
@@ -90,7 +94,28 @@ class File():
             mainapp.File.file_name = "__pytextLocaldir__"
             # Saving the current terminal directory after it sucessfully opens
             self.terminal_directory = current_terminal_directory
-            textbox.mark_set(ctk.INSERT, "2.0")
+
+            # adding dirs last mouse pos (2.0 default)
+            if self.pos_per_dir == []:
+                for i in range(upper_dir_count):
+                    self.pos_per_dir.append("2.0")
+                    textbox.mark_set(ctk.INSERT, "2.0")
+                    textbox.see("2.0")
+                    
+            else:
+                # if user go to a updir 
+                if len(self.pos_per_dir) > upper_dir_count:
+                    textbox.mark_set(ctk.INSERT, self.pos_per_dir[-1])
+                    textbox.see(f"{self.pos_per_dir[-1]}")
+                    self.pos_per_dir.pop()
+                    mainapp.GUI.mover_tela(move_to_center=True)
+
+                # if user go to an inside dir
+                elif len(self.pos_per_dir) < upper_dir_count:
+                    self.pos_per_dir.append(cursor_pos)
+                    textbox.mark_set(ctk.INSERT, "2.0")
+                    textbox.see("2.0")
+                    
             mainapp.GUI.realcar_linha_selecionada()
             mainapp.GUI.bottom_current_dir.configure(text=self.get_formatted_to_gui_cur_dir(self.terminal_directory, self.file_name))
             mainapp.Counter.atualizar_contador()
