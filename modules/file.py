@@ -143,7 +143,7 @@ class File():
     
 
     def insert_new_dir_title(self, gui):
-        newDirTitlepreset = os.path.join(os.getcwd(), ".temp", "__pytextNewDirTitle__.txt")
+        newDirTitlepreset = os.path.join(os.getcwd(), "pytext", ".temp", "__pytextNewDirTitle__.txt")
 
         with open(newDirTitlepreset, "r", encoding="utf8") as file:
             content = file.read()
