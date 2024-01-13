@@ -22,9 +22,10 @@ class MainApp:
         self.init_command_manager()
         if self.file_name:
             self.File.open_local_directory_or_file(self.file_name, self.GUI.main_textarea, self, self.GUI, False, True)
-        # update to make sure gui is properly created before changing text 
-        self.root.update()
-        self.GUI.bottom_current_dir.configure(self.GUI.bottomframe, text="Welcome to The Pytext Editor!")
+        else:
+            # update to make sure gui is properly created before changing text 
+            self.root.update()
+            self.GUI.bottom_current_dir.configure(self.GUI.bottomframe, text="Welcome to The Pytext Editor!")
         self.Counter.atualizar_contador()
 
     def setup_instances(self):
