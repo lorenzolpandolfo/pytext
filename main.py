@@ -21,7 +21,7 @@ class MainApp:
         self.init_gui()
         self.init_command_manager()
         if self.file_name:
-            self.File.open_existent_file(self.file_name, self.GUI.main_textarea)
+            self.File.open_local_directory_or_file(self.file_name, self.GUI.main_textarea, self, self.GUI, False, True)
 
     def setup_instances(self):
         # loading instances from another classes

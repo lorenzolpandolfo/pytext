@@ -32,24 +32,30 @@ class GUI:
         self.main_textarea.mark_set(ctk.INSERT, "1.0")
         self.realcar_linha_selecionada()
         self.main_app_instance.File.file_name = file_name
-        self.bottom_current_dir.configure(text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.terminal_directory, self.main_app_instance.File.file_name))
         self.main_app_instance.Counter.atualizar_contador()
+        if file_name == "":
+            self.bottom_current_dir.configure(text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.terminal_directory,"Unnamed"))
+        else: self.bottom_current_dir.configure(text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.terminal_directory, self.main_app_instance.File.file_name))
 
         if "." in file_name:
             file_extension = file_name.split(".")[1]
 
             match file_extension:
                 case "py":
-                    language = "Python"
+                    language = "python"
                 case _:
                     print(f".{file_extension} syntax highlight is not supported yet")
                     self.main_textarea._syntax_rules_loaded = False
                     language = False
 
             if language:
-                full_language_path = os.path.join(self.main_app_instance.File.current_directory, "languages", language)    
+                os.chdir(os.path.dirname(os.path.abspath(__file__)))
+                os.chdir("..")
+                full_language_path = os.path.join(os.getcwd(), "languages", language)
+                print(full_language_path)
                 self.main_textarea.load_syntax_rules(os.path.join(full_language_path, "syntax.json"), os.path.join(full_language_path,"syntax_colors.json"))
                 self.main_textarea.active_syntax_highlighting()
+        
 
 
         if auto_insert:
@@ -241,7 +247,7 @@ class GUI:
         self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.main_app_instance.modo, justify="center", font=self.Font.font)
         self.bottom_output_mode.grid(row=1, column=0, sticky="ew", columnspan=2)
 
-        self.bottom_current_dir = ctk.CTkLabel(self.bottomframe,text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.get_current_directory(), self.main_app_instance.File.file_name), font=self.Font.gui_font)
+        self.bottom_current_dir = ctk.CTkLabel(self.bottomframe, text="loading...", font=self.Font.gui_font)
         self.bottom_current_dir.grid(row=2,column=1, sticky="w", padx=10, pady=0)
 
         # creating the detailed command output label 

@@ -34,6 +34,7 @@ class UserConfig:
 
         with open("theme.json", "r", encoding="utf8") as themeFile:
             self.theme = json.load(themeFile)
+        os.chdir("..")
     
 
     def check_delimiter_chars(self, event, maintext):

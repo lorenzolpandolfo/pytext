@@ -96,7 +96,7 @@ def mover_cursor(pos, qtd, textbox):
 # S    - save the current file to a directory
 def save(textbox, mainapp, gui):
     
-    if mainapp.File.file_name is not None:
+    if mainapp.File.file_name != "":
         print("FILE NAME: ", mainapp.File.file_name)
         # In this case, you're saving the SavePreset file
         if mainapp.File.file_name == "__pytextSavePreset__":
@@ -130,12 +130,14 @@ def save(textbox, mainapp, gui):
     # this runs when you save a file that doesn't have a title yet
     else:
         # Saving the current file content so you can edit the SavePreset file
-        gui.buffer_content = textbox.get("1.0", ctk.END) 
+        gui.buffer_content = textbox.get("1.0", ctk.END)
         
-        savepreset = os.path.join(os.getcwd(), "pytext", ".temp", "__pytextSavePreset__.txt")
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        os.chdir("..")
+        savepreset = os.path.join(os.getcwd(), ".temp", "__pytextSavePreset__.txt")
 
         with open(savepreset, "r", encoding="utf8") as savepresetfile:
             content = savepresetfile.read()
-            gui.write_another_file_content(content, True)
+            gui.write_another_file_content(content, "", True)
         
         mainapp.File.file_name = "__pytextSavePreset__"

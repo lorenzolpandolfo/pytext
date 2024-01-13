@@ -23,7 +23,7 @@ class File():
         return os.getcwd()
     
 
-    def open_local_directory_or_file(self, dir_name:str, textbox, mainapp, gui, updir = False):
+    def open_local_directory_or_file(self, dir_name:str, textbox, mainapp, gui, updir = False, file_just_created:bool = False):
         """Runs when user try to open a file or directory inside the Open LocalDir"""
         fulldir = os.path.join(self.terminal_directory, dir_name)
         fulldir_path_format = os.path.join(self.terminal_directory, dir_name[2:-1])
@@ -45,9 +45,17 @@ class File():
                 except UnicodeDecodeError: return gui.bottom_output_detail.configure(text=f"Invalid file extension ({dir_name})")
             return gui.write_another_file_content(content, file_name=dir_name, auto_insert=True)
         else:
-            return gui.bottom_output_detail.configure(text="Path is not a file or a directory")
+            if file_just_created:
+                self.file_name = mainapp.file_name
+                print(self.get_current_directory())
+                # this update is needed so the GUI is properly created
+                mainapp.root.update()
+                return gui.bottom_current_dir.configure(text=self.get_formatted_to_gui_cur_dir(self.terminal_directory, mainapp.file_name))
+            else:
+                return gui.bottom_output_detail.configure(text="Path is not a file or a directory")
+                
             # print("Path is not a file or a directory. ", fulldir, fulldir_path_format)
-        
+    
 
     def load_local_files_to_open(self, textbox, mainapp, path_to_open:str = "", cursor_pos = "2.0"):
         """Runs when user Opens the current directory"""
@@ -132,7 +140,7 @@ class File():
 
     def create_new_file(self, gui):
         self.file_name = None
-        return gui.write_another_file_content("", file_name=None, auto_insert=True)
+        return gui.write_another_file_content("", file_name="", auto_insert=True)
 
 
     def create_new_directory(self, dir_name:str, textbox, mainapp):
@@ -143,11 +151,13 @@ class File():
     
 
     def insert_new_dir_title(self, gui):
-        newDirTitlepreset = os.path.join(os.getcwd(), "pytext", ".temp", "__pytextNewDirTitle__.txt")
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        os.chdir("..")
+        newDirTitlepreset = os.path.join(os.getcwd(), ".temp", "__pytextNewDirTitle__.txt")
 
         with open(newDirTitlepreset, "r", encoding="utf8") as file:
             content = file.read()
-            gui.write_another_file_content(content, True)
+            gui.write_another_file_content(content, "__pytextNewDirTitle__", True)
             self.file_name = "__pytextNewDirTitle__"
 
 
@@ -155,6 +165,7 @@ class File():
         """ Format correctly to gui the current directory and file """
         if curfile in self.files_to_not_show_in_gui:
             curfile = ""
-
-        formatted_to_gui:str = curdir + f" ({curfile})" if curfile else curdir
+        formatted_to_gui:str = curdir + f" ({curfile})" if curfile != "" else curdir
+        print(formatted_to_gui)
         return formatted_to_gui.replace("\\","/")
+        
