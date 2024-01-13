@@ -71,7 +71,7 @@ class GUI:
         
         texto.tag_remove("realce", "1.0", ctk.END)
         texto.tag_add("realce", inicio_linha, fim_linha)
-        texto.tag_config("realce", background=self.user_config_instance.theme["line_background_color"])
+        texto.tag_config("realce", background=self.current_bg_color)
 
 
     def mover_tela(self, move_to_center = False):
@@ -198,7 +198,7 @@ class GUI:
 
     def create_frames(self):
         # creating left frame
-        self.leftframe = ctk.CTkFrame(self.root)
+        self.leftframe = ctk.CTkFrame(self.root, bg_color="#2b2b2b")
         self.leftframe.grid(row=0, column=0, sticky="ns")
         # peso 0 para não expandir (janela)
         self.root.columnconfigure(0, weight=0)
@@ -216,29 +216,40 @@ class GUI:
 
 
     def create_widgets(self):
+        theme_mode = ctk.get_appearance_mode()
+        themes = {
+            "Dark": "#1d1e1e",
+            "Light": "#f9f9fa",
+            "bgDark": "#2b2b2b",
+            "bgLight": "#DBDBDB"
+        }
+        self.current_bg_color = themes[f"bg{theme_mode}"]
+        self.current_darker_color = themes[theme_mode]
+
         # initializing main text area
         self.main_textarea = CTkEasyTextBox(self.mainframe, wrap=ctk.WORD, font=self.Font.font, height=0)
         self.main_textarea.grid(row=0, column=0, sticky="new", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
         self.main_textarea.grid_rowconfigure(0, weight=1)
-        self.main_textarea.configure(state="disabled", tabs=(self.main_app_instance.Font.font.measure(" ") *self.user_config_instance.config["tab_width"],))
+        self.main_textarea.configure(
+            state="disabled",
+            tabs=(self.main_app_instance.Font.font.measure(" ") *self.user_config_instance.config["tab_width"],),
+            yscrollcommand="",
+            scrollbar_button_color=self.current_darker_color,
+            scrollbar_button_hover_color=self.current_darker_color)
         
-        # escondendo a barra de scroll
-        theme_mode = ctk.get_appearance_mode()
-        themes = {
-            "Dark": "#1d1e1e",
-            "Light": "#f9f9fa"
-        }
-        self.main_textarea.configure(yscrollcommand="", scrollbar_button_color=themes[theme_mode], scrollbar_button_hover_color=themes[theme_mode])
-
 
         # configurando o mainframe
         self.mainframe.columnconfigure(0, weight=1)
         self.mainframe.rowconfigure(0, weight=1)
+        self.mainframe.configure(bg_color=self.current_bg_color)
 
         # configurando o leftframe
         self.leftframe.columnconfigure(0, weight=0)
         self.leftframe.rowconfigure(0, weight=0)
+        self.leftframe.configure(bg_color=self.current_bg_color)
+
+        self.bottomframe.configure(bg_color=self.current_bg_color)
 
         # creating the bottom label
         self.bottom_output_mode = ctk.CTkLabel(self.bottomframe, text=self.main_app_instance.modo, justify="center", font=self.Font.font)

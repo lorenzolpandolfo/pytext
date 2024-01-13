@@ -28,7 +28,7 @@ class CTkEasyTextBox(CTkTextbox):
         scrollbar_button_color: str | tuple[str, str] | None = None,
         scrollbar_button_hover_color: str | tuple[str, str] | None = None,
         font: tuple | CTkFont | None = None,
-        activate_scrollbars: bool = True,
+        activate_scrollbars: bool = False,
         wrap_callable: Callable[..., None] | None = None,
         **kwargs):
 
