@@ -33,6 +33,7 @@ class GUI:
         self.realcar_linha_selecionada()
         self.main_app_instance.File.file_name = file_name
         self.main_app_instance.Counter.atualizar_contador()
+        self.root.update()
         if file_name == "":
             self.bottom_current_dir.configure(text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.terminal_directory,"Unnamed"))
         else: self.bottom_current_dir.configure(text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.terminal_directory, self.main_app_instance.File.file_name))
@@ -52,12 +53,9 @@ class GUI:
                 os.chdir(os.path.dirname(os.path.abspath(__file__)))
                 os.chdir("..")
                 full_language_path = os.path.join(os.getcwd(), "languages", language)
-                print(full_language_path)
                 self.main_textarea.load_syntax_rules(os.path.join(full_language_path, "syntax.json"), os.path.join(full_language_path,"syntax_colors.json"))
                 self.main_textarea.active_syntax_highlighting()
         
-
-
         if auto_insert:
             # ver pq q tem q ter 2 vezes
             self.command_manager_instance.trocar_modo(self.main_app_instance.modo)
@@ -80,7 +78,6 @@ class GUI:
         linha_visivel = int(self.Counter.get_visible_line(self.main_textarea))
         maximo_linhas_total = len(self.Counter.labels)
 
-        #print(maximo_linhas_total)
 
         min = int((maximo_linhas_total / 10) * 3)
         max = int((maximo_linhas_total / 10) * 7)

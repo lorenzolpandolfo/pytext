@@ -27,6 +27,11 @@ def search_command(comando:str, qtd:int, textbox, mainapp, gui):
         case "O":
             return mainapp.File.load_local_files_to_open(textbox, mainapp)
         
+        case "SO" | "so":
+            save(textbox, mainapp, gui)
+            mainapp.root.update()
+            return mainapp.File.load_local_files_to_open(textbox, mainapp)
+        
         case "nf":
             return mainapp.File.create_new_file(gui)
 
@@ -97,7 +102,7 @@ def mover_cursor(pos, qtd, textbox):
 def save(textbox, mainapp, gui):
     
     if mainapp.File.file_name != "":
-        print("FILE NAME: ", mainapp.File.file_name)
+        #print("FILE NAME: ", mainapp.File.file_name)
         # In this case, you're saving the SavePreset file
         if mainapp.File.file_name == "__pytextSavePreset__":
             mainapp.File.file_name = textbox.get("1.0", "1.end")
@@ -108,11 +113,9 @@ def save(textbox, mainapp, gui):
             dir_name = textbox.get("1.0", "1.end")
             return mainapp.File.create_new_directory(dir_name, textbox, mainapp)
 
-
-            
         else:
             # Get all the content in this current file
-            content = textbox.get("1.0", ctk.END)
+            content = textbox.get("1.0", "end-1c")
             gui.buffer_content = content
 
         full_path = os.path.join(mainapp.File.terminal_directory, mainapp.File.file_name)

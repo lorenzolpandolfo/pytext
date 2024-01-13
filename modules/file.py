@@ -26,7 +26,7 @@ class File():
     def open_local_directory_or_file(self, dir_name:str, textbox, mainapp, gui, updir = False, file_just_created:bool = False):
         """Runs when user try to open a file or directory inside the Open LocalDir"""
         fulldir = os.path.join(self.terminal_directory, dir_name)
-        fulldir_path_format = os.path.join(self.terminal_directory, dir_name[2:-1])
+        fulldir_path_format = os.path.join(self.terminal_directory, dir_name[2:-1]) if len(dir_name) > 3 else fulldir
 
         # if user is trying to open a up directory (..)
         if updir:
