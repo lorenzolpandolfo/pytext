@@ -2,6 +2,7 @@
 import customtkinter as ctk
 from modules import shortcuts
 import re
+import teste as teste
 
 
 

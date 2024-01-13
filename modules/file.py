@@ -88,7 +88,7 @@ class File():
             # insert the current terminal directory in the first line
             textbox.insert(f"1.0", f"{current_terminal_directory}\n")
             textbox.tag_add("curdir", "1.0", "1.end")
-            textbox.tag_config("curdir", foreground="green")
+            textbox.tag_config("curdir", foreground=mainapp.UserConfig.theme["current_dir_color"])
 
             textbox.configure(state="disabled")
             mainapp.File.file_name = "__pytextLocaldir__"

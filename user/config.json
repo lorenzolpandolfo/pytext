@@ -8,16 +8,12 @@
 		"height" : 749
 	},
 	"font": {
-		"file_name" : "firacode",
-		"family"    : "Fira Code",
-		"size"      : 22,
-		"gui_size"  : 16
+		"tip" : "font size below 25 and gui_size below 19 may cause pytext crashes on start. Try bigger sizes if your pytext is crashing.",
+		"_"	  : "If you want to add a custom font, go to pytext/fonts/ and paste your .ttf file. Then, set the file title in file_name key (without .ttf)",
+
+		"file_name" : "",
+		"family"    : "Consolas",
+		"size"      : 28,
+		"gui_size"  : 19
     	}
 }
-
-
-
-
-
-
-

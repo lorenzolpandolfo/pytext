@@ -2,7 +2,7 @@
 	"line_background_color"	: "#2b2b2b",
 	"dir_color"				: "#05BDDD",
 	"file_color"			: "#C8C6AB",
-	"current_dir_color"		: "#00B999",
+	"current_dir_color"		: "#7ec699",
 	"nonexistent_char_color": "#616060",
-	"line_counter_color"	: "#05BDDD"
+	"line_counter_color"	: "#c586c0"
 }

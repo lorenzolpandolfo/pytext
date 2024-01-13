@@ -2,6 +2,7 @@ import customtkinter as ctk
 import math
 import json
 from modules.CTkEasyTextBox import CTkEasyTextBox
+import os
 
 class GUI:
     def __init__(self, main_app_instance):
@@ -33,6 +34,23 @@ class GUI:
         self.main_app_instance.File.file_name = file_name
         self.bottom_current_dir.configure(text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.terminal_directory, self.main_app_instance.File.file_name))
         self.main_app_instance.Counter.atualizar_contador()
+
+        if "." in file_name:
+            file_extension = file_name.split(".")[1]
+
+            match file_extension:
+                case "py":
+                    language = "Python"
+                case _:
+                    print(f".{file_extension} syntax highlight is not supported yet")
+                    self.main_textarea._syntax_rules_loaded = False
+                    language = False
+
+            if language:
+                full_language_path = os.path.join(self.main_app_instance.File.current_directory, "languages", language)    
+                self.main_textarea.load_syntax_rules(os.path.join(full_language_path, "syntax.json"), os.path.join(full_language_path,"syntax_colors.json"))
+                self.main_textarea.active_syntax_highlighting()
+
 
         if auto_insert:
             # ver pq q tem q ter 2 vezes
@@ -201,7 +219,7 @@ class GUI:
         self.main_textarea.focus_set()
         self.main_textarea.grid_rowconfigure(0, weight=1)
         self.main_textarea.configure(state="disabled", tabs=(self.main_app_instance.Font.font.measure(" ") *self.user_config_instance.config["tab_width"],))
-
+        
         # escondendo a barra de scroll
         theme_mode = ctk.get_appearance_mode()
         themes = {

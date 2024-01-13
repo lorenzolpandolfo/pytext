@@ -1,7 +1,14 @@
-from customtkinter import CTkTextbox, CTkFont
+from customtkinter import CTkTextbox, CTkFont, CTk
 from tkinter import Event, END
 from typing import Callable
 from tkinterdnd2 import *
+
+from json import load as load_json
+from re import finditer, MULTILINE
+from string import printable, whitespace, punctuation
+from customtkinter import set_appearance_mode
+
+import os
 
 # Standard Solution. Handles all interections well.
 
@@ -37,6 +44,8 @@ class CTkEasyTextBox(CTkTextbox):
         # Adding character validation by default
         # Ao ativar aqui, ele confere se a linha atual selecionada é wrapped
         # self.bind("<Key>", lambda _: self._handle_pressed_button())
+
+        
 
     def getCursoredExtremes(self) -> (str, str):
         first_index = self.index("insert linestart")
@@ -126,3 +135,159 @@ class CTkEasyTextBox(CTkTextbox):
                 self.insert(f"1.0", self.openned_file.read())
 
         except FileNotFoundError: pass
+
+
+    # Syntax highlight methods
+
+# Declaring indicating variables
+        self._groups: dict              = None
+        self._colors: dict              = None
+        self._syntax_rules_loaded: bool = False
+        self._boundary_chars: list      = None
+
+    def _active_syntax_highlighting(self):
+        # Binding key stroke event
+        self.bind("<KeyRelease>",
+                  lambda _: self.after(2, self._highlight_syntax))
+        
+    def _get_number_indices(self, string: str) -> list[tuple[int, int]]:
+        pattern = r'\b\d+\.\d+|\b\d+\b|\.\d+'  # Regular expression for matching integers and floats
+        matches = finditer(pattern, string)
+
+        indices = []
+        for match in matches:
+            indices.append((match.start(), match.end()))
+
+        return indices
+    
+    def _get_quoted_text_indices(self, string) -> list[tuple[int, int]]:
+        pattern = r'(\'\'\'|\"\"\")([\s\S]*?)\1|(\'|\")([\s\S]*?)\3'  # Regular expression for matching quoted text
+        matches = finditer(pattern, string)
+
+        indices = []
+        for match in matches:
+            start = match.start()
+            end = match.end()
+            indices.append((start, end))
+
+        return indices
+    
+    def _get_commented_text_indices(self, string) -> list[tuple[int, int]]:
+        # Regular expression for matching Python comments
+        pattern = r'#.*?$|(\'\'\'|\"\"\")([\s\S]*?)\1'
+
+        matches = finditer(pattern, string, MULTILINE)
+
+        indices = []
+        for match in matches:
+            start = match.start()
+            end = match.end()
+            indices.append((start, end))
+
+        return indices
+
+    def _highlight_keywords(self):
+        for group, values in self._groups.items():
+            for value in values:
+                for occurance in self.search_all(value, exact=False if group == "operators" else True):
+                    index_start = occurance[0]
+                    index_end = occurance[1]
+
+                    # Applying the color tag
+                    self.tag_add(group, index_start, index_end)
+    
+    def _highlight_numbers(self):
+        for row, line in enumerate(self.get("1.0", "end").splitlines(), start=1):
+            for occurance in self._get_number_indices(line):
+                start_index = f"{row}.{occurance[0]}"
+                last_index  = f"{row}.{occurance[1]}"
+            
+                # Applying the color tag
+                self.tag_add("numbers", start_index, last_index)
+            
+    def _highlight_comments(self):
+        for row, line in enumerate(self.get("1.0", "end").splitlines(), start=1):
+            for occurance in self._get_commented_text_indices(line):
+                start_index = f"{row}.{occurance[0]}"
+                last_index  = f"{row}.{occurance[1]}"
+            
+                # Applying the color tag
+                self.tag_add("comments", start_index, last_index)
+
+    def _highlight_strings(self):
+        for row, line in enumerate(self.get("1.0", "end").splitlines(), start=1):
+            for occurance in self._get_quoted_text_indices(line):
+                start_index = f"{row}.{occurance[0]}"
+                last_index  = f"{row}.{occurance[1]}"
+            
+                # Applying the color tag
+                self.tag_add("strings", start_index, last_index)
+    
+    def _remove_existing_colors(self):
+        # Deleting highlighting tags
+        for group, _ in self._colors.items():
+            self.tag_remove(group, "1.0", "end")
+
+    def _highlight_syntax(self):
+        # Removing all existing colors
+        self._remove_existing_colors()
+
+        # Highlighting new entries
+        self._highlight_keywords()
+        self._highlight_numbers()
+        self._highlight_comments()
+        self._highlight_strings()
+
+    def _check_boundaries(self, index_start: str, index_end: str):
+        before_char = self.get(index_start + " -1c") if index_start.split(".")[1] != "0" else "\n"
+        after_char = self.get(index_end)
+
+        if (before_char not in self._boundary_chars) and (after_char not in self._boundary_chars):
+            return True
+        else:
+            return False
+
+    def search_all(self, word: str, exact: bool = True) -> list[tuple[int, int]]:
+        """Returns all occurance indices of the word."""
+        word_length: int   = len(word)
+        initial_index: str = "1.0"
+        matches: list      = []
+
+        while match:= self.search(word, initial_index, stopindex="end"):
+            row, column = match.split(".")
+            last_index  = f"{row}.{int(column) + word_length}"
+            initial_index = last_index
+
+            if exact:   # Prevents substring from detection
+                if not self._check_boundaries(match, last_index):
+                    continue
+
+            matches.append((match, last_index))
+
+        
+        return matches
+    
+    def load_syntax_rules(self, group_file: str, color_file: str):
+        with open(group_file, "r") as group:
+            with open(color_file, "r") as colors:
+                self._groups = load_json(group)
+                self._colors = load_json(colors)
+        
+        # Creating highlighting tags
+        for group, color in self._colors.items():                   # This will set colors of all the syntax
+            self.tag_config(group, foreground=color)
+
+        # Loading boundary characters
+        self._boundary_chars = [char for char in printable 
+                                if char not in (whitespace + punctuation)]
+
+        # Allow following at the boundary
+        self._boundary_chars.extend(["_"])
+
+        self._syntax_rules_loaded = True
+
+    def active_syntax_highlighting(self):
+        if not self._syntax_rules_loaded:
+            raise LookupError("Please provide syntax rule files.")
+        else:
+            self._active_syntax_highlighting()
