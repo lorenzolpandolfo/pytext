@@ -69,11 +69,60 @@ class CommandManager:
 
 
     def tecla_pressionada(self, event):
+        
         self.gui.realcar_linha_selecionada(self.gui)
         tecla = event.keysym
 
         if self.main_app_instance.modo == "view":
             comando = self.bottom_command_output.get("1.0", "end-1c")
+
+            # auto select files in directory viewer with the event char
+            if self.main_app_instance.File.file_name == "__pytextLocaldir__" and event.char.isalpha() and str(self.gui.main_textarea) in str(self.root.focus_get()):
+                content = self.gui.main_textarea.get("1.0", ctk.END).splitlines()
+                for i, line in enumerate(content):
+                    if "▼ " in line: line = line.replace("▼ ", "")
+                
+                    linha_atual = int(self.gui.main_textarea.index(ctk.INSERT).split(".")[0])
+                    current_line = self.gui.main_textarea.get(ctk.INSERT+" linestart", ctk.INSERT+" lineend")
+                    if "▼ " in current_line: current_line = current_line.replace("▼ ", "")
+                    
+                    if event.char == current_line[0]:
+                        max_linhas = self.gui.obter_numero_de_linhas_e_colunas()[0]
+
+                        # if there is a next line
+                        if int(linha_atual) + 1 <= max_linhas:
+                            next_line = self.gui.main_textarea.get(f"{int(linha_atual) + 1}.0 linestart", f"{int(linha_atual) + 1}.0 lineend").replace("▼ ", "")
+                            previous_line = self.gui.main_textarea.get(f"{int(linha_atual) - 1}.0 linestart", f"{int(linha_atual) - 1}.0 lineend").replace("▼ ", "")
+                        
+                            if next_line[0] == event.char:
+                                position = int(linha_atual) + 1 if int(linha_atual) + 1 <= max_linhas else int(linha_atual) - 1
+                            elif previous_line[0] == event.char:
+                                position = self.first_occurrence
+                            else:
+                                self.gui.bottom_output_detail.configure(text=f"no other file starting with {event.char}")
+                                break
+                        else: position = self.first_occurrence
+
+                        self.gui.main_textarea.mark_set(ctk.INSERT, f"{position}.0") 
+                        self.gui.mover_tela(move_to_center=True)
+                        self.Counter.atualizar_contador()
+                        self.gui.realcar_linha_selecionada()
+                        self.gui.bottom_output_detail.configure(text="")
+                        break
+
+                    if line[0] == event.char:
+                        # saving the first occurrence of the char pressed
+                        self.first_occurrence = f"{i + 1}"
+                        self.gui.main_textarea.mark_set(ctk.INSERT, f"{i + 1}.0")
+                        self.gui.mover_tela(move_to_center=True)
+                        self.Counter.atualizar_contador()
+                        self.gui.realcar_linha_selecionada()
+                        self.gui.bottom_output_detail.configure(text="")
+                        break
+
+                    if i == len(content) - 1: self.gui.bottom_output_detail.configure(text=f"no file starting with {event.char}")
+
+
             
             # Caso não haja comandos e aperte :
             if comando == "":
