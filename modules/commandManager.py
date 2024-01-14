@@ -28,7 +28,19 @@ class CommandManager:
         # Atualizar as labels para ajustar na resolução
         self.root.bind("<Prior>", lambda e          : self.gui.update_labels_to_current_resolution(e))
         self.root.bind("<Configure>", lambda e      : self.gui.adjust_widgets_to_resolution(e))
+        self.root.bind("<<Undo>>", lambda _      : self.update_gui_to_current_text("text undo loaded to last separator"))
+        self.root.bind("<<Redo>>", lambda _      : self.update_gui_to_current_text("text redo loaded to last separator"))
+        self.root.bind("<<Paste>>", lambda _      : self.update_gui_to_current_text("paste event"))
+        self.root.bind("<<Cut>>", lambda _      : self.update_gui_to_current_text("cut event"))
         self.maintext.bind("<MouseWheel>", lambda _ : "break")
+
+
+    def update_gui_to_current_text(self, output_detail:str=""):
+        self.root.update()
+        self.gui.mover_tela(move_to_center=True)
+        self.Counter.atualizar_contador()
+        self.gui.realcar_linha_selecionada()
+        if output_detail != "": self.gui.bottom_output_detail.configure(text=output_detail)
 
 
     def escape_deal(self):
@@ -104,20 +116,14 @@ class CommandManager:
                         else: position = self.first_occurrence
 
                         self.gui.main_textarea.mark_set(ctk.INSERT, f"{position}.0") 
-                        self.gui.mover_tela(move_to_center=True)
-                        self.Counter.atualizar_contador()
-                        self.gui.realcar_linha_selecionada()
-                        self.gui.bottom_output_detail.configure(text="")
+                        self.update_gui_to_current_text("")
                         break
 
                     if line[0] == event.char:
                         # saving the first occurrence of the char pressed
                         self.first_occurrence = f"{i + 1}"
                         self.gui.main_textarea.mark_set(ctk.INSERT, f"{i + 1}.0")
-                        self.gui.mover_tela(move_to_center=True)
-                        self.Counter.atualizar_contador()
-                        self.gui.realcar_linha_selecionada()
-                        self.gui.bottom_output_detail.configure(text="")
+                        self.update_gui_to_current_text("")
                         break
 
                     if i == len(content) - 1: self.gui.bottom_output_detail.configure(text=f"no file starting with {event.char}")
@@ -159,7 +165,21 @@ class CommandManager:
 
         elif self.main_app_instance.modo == "insert":
             # checa se é um delimitador
-            self.user_config_instance.check_delimiter_chars(event, self.maintext)        
+            self.user_config_instance.check_delimiter_chars(event, self.maintext)    
+
+            caracteres_e_situacoes_em_python = [
+                ' ', '.', ','
+                '(', ')', '[', ']', '{', '}',
+                ':', ',',
+                "'", '"',
+                '+', '-', '*', '/', '\\', '%',
+                '<',  '>', 
+                '=',
+            ]
+
+            if event.char in caracteres_e_situacoes_em_python:
+                self.gui.main_textarea.edit_separator()
+                print("separador adicionado ", event.char)
 
             match tecla:
                 case "Up" | "Down" | "Left" | "Right" | "BackSpace" | "Button-1":
