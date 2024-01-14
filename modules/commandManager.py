@@ -166,8 +166,8 @@ class CommandManager:
         elif self.main_app_instance.modo == "insert":
             # checa se é um delimitador
             self.user_config_instance.check_delimiter_chars(event, self.maintext)    
-
             caracteres_e_situacoes_em_python = [
+                '\r',
                 ' ', '.', ','
                 '(', ')', '[', ']', '{', '}',
                 ':', ',',

@@ -100,6 +100,8 @@ class File():
 
             textbox.configure(state="disabled")
             mainapp.File.file_name = "__pytextLocaldir__"
+            mainapp.GUI.main_textarea.edit_reset()
+
             # Saving the current terminal directory after it sucessfully opens
             self.terminal_directory = current_terminal_directory
 

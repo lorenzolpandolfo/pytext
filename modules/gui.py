@@ -24,6 +24,7 @@ class GUI:
 
 
     def write_another_file_content(self, content:str, file_name:str, auto_insert:bool = False):
+        self.main_textarea.edit_reset()
         self.main_app_instance.File.pos_per_dir.append(self.main_textarea.index(ctk.INSERT))
         self.main_textarea.configure(state="normal")
         self.main_textarea.delete("1.0", "end")

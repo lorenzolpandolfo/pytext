@@ -12,7 +12,7 @@ from modules.font           import Font
 from modules.file           import File
 
 class MainApp:
-    def __init__(self, root, file_name = None):
+    def __init__(self, root, file_name = ""):
         self.file_name = file_name
         self.root = root
         self.modo = "view"
@@ -20,7 +20,7 @@ class MainApp:
         self.setup_instances()
         self.init_gui()
         self.init_command_manager()
-        if self.file_name:
+        if self.file_name != "":
             self.File.open_local_directory_or_file(self.file_name, self.GUI.main_textarea, self, self.GUI, False, True)
         else:
             # update to make sure gui is properly created before changing text 
