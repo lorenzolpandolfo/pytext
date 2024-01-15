@@ -2,6 +2,7 @@ import customtkinter as ctk
 import math
 import json
 from modules.CTkEasyTextBox import CTkEasyTextBox
+from modules.localSuggestion import LocalSuggestion
 import os
 
 class GUI:
@@ -279,7 +280,7 @@ class GUI:
         self.current_darker_color = themes[theme_mode]
 
         # initializing main text area
-        self.main_textarea = CTkEasyTextBox(self.mainframe, wrap=ctk.WORD, font=self.Font.font, height=0, undo=True, maxundo=-1, autoseparators=False)
+        self.main_textarea = LocalSuggestion(self.mainframe, wrap=ctk.WORD, font=self.Font.font, height=0, undo=True, maxundo=-1, autoseparators=False)
         self.main_textarea.grid(row=0, column=0, sticky="new", padx=10, pady=(20, 10))
         self.main_textarea.focus_set()
         self.main_textarea.grid_rowconfigure(0, weight=1)
