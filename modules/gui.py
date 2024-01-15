@@ -23,20 +23,47 @@ class GUI:
         self.user_config_instance = user_config_instance
 
 
+    def adicionar_linha_com_tab(self, text_widget, extra_line = False):
+        cursor_pos = text_widget.index(ctk.INSERT)
+
+        numero_linha = int(cursor_pos.split('.')[0])
+        
+        conteudo_linha_anterior = text_widget.get(f"{numero_linha-1}.0", f"{numero_linha - 1}.end")
+        qtd_espacamentos = conteudo_linha_anterior.count("\t") + 1
+
+        # Calcula a posição do início da próxima linha
+        posicao_inicio_proxima_linha = f"{numero_linha}.0"
+
+        if extra_line:
+            # insert a new line below the current line
+            text_widget.insert(posicao_inicio_proxima_linha, '\n')
+
+        # set the cursor to the new line
+        nova_posicao_cursor = f"{numero_linha}.0"
+
+        # add a \t to the new line
+        text_widget.insert(nova_posicao_cursor, '\t'*qtd_espacamentos)
+        text_widget.mark_set(ctk.INSERT, nova_posicao_cursor.split(".")[0] + ".end")
+
+        linha_2 = f"{int(nova_posicao_cursor.split('.')[0]) + 1}.0" 
+        text_widget.insert(linha_2, '\t'*int(qtd_espacamentos - 1))
+        self.realcar_linha_selecionada()
+
+
     def write_another_file_content(self, content:str, file_name:str, auto_insert:bool = False):
-        self.main_app_instance.File.pos_per_dir.append(self.main_textarea.index(ctk.INSERT))
+        self.main_app_instance.FileManager.pos_per_dir.append(self.main_textarea.index(ctk.INSERT))
         self.main_textarea.configure(state="normal")
         self.main_textarea.delete("1.0", "end")
         self.main_textarea.insert(ctk.END, content)
         self.main_textarea.configure(state="disabled")
         self.main_textarea.mark_set(ctk.INSERT, "1.0")
         self.realcar_linha_selecionada()
-        self.main_app_instance.File.file_name = file_name
+        self.main_app_instance.FileManager.file_name = file_name
         self.main_app_instance.Counter.atualizar_contador()
 
         self.root.update()
-        _file_name = "(Untitled)" if file_name == "" else self.main_app_instance.File.file_name
-        self.bottom_current_dir.configure(text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.terminal_directory,_file_name))
+        _file_name = "(Untitled)" if file_name == "" else self.main_app_instance.FileManager.file_name
+        self.bottom_current_dir.configure(text=self.main_app_instance.FileManager.get_formatted_to_gui_cur_dir(self.main_app_instance.FileManager.terminal_directory,_file_name))
 
         if "." in file_name:
             file_extension = file_name.split(".")[1]
@@ -63,6 +90,22 @@ class GUI:
 
         self.main_textarea.edit_reset()
 
+    
+    def deletar_linha(final: int, textbox):
+        inicio = f"{str(textbox.index(ctk.INSERT)).split('.')[0]}.0"
+        
+        final = str(final + float(inicio) + 1)
+
+        textbox.configure(state="normal")
+        textbox.delete(inicio, final)
+        textbox.configure(state="disabled")
+
+        final = final.replace(".0", "")
+        inicio = inicio.replace(".0", "")
+
+        final = int(final) - int(inicio) - 1
+        return f"{final} linhas apagadas".replace("0", "1")
+    
 
     def realcar_linha_selecionada(self, *args):
         texto = self.main_textarea
@@ -73,6 +116,14 @@ class GUI:
         texto.tag_remove("realce", "1.0", ctk.END)
         texto.tag_add("realce", inicio_linha, fim_linha)
         texto.tag_config("realce", background=self.current_bg_color)
+
+
+    def update_gui_to_current_text(self, output_detail:str=""):
+        self.root.update()
+        self.mover_tela(move_to_center=True)
+        self.Counter.atualizar_contador()
+        self.realcar_linha_selecionada()
+        if output_detail != "": self.bottom_output_detail.configure(text=output_detail)
 
 
     def mover_tela(self, move_to_center = False):

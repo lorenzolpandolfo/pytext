@@ -4,7 +4,6 @@ import os
 
 
 class Shortcuts:
-
     @staticmethod
     def search_command(comando:str, qtd:int, textbox, mainapp, gui):
         # Se o qtd não for indicado, vai ser entendido como 0
@@ -13,6 +12,7 @@ class Shortcuts:
 
         match comando:
             case "dd":
+                return Shortcuts.deletar_linha(qtd, textbox)
                 return Shortcuts.deletar_linha(qtd, textbox)
             
             case "w" | "a" | "s" | "d":
@@ -35,18 +35,18 @@ class Shortcuts:
                     return "sair"
             
             case "O":
-                return mainapp.File.load_local_files_to_open(textbox, mainapp)
+                return mainapp.FileManager.load_local_files_to_open(textbox, mainapp)
             
             case "SO" | "so":
                 Shortcuts.save(textbox, mainapp, gui)
                 mainapp.root.update()
-                return mainapp.File.load_local_files_to_open(textbox, mainapp)
+                return mainapp.FileManager.load_local_files_to_open(textbox, mainapp)
             
             case "nf":
-                return mainapp.File.create_new_file(gui)
+                return mainapp.FileManager.create_new_file(gui)
 
             case "nd":
-                mainapp.File.insert_new_dir_title(gui)
+                mainapp.FileManager.insert_new_dir_title(gui)
 
             case _:
                 return "Command not found"
@@ -56,11 +56,11 @@ class Shortcuts:
     def move_to_extremes(up:bool, textbox, mainapp):
         if up:
             textbox.mark_set(ctk.INSERT, "1.0")
-            mainapp.CommandManager.update_gui_to_current_text("cursor moved to the first line")
+            mainapp.GUI.update_gui_to_current_text("cursor moved to the first line")
 
         else:
             textbox.mark_set(ctk.INSERT, ctk.END)
-            mainapp.CommandManager.update_gui_to_current_text("cursor moved to the last line")
+            mainapp.GUI.update_gui_to_current_text("cursor moved to the last line")
 
 
 
@@ -120,34 +120,34 @@ class Shortcuts:
     @staticmethod
     def save(textbox, mainapp, gui):
         
-        if mainapp.File.file_name != "":
-            #print("FILE NAME: ", mainapp.File.file_name)
+        if mainapp.FileManager.file_name != "":
+            #print("FILE NAME: ", mainapp.FileManager.file_name)
             # In this case, you're saving the SavePreset file
-            if mainapp.File.file_name == "__pytextSavePreset__":
-                mainapp.File.file_name = textbox.get("1.0", "1.end")
+            if mainapp.FileManager.file_name == "__pytextSavePreset__":
+                mainapp.FileManager.file_name = textbox.get("1.0", "1.end")
                 content = gui.buffer_content
             
             # Creating a new dir title
-            elif mainapp.File.file_name == "__pytextNewDirTitle__":
+            elif mainapp.FileManager.file_name == "__pytextNewDirTitle__":
                 dir_name = textbox.get("1.0", "1.end")
-                return mainapp.File.create_new_directory(dir_name, textbox, mainapp)
+                return mainapp.FileManager.create_new_directory(dir_name, textbox, mainapp)
 
             else:
                 # Get all the content in this current file
                 content = textbox.get("1.0", "end-1c")
                 gui.buffer_content = content
 
-            full_path = os.path.join(mainapp.File.terminal_directory, mainapp.File.file_name)
+            full_path = os.path.join(mainapp.FileManager.terminal_directory, mainapp.FileManager.file_name)
 
             with open(full_path, "w", encoding="utf8") as new_file:
                 new_file.write(content)
 
                 # check if you just added a title to a non-title file
-                if mainapp.File.file_name == textbox.get("1.0", "1.end"):
+                if mainapp.FileManager.file_name == textbox.get("1.0", "1.end"):
                     # Loading the old file 
                     gui.write_another_file_content(gui.buffer_content, file_name=textbox.get("1.0", "1.end"))
 
-                return f"{mainapp.File.file_name} saved"
+                return f"{mainapp.FileManager.file_name} saved"
 
         # this runs when you save a file that doesn't have a title yet
         else:
@@ -162,4 +162,4 @@ class Shortcuts:
                 content = savepresetfile.read()
                 gui.write_another_file_content(content, "", True)
             
-            mainapp.File.file_name = "__pytextSavePreset__"
+            mainapp.FileManager.file_name = "__pytextSavePreset__"

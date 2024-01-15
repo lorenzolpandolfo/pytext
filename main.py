@@ -9,28 +9,27 @@ from modules.gui            import GUI
 from modules.userConfig     import UserConfig
 from modules.counter        import Counter
 from modules.font           import Font
-from modules.file           import File
+from modules.fileManager    import FileManager
 
-class MainApp:
+class MainApp():
     def __init__(self, root, file_name = ""):
-        self.file_name = file_name
         self.root = root
         self.modo = "view"
 
-        self.setup_instances()
+        self.setup_instances(file_name)
         self.init_gui()
         self.init_command_manager()
-        if self.file_name != "":
-            self.File.open_local_directory_or_file(self.file_name, self.GUI.main_textarea, self, self.GUI, False, True)
+        if file_name != "":
+            self.FileManager.open_local_directory_or_file(file_name, self.GUI.main_textarea, self, self.GUI, False, True)
         else:
             # update to make sure gui is properly created before changing text 
             self.root.update()
             self.GUI.bottom_current_dir.configure(self.GUI.bottomframe, text="Welcome to The Pytext Editor!")
         self.Counter.atualizar_contador()
 
-    def setup_instances(self):
+    def setup_instances(self, file_name):
         # loading instances from another classes
-        self.File           = File(self.file_name, os.getcwd())
+        self.FileManager    = FileManager(file_name, os.getcwd())
         self.UserConfig     = UserConfig(self)
         self.Font           = Font(self)
         self.Counter        = Counter(self)

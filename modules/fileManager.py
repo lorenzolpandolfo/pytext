@@ -2,7 +2,7 @@ import os
 import customtkinter as ctk
 from time import sleep
 
-class File():
+class FileManager():
     def __init__(self, file_name, terminal_directory):
         self.current_directory = self.get_current_directory()
         self.file_name = file_name
@@ -99,7 +99,7 @@ class File():
             textbox.tag_config("curdir", foreground=mainapp.UserConfig.theme["current_dir_color"])
 
             textbox.configure(state="disabled")
-            mainapp.File.file_name = "__pytextLocaldir__"
+            mainapp.FileManager.file_name = "__pytextLocaldir__"
             mainapp.GUI.main_textarea.edit_reset()
 
             # Saving the current terminal directory after it sucessfully opens
@@ -131,6 +131,7 @@ class File():
             mainapp.Counter.atualizar_contador()
 
         except PermissionError:
+            return 1
             return mainapp.GUI.bottom_output_detail.configure(text="Pytext doesn't have permission to open this file")
             # print("Pytext doesn't have permission to open this file: ", path_to_open)
         

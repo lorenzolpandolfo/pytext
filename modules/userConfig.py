@@ -7,7 +7,7 @@ class UserConfig:
     def __init__(self, mainApp):
         self.main_app_instance = mainApp
         self.root = mainApp.root
-        self.file = mainApp.File
+        self.file = mainApp.FileManager
         self.load()
 
 
@@ -22,7 +22,7 @@ class UserConfig:
         # moving to pytext directory
         os.chdir("..")
         # moving to user directory
-        os.chdir(os.path.join(os.curdir, "user"))
+        os.chdir("user")
 
         with open("config.json", "r", encoding="utf8") as configFile:
             self.config = json.load(configFile)

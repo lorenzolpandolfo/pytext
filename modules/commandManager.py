@@ -28,26 +28,18 @@ class CommandManager:
         # Atualizar as labels para ajustar na resolução
         self.root.bind("<Prior>", lambda e          : self.gui.update_labels_to_current_resolution(e))
         self.root.bind("<Configure>", lambda e      : self.gui.adjust_widgets_to_resolution(e))
-        self.root.bind("<<Undo>>", lambda _      : self.update_gui_to_current_text("text undo loaded to last separator"))
-        self.root.bind("<<Redo>>", lambda _      : self.update_gui_to_current_text("text redo loaded to last separator"))
-        self.root.bind("<<Paste>>", lambda _      : self.update_gui_to_current_text("paste event"))
-        self.root.bind("<<Cut>>", lambda _      : self.update_gui_to_current_text("cut event"))
+        self.root.bind("<<Undo>>", lambda _      : self.gui.update_gui_to_current_text("text undo loaded to last separator"))
+        self.root.bind("<<Redo>>", lambda _      : self.gui.update_gui_to_current_text("text redo loaded to last separator"))
+        self.root.bind("<<Paste>>", lambda _      : self.gui.update_gui_to_current_text("paste event"))
+        self.root.bind("<<Cut>>", lambda _      : self.gui.update_gui_to_current_text("cut event"))
         self.maintext.bind("<MouseWheel>", lambda _ : "break")
-
-
-    def update_gui_to_current_text(self, output_detail:str=""):
-        self.root.update()
-        self.gui.mover_tela(move_to_center=True)
-        self.Counter.atualizar_contador()
-        self.gui.realcar_linha_selecionada()
-        if output_detail != "": self.gui.bottom_output_detail.configure(text=output_detail)
 
 
     def escape_deal(self):
         # if you're in a localdir Open file
-        if self.main_app_instance.File.file_name == "__pytextLocaldir__":
-            updir = self.main_app_instance.File.get_up_directory()
-            self.main_app_instance.File.open_local_directory_or_file(updir, self.maintext, self.main_app_instance, self.gui, updir = True)
+        if self.main_app_instance.FileManager.file_name == "__pytextLocaldir__":
+            updir = self.main_app_instance.FileManager.get_up_directory()
+            self.main_app_instance.FileManager.open_local_directory_or_file(updir, self.maintext, self.main_app_instance, self.gui, updir = True)
         
         else:
             self.trocar_modo(self.main_app_instance.modo)
@@ -89,7 +81,7 @@ class CommandManager:
             comando = self.bottom_command_output.get("1.0", "end-1c")
 
             # auto select files in directory viewer with the event char
-            if self.main_app_instance.File.file_name == "__pytextLocaldir__" and event.char.isalpha() and str(self.gui.main_textarea) in str(self.root.focus_get()):
+            if self.main_app_instance.FileManager.file_name == "__pytextLocaldir__" and event.char.isalpha() and str(self.gui.main_textarea) in str(self.root.focus_get()):
                 content = self.gui.main_textarea.get("1.0", ctk.END).splitlines()
                 for i, line in enumerate(content):
                     if "▼ " in line: line = line.replace("▼ ", "")
@@ -116,14 +108,14 @@ class CommandManager:
                         else: position = self.first_occurrence
 
                         self.gui.main_textarea.mark_set(ctk.INSERT, f"{position}.0") 
-                        self.update_gui_to_current_text("")
+                        self.gui.update_gui_to_current_text("")
                         break
 
                     if line[0] == event.char:
                         # saving the first occurrence of the char pressed
                         self.first_occurrence = f"{i + 1}"
                         self.gui.main_textarea.mark_set(ctk.INSERT, f"{i + 1}.0")
-                        self.update_gui_to_current_text("")
+                        self.gui.update_gui_to_current_text("")
                         break
 
                     if i == len(content) - 1: self.gui.bottom_output_detail.configure(text=f"no file starting with {event.char}")
@@ -137,16 +129,16 @@ class CommandManager:
 
 
                 elif tecla == "Return":
-                    if self.main_app_instance.File.file_name == "__pytextLocaldir__":
+                    if self.main_app_instance.FileManager.file_name == "__pytextLocaldir__":
                         posicao_linha_atual = self.gui.main_textarea.index(ctk.INSERT).split('.')[0]
                         conteudo_linha_atual = self.gui.main_textarea.get(f"{posicao_linha_atual}.0", f"{posicao_linha_atual}.end")
-                        self.main_app_instance.File.open_local_directory_or_file(conteudo_linha_atual, self.maintext, self.main_app_instance, self.gui)
+                        self.main_app_instance.FileManager.open_local_directory_or_file(conteudo_linha_atual, self.maintext, self.main_app_instance, self.gui)
                     return
                 
                 else:
                     match tecla:
                         case "i":
-                            if not self.main_app_instance.File.file_name == "__pytextLocaldir__":
+                            if not self.main_app_instance.FileManager.file_name == "__pytextLocaldir__":
                                 return self.trocar_modo(self.main_app_instance.modo)
                         
                         case "Up" | "Down" | "Left" | "Right" | "Return" | "BackSpace" | "Button-1":
@@ -200,10 +192,8 @@ class CommandManager:
         # separando o comando em partes: numero de vezes a rodar e o comando
         def extrair_numeros(texto):
             numeros = re.findall(r'\d+', texto)
-            if numeros:
-                return int(''.join(numeros))
-            else:
-                return 0
+            if not numeros: return 0
+            return int(''.join(numeros))
 
         comando_sem_numeros = re.sub(r'\d', '', comando)
         numeros = extrair_numeros(comando)
