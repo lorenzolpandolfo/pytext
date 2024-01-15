@@ -34,10 +34,10 @@ class GUI:
         self.realcar_linha_selecionada()
         self.main_app_instance.File.file_name = file_name
         self.main_app_instance.Counter.atualizar_contador()
+
         self.root.update()
-        if file_name == "":
-            self.bottom_current_dir.configure(text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.terminal_directory,"Unnamed"))
-        else: self.bottom_current_dir.configure(text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.terminal_directory, self.main_app_instance.File.file_name))
+        _file_name = "(Untitled)" if file_name == "" else self.main_app_instance.File.file_name
+        self.bottom_current_dir.configure(text=self.main_app_instance.File.get_formatted_to_gui_cur_dir(self.main_app_instance.File.terminal_directory,_file_name))
 
         if "." in file_name:
             file_extension = file_name.split(".")[1]
@@ -47,7 +47,7 @@ class GUI:
                     language = "python"
                 case _:
                     print(f".{file_extension} syntax highlight is not supported yet")
-                    self.main_textarea._syntax_rules_loaded = False
+                    self.main_textarea._deactivate_syntax_highlighting()
                     language = False
 
             if language:
@@ -56,7 +56,7 @@ class GUI:
                 full_language_path = os.path.join(os.getcwd(), "languages", language)
                 self.main_textarea.load_syntax_rules(os.path.join(full_language_path, "syntax.json"), os.path.join(full_language_path,"syntax_colors.json"))
                 self.main_textarea.active_syntax_highlighting()
-        
+        else: self.main_app_instance._deactivate_syntax_highlighting()
         if auto_insert:
             # ver pq q tem q ter 2 vezes
             self.command_manager_instance.trocar_modo(self.main_app_instance.modo)

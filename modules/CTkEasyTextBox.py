@@ -149,6 +149,9 @@ class CTkEasyTextBox(CTkTextbox):
         # Binding key stroke event
         self.bind("<KeyRelease>",
                   lambda _: self.after(2, self._highlight_syntax))
+
+    def _deactivate_syntax_highlighting(self):
+        self.unbind("<KeyRelease>")
         
     def _get_number_indices(self, string: str) -> list[tuple[int, int]]:
         pattern = r'\b\d+\.\d+|\b\d+\b|\.\d+'  # Regular expression for matching integers and floats

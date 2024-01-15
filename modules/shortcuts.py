@@ -14,6 +14,12 @@ def search_command(comando:str, qtd:int, textbox, mainapp, gui):
         case "w" | "a" | "s" | "d":
             return mover_cursor(comando, qtd, textbox)
         
+        case "gg":
+            return move_to_extremes(up=True, textbox=textbox, mainapp=mainapp)
+
+        case "bb":
+            return move_to_extremes(up=False, textbox=textbox, mainapp=mainapp)
+        
         case "Q":
             return "sair"
         
@@ -42,6 +48,16 @@ def search_command(comando:str, qtd:int, textbox, mainapp, gui):
             return "Command not found"
 
 
+# gg, bb - move to top / move to bottom
+def move_to_extremes(up:bool, textbox, mainapp):
+    if up:
+        textbox.mark_set(ctk.INSERT, "1.0")
+        mainapp.CommandManager.update_gui_to_current_text("cursor moved to the first line")
+
+    else:
+        textbox.mark_set(ctk.INSERT, ctk.END)
+        mainapp.CommandManager.update_gui_to_current_text("cursor moved to the last line")
+
 
 
 
@@ -65,8 +81,7 @@ def deletar_linha(final: int, textbox):
 # wasd - move through lines
 def mover_cursor(pos, qtd, textbox):
     # caso vc apenas insira o comando de movimento, sem qtd
-    if qtd == 0:
-        qtd = 1
+    if qtd == 0: qtd = 1
     
     linha_atual = int(textbox.index(ctk.INSERT).split(".")[0])
     coluna_atual = int(textbox.index(ctk.INSERT).split(".")[1])
