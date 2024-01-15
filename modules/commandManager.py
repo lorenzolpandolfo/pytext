@@ -168,7 +168,6 @@ class CommandManager:
 
             if event.char in caracteres_e_situacoes_em_python:
                 self.gui.main_textarea.edit_separator()
-                print("separador adicionado ", event.char)
 
             match tecla:
                 case "Up" | "Down" | "Left" | "Right" | "BackSpace" | "Button-1":
