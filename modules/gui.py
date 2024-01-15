@@ -24,7 +24,6 @@ class GUI:
 
 
     def write_another_file_content(self, content:str, file_name:str, auto_insert:bool = False):
-        self.main_textarea.edit_reset()
         self.main_app_instance.File.pos_per_dir.append(self.main_textarea.index(ctk.INSERT))
         self.main_textarea.configure(state="normal")
         self.main_textarea.delete("1.0", "end")
@@ -56,12 +55,13 @@ class GUI:
                 full_language_path = os.path.join(os.getcwd(), "languages", language)
                 self.main_textarea.load_syntax_rules(os.path.join(full_language_path, "syntax.json"), os.path.join(full_language_path,"syntax_colors.json"))
                 self.main_textarea.active_syntax_highlighting()
-        else: self.main_app_instance._deactivate_syntax_highlighting()
+        else: self.main_textarea._deactivate_syntax_highlighting()
         if auto_insert:
             # ver pq q tem q ter 2 vezes
             self.command_manager_instance.trocar_modo(self.main_app_instance.modo)
             self.command_manager_instance.trocar_modo(self.main_app_instance.modo)
 
+        self.main_textarea.edit_reset()
 
 
     def realcar_linha_selecionada(self, *args):

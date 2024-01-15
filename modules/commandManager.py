@@ -1,6 +1,6 @@
 
 import customtkinter as ctk
-from modules import shortcuts
+from modules.shortcuts import Shortcuts
 import re
 import teste as teste
 
@@ -209,7 +209,7 @@ class CommandManager:
         numeros = extrair_numeros(comando)
 
         # tratando o comando de fato
-        command_output = shortcuts.search_command(comando_sem_numeros, numeros, self.maintext, self.main_app_instance, self.gui)
+        command_output = Shortcuts.search_command(comando_sem_numeros, numeros, self.maintext, self.main_app_instance, self.gui)
 
         if command_output == "sair":
             self.root.destroy()
