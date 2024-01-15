@@ -17,6 +17,18 @@ If you add Pytext to PATH, you can launch it in terminal with `pytext <file_name
 - If you want to change Pytext directory, don't forget to edit the `pytext.bat` file after adding the custom directory to PATH.
 - You can edit the `user/config.json` and `user/theme.json` files to change some personal preferences.
 
+# Use
+To change from **view** to **insert** mode, you can use **Escape** or press the **i** key.
+
+In the **view mode**, you can navigate through the document with arrow keys and use the keybinds after focusing the **command input text**, that is located on the right bottom corner.
+To focus the command input text, you can use the **:** key or just press **Tab**.
+In the **insert mode**, you can insert text to the current document and use **Ctrl** and **Alt** shortcuts, such as:
+- **Ctrl + Z**: undo 
+- **Ctrl + Y**: redo 
+- **Ctrl + X**: cut a selected area or current line (cutting the current in progress)
+- **Alt + Up or Down**: move a selected area or current line (in progress)
+- **Alt + Shift + Up or Down**: copy and paste a selected area or current line (in progress)
+
 # Current keybindings
 You can add numbers after or before the keybind to run it more than one time. More keybinds will be added with time, as well as way to
 remap them.
@@ -24,30 +36,28 @@ remap them.
 - **wasd**: move through lines
 - **S**: save file
 - **Q**: quit
-- **O**: **Open**/**On local directory**: List all files and folders in the current directory. You can select them with Return (enter) to navigate through directories and files.
-- **nd**: **New Directory**: Creates a new directory in your local terminal directory.
-- **nf**: **New File**: Creates a new file in your local terminal directory.
+- **SQ, QS, wq, WQ**: save and quit
+- **O**: **On local directory**: List all files and folders in the current directory. You can select them with Return (enter) to navigate through directories and files
+- **SO, so**: save and run On local directory command
+- **nd** (**New Directory**): Creates a new directory in your local terminal directory
+- **nf** (**New File**): Creates a new file in your local terminal directory
+- **gg**: move to the first line
+- **bb**: move to the last line
 
 # Current TO-DO:
-These features are not sure to be in the final version, but they look like a good idea at time.
-- New GUI improvements, showing the current directory and file title
+These features are not sure to be in the final version, but they look like a good idea at time. Features with ~strikethrough~ are already implemented or deprecated.
+- ~New GUI improvements, showing the current directory and file title~
 - Line counter modes:
-  - number
+  - ~number~
   - relativenumber
   - numberelative number
 - A **keybinds.json** file to remap the standard Pytext keybinds.
-- New keybindings, such as:
-   - **gg**: move to the first absolute line
-   - **bb**: move to the last absolute line
 - Add **CTRL +**
-  - **Z**: undo
   - **X**: cut current line
   - **+** and **-**: change font size
-  - **Shift** + **N**: create a new file (maybe useless because of workspaces)
   - **Enter**: if it is a script, run it
 - Add **Alt +**
   - **Arrow Keys**: move current line
   - **Shift + Arrow Keys**: copy and paste current line
 - **Workplaces** from 1 to 10
-- Colors to key words for each programming language. Make the colors custom too!
 - Add a git support to check the repository info
