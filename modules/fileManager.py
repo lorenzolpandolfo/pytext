@@ -11,7 +11,6 @@ class FileManager():
         self.pos_per_dir = []
 
 
-
     def setup_files_to_not_show_in_gui(self):
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         os.chdir("..")
@@ -46,11 +45,10 @@ class FileManager():
             return gui.write_another_file_content(content, file_name=dir_name, auto_insert=True)
         else:
             if file_just_created:
-                self.file_name = mainapp.file_name
                 print(self.get_current_directory())
                 # this update is needed so the GUI is properly created
                 mainapp.root.update()
-                return gui.bottom_current_dir.configure(text=self.get_formatted_to_gui_cur_dir(self.terminal_directory, mainapp.file_name))
+                return gui.bottom_current_dir.configure(text=self.get_formatted_to_gui_cur_dir(self.terminal_directory, self.file_name))
             else:
                 return gui.bottom_output_detail.configure(text="Path is not a file or a directory")
                 
@@ -99,7 +97,7 @@ class FileManager():
             textbox.tag_config("curdir", foreground=mainapp.UserConfig.theme["current_dir_color"])
 
             textbox.configure(state="disabled")
-            mainapp.FileManager.file_name = "__pytextLocaldir__"
+            self.file_name = "__pytextLocaldir__"
             mainapp.GUI.main_textarea.edit_reset()
 
             # Saving the current terminal directory after it sucessfully opens

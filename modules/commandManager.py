@@ -2,9 +2,6 @@
 import customtkinter as ctk
 from modules.shortcuts import Shortcuts
 import re
-import teste as teste
-
-
 
 class CommandManager:
     def __init__(self, main_app_instance):
