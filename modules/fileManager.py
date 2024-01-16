@@ -1,5 +1,6 @@
 import os
 import customtkinter as ctk
+from modules.gitManager import GitManager
 from time import sleep
 
 class FileManager():
@@ -58,10 +59,14 @@ class FileManager():
     def load_local_files_to_open(self, textbox, mainapp, path_to_open:str = "", cursor_pos = "2.0"):
         """Runs when user Opens the current directory"""
         try:
+            branch = ""
             # path_to_open is used to open a custom path
             current_terminal_directory = self.terminal_directory if path_to_open == "" else path_to_open
             files_in_current_dir = os.listdir(current_terminal_directory)
-            
+
+            if ".git" in files_in_current_dir:
+                branch = GitManager.get_current_branch(current_terminal_directory)
+
             componentes_caminho = os.path.normpath(current_terminal_directory).split(os.path.sep)
             upper_dir_count = len(componentes_caminho) - 1
 
@@ -125,7 +130,7 @@ class FileManager():
                     textbox.see("2.0")
                     
             mainapp.GUI.realcar_linha_selecionada()
-            mainapp.GUI.bottom_current_dir.configure(text=self.get_formatted_to_gui_cur_dir(self.terminal_directory, self.file_name))
+            mainapp.GUI.bottom_current_dir.configure(text=self.get_formatted_to_gui_cur_dir(self.terminal_directory, self.file_name, branch))
             mainapp.Counter.atualizar_contador()
 
         except PermissionError:
@@ -162,11 +167,11 @@ class FileManager():
             self.file_name = "__pytextNewDirTitle__"
 
 
-    def get_formatted_to_gui_cur_dir(self, curdir:str, curfile:str):
+    def get_formatted_to_gui_cur_dir(self, curdir:str, curfile:str, branch:str=""):
         """ Format correctly to gui the current directory and file """
         if curfile in self.files_to_not_show_in_gui:
             curfile = ""
         formatted_to_gui:str = curdir + f" ({curfile})" if curfile != "" else curdir
-        print(formatted_to_gui)
+        formatted_to_gui = formatted_to_gui + f" ({branch})" if branch != "" else formatted_to_gui
         return formatted_to_gui.replace("\\","/")
         
