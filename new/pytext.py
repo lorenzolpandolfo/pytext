@@ -4,15 +4,15 @@ class MainApp(ctk.CTk):
 	def __init__(self):
 		super().__init__()
 
+		self.__create_gui__()
+	
+
+	def __create_gui__(self):
 		self.__create_window__()
 		self.__configure_grids__()
 		self.__create_frames__()
-
-		max_lines = self.main_frame.get_number_of_visible_lines()
-		self.left_frame.create_counter(max_lines=max_lines)
-		self.main_frame.set_textbox_height(height=max_lines)
+		self.__create_counter__()
 	
-
 	def __create_window__(self):
 		self.title("The Pytext Editor Refactored")
 		self.geometry("1100x749")
@@ -35,19 +35,32 @@ class MainApp(ctk.CTk):
 		self.left_frame = LeftFrame(self)
 		self.left_frame.grid(row=0, column=0, sticky="ns")
 
+	def __create_counter__(self):
+		max_lines = self.main_frame.get_number_of_visible_lines()
+		self.left_frame.create_counter(max_lines=max_lines)
+		self.main_frame.set_textbox_height(height=max_lines)
+	
 
 class LeftFrame(ctk.CTkFrame):
 	def __init__(self, master):
 		super().__init__(master)
 
-		
+		self.labels = []
+
+
 	def create_counter(self, max_lines:int):
+		"""create the line counter."""
 		for i in range(0,max_lines):
 			pady = (9,0) if i == 0 else (0,0)
-			self.i = ctk.CTkLabel(self, text=i, anchor="e", font=ctk.CTkFont("Consolas", 30))
-			self.i.grid(row=i, column=0, pady=pady)
+			_ = ctk.CTkLabel(self, text=i, anchor="e", font=ctk.CTkFont("Consolas", 30))
+			_.grid(row=i, column=0, pady=pady)
+			self.labels.append(_)
 	
-
+	def delete_counter_labels(self):
+		"""deletes the line counter labels. Destroy the labels and reset the labels list."""
+		for label in self.labels:
+			label.destroy()
+		self.labels = []
 	
 
 class BottomFrame(ctk.CTkFrame):
@@ -73,6 +86,7 @@ class MainFrame(ctk.CTkFrame):
 
 	
 	def get_number_of_visible_lines(self):
+		"""returns the number of possible complete visible lines in screen"""
 		self.update()
 		height = self.winfo_height()
 		line_height = ctk.CTkFont("Consolas", 30).metrics()["linespace"]
@@ -80,6 +94,7 @@ class MainFrame(ctk.CTkFrame):
 
 
 	def set_textbox_height(self, height:int):
+		"""set the main textbox height in lines."""
 		return self.textbox._textbox.configure(height=height)
 
 
