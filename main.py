@@ -2,15 +2,18 @@ import customtkinter as ctk
 import tkinter as tk
 from tklinenums import TkLineNumbers
 
+from modules.UserConfig import UserConfig
+
+
 class MainApp(ctk.CTk):
 	def __init__(self):
 		super().__init__()
-
+		self.__load_user_config__()
 		self.__create_gui__()
 
 	
 	def __load_user_config__(self):
-		pass
+		self.config = UserConfig.get_user_config()
 
 	def __create_gui__(self):
 		self.__create_window__()
@@ -43,12 +46,6 @@ class MainApp(ctk.CTk):
 		self.left_frame.grid(row=0, column=0, sticky="nsew")
 
 
-class UserConfig:
-	@staticmethod
-	def get_user_config(self):
-		pass
-	def __move_to_user_directory__(self, terminal_dir:str):
-		pass
 
 
 class LeftFrame(ctk.CTkFrame):
