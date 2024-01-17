@@ -33,6 +33,7 @@ class Counter:
 
             try:
                 height = self.gui.main_textarea.winfo_height()
+                print("Height: ", height)
                 # antigo e problematico abaixo
                 #line_height = self.gui.main_textarea.dlineinfo("1.0")[3]  # Altura da primeira linha
                 line_height = self.Font.size  # Altura da primeira linha

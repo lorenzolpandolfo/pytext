@@ -4,34 +4,51 @@ class MainApp(ctk.CTk):
 	def __init__(self):
 		super().__init__()
 
-		self.grid_rowconfigure(0, weight=1)
+		self.__create_window__()
+		self.__configure_grids__()
+		self.__create_frames__()
 
-		self.grid_columnconfigure(0, weight=1, uniform="columns", minsize=70)
-		self.grid_columnconfigure(1, weight=20, uniform="columns")
+		max_lines = self.main_frame.get_number_of_visible_lines()
+		self.left_frame.create_counter(max_lines=max_lines)
+		self.main_frame.set_textbox_height(height=max_lines)
+	
 
+	def __create_window__(self):
 		self.title("The Pytext Editor Refactored")
 		self.geometry("1100x749")
 		self.resizable(True, True)
 
+	def __configure_grids__(self):
+		self.grid_rowconfigure(0, weight=1)
+		self.grid_rowconfigure(1, weight=0)
 
-		self.left_frame = LeftFrame(self)
-		self.left_frame.grid(row=0, column=0, sticky="ns")
+		self.grid_columnconfigure(0, weight=0, minsize=60)
+		self.grid_columnconfigure(1, weight=1)
+
+	def __create_frames__(self):
+		self.bottom_frame = BottomFrame(self)
+		self.bottom_frame.grid(row=1, column=0, sticky="we", columnspan=2, rowspan=2)
 
 		self.main_frame = MainFrame(self)
 		self.main_frame.grid(row=0, column=1, sticky="nsew")
 
-		self.bottom_frame = BottomFrame(self)
-		self.bottom_frame.grid(row=1, column=0, sticky="we", columnspan=2, rowspan=2)
+		self.left_frame = LeftFrame(self)
+		self.left_frame.grid(row=0, column=0, sticky="ns")
 
 
 class LeftFrame(ctk.CTkFrame):
 	def __init__(self, master):
 		super().__init__(master)
+
+		
+	def create_counter(self, max_lines:int):
+		for i in range(0,max_lines):
+			pady = (9,0) if i == 0 else (0,0)
+			self.i = ctk.CTkLabel(self, text=i, anchor="e", font=ctk.CTkFont("Consolas", 30))
+			self.i.grid(row=i, column=0, pady=pady)
 	
-		for i in range(0,10):
-			__pady = 10 # if i == 0 else 0
-			self.i = ctk.CTkLabel(self, text=i, pady=(f"{__pady}.0"), font=ctk.CTkFont("Consolas", 30))
-			self.i.grid(row=i, column=0)
+
+	
 
 class BottomFrame(ctk.CTkFrame):
 	def __init__(self, master):
@@ -52,10 +69,20 @@ class MainFrame(ctk.CTkFrame):
 		self.grid_columnconfigure(0, weight=1)
 
 		self.textbox = ctk.CTkTextbox(self, font=ctk.CTkFont("Consolas", 30))
-		self.textbox.grid(row=0, column=0, sticky="nsew")
+		self.textbox.grid(row=0, column=0, sticky="new")
+
+	
+	def get_number_of_visible_lines(self):
+		self.update()
+		height = self.winfo_height()
+		line_height = ctk.CTkFont("Consolas", 30).metrics()["linespace"]
+		return height // line_height
+
+
+	def set_textbox_height(self, height:int):
+		return self.textbox._textbox.configure(height=height)
 
 
 if __name__ == "__main__":
 	app = MainApp()
 	app.mainloop()
-
