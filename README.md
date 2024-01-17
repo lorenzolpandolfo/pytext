@@ -4,6 +4,8 @@ It's being developed on Windows and it may present instabilities on other operat
 The project have a lot of progress to be made and it can be unstable with different screen resolutions too.
 Feel free to open an issue or fork it!
 
+Pytext code is under a total refactor process in the **unstable branch**. Use the main branch if you would like to run Pytext in its stablest version.
+
 # Installation process
 Pytext default directory is inside your user's folder. So, it is recommended that you clone the repository there.
 To correctly install Pytext, follow these steps:
@@ -46,18 +48,22 @@ remap them.
 
 # Current TO-DO:
 These features are not sure to be in the final version, but they look like a good idea at time. Features with ~strikethrough~ are already implemented or deprecated.
-- ~New GUI improvements, showing the current directory and file title~
 - Line counter modes:
   - ~number~
   - relativenumber
   - numberelative number
 - A **keybinds.json** file to remap the standard Pytext keybinds.
+- A keybind to select line(s)
 - Add **CTRL +**
   - **X**: cut current line
   - **+** and **-**: change font size
   - **Enter**: if it is a script, run it
+  - **S**: quick save file
 - Add **Alt +**
   - **Arrow Keys**: move current line
   - **Shift + Arrow Keys**: copy and paste current line
 - **Workplaces** from 1 to 10
-- Add a git support to check the repository info
+- **Improve**
+- - Ctrl + Arrow Keys movement
+- - Better autocomplete text
+- - **Tag optimization:** apply only to visible lines 
