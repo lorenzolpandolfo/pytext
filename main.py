@@ -105,7 +105,9 @@ class Texto(ctk.CTkTextbox):
 
     def __enable_auto_redraw__(self):
         self.bind("<Key>", lambda e: self.after_idle(self.line_counter.redraw), add=True)
-        self.bind("<KeyRelease>", lambda e: self.highlight_all())
+        self.bind("<Key>", lambda e: self.highlight_line())
+        self.bind("<Control-v>", lambda e: self.highlight_all())
+        self.bind("<Prior>", lambda e: self.highlight_all())
     
     
     def highlight_line(self, lexer="python", line_num:str=""):
@@ -124,23 +126,67 @@ class Texto(ctk.CTkTextbox):
         start_col = 0
         for (token, text) in tokens:
             token = str(token)
-            print(token, text)
+            #print(token, text)
             
             end_col = start_col + len(text)
             if token not in ["Token.Text.Whitespace", "Token.Text"]:
+                self.tag_add(token, f"{line_num}.{start_col}", f"{line_num}.{end_col}")
+                #print(f"{line_num}.{start_col}", f"{line_num}.{end_col}")
+                if token.split(".")[1] in a:
+                    self.tag_config(token, foreground=a[token.split(".")[1]])
+            start_col = end_col
+
+
+    def highlight_all(self, lexer="python"):
+        self.update()
+        all = self.get("1.0", "end")
+        num_lines = all.count("\n")
+
+        for i in range(1, num_lines+1):
+            self.highlight_line("python", i)
+        return
+        #for tag in self.tag_names(index=None):
+        #    if tag.startswith("Token"):
+        #        self.tag_remove(tag, "1.0", "end")
+        #        self.tag_delete(tag)
+        #        print(tag, " removida")
+                
+        lexer = get_lexer_by_name(lexer)
+        content = self.get(f"1.0", f"end")
+        tokens = list(pygments.lex(content, lexer))
+        
+        content = content.split("\n")
+
+        start_col = 0
+        for (token, text) in tokens:
+            token = str(token)
+            print(token, text)
+
+            
+            end_col = start_col + len(text)
+            if token not in ["Token.Text.Whitespace", "Token.Text"]:
+                for i, linha in enumerate(content):
+                    if text in linha:
+                        line_num = i + 1
+
+                print(line_num)
                 self.tag_add(token, f"{line_num}.{start_col}", f"{line_num}.{end_col}")
                 print(f"{line_num}.{start_col}", f"{line_num}.{end_col}")
                 if token.split(".")[1] in a:
                     self.tag_config(token, foreground=a[token.split(".")[1]])
             start_col = end_col
 
-    def highlight_all(self, lexer="python"):
-        lines = self.get("1.0", "end")
-        line_offset = lines.count("\n") - lines.lstrip().count("\n")
-        print(1 + line_offset)
-        #start_index = str(self.tk.call(self, "index", f"1.0 + {line_offset} lines"))
 
 
+    def highlight_alla(self, start_line: int | None = None, end_line: int | None = None) -> None:
+        print("area usado")
+        text = self.get(f"1.0", f"end")
+        for token, text in pygments.lex(text, "python"):
+            token = str(token)
+            end_index = self.index(f"{start_index} + {len(text)} indices")
+            if token not in {"Token.Text.Whitespace", "Token.Text"}:
+                self.tag_add(token, start_index, end_index)
+            start_index = end_index
 
 
     def _setup_tags(self):
