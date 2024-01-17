@@ -1,17 +1,24 @@
 import customtkinter as ctk
+import tkinter as tk
+from tklinenums import TkLineNumbers
 
 class MainApp(ctk.CTk):
 	def __init__(self):
 		super().__init__()
 
 		self.__create_gui__()
+		self.update()
+		self.update_idletasks()
+		self.main_frame.__create_textbox__()
+		self.main_frame.textbox.__create_line_counter__(self.left_frame)
+
 	
 
 	def __create_gui__(self):
 		self.__create_window__()
 		self.__configure_grids__()
 		self.__create_frames__()
-		self.__create_counter__()
+		#self.__create_counter__()
 	
 	def __create_window__(self):
 		self.title("The Pytext Editor Refactored")
@@ -33,34 +40,16 @@ class MainApp(ctk.CTk):
 		self.main_frame.grid(row=0, column=1, sticky="nsew")
 
 		self.left_frame = LeftFrame(self)
-		self.left_frame.grid(row=0, column=0, sticky="ns")
+		self.left_frame.grid(row=0, column=0, sticky="nsew")
 
-	def __create_counter__(self):
-		max_lines = self.main_frame.get_number_of_visible_lines()
-		self.left_frame.create_counter(max_lines=max_lines)
-		self.main_frame.set_textbox_height(height=max_lines)
 	
 
 class LeftFrame(ctk.CTkFrame):
 	def __init__(self, master):
 		super().__init__(master)
+		self.grid_rowconfigure(0, weight=1)  # Adicione esta linha para permitir expansão vertical
+		self.grid_columnconfigure(0, weight=1)
 
-		self.labels = []
-
-
-	def create_counter(self, max_lines:int):
-		"""create the line counter."""
-		for i in range(0,max_lines):
-			pady = (9,0) if i == 0 else (0,0)
-			_ = ctk.CTkLabel(self, text=i, anchor="e", font=ctk.CTkFont("Consolas", 30))
-			_.grid(row=i, column=0, pady=pady)
-			self.labels.append(_)
-	
-	def delete_counter_labels(self):
-		"""deletes the line counter labels. Destroy the labels and reset the labels list."""
-		for label in self.labels:
-			label.destroy()
-		self.labels = []
 	
 
 class BottomFrame(ctk.CTkFrame):
@@ -81,21 +70,30 @@ class MainFrame(ctk.CTkFrame):
 		self.grid_rowconfigure(0, weight=1)
 		self.grid_columnconfigure(0, weight=1)
 
-		self.textbox = ctk.CTkTextbox(self, font=ctk.CTkFont("Consolas", 30))
-		self.textbox.grid(row=0, column=0, sticky="new")
 
-	
-	def get_number_of_visible_lines(self):
-		"""returns the number of possible complete visible lines in screen"""
+	def __create_textbox__(self):
 		self.update()
-		height = self.winfo_height()
-		line_height = ctk.CTkFont("Consolas", 30).metrics()["linespace"]
-		return height // line_height
-
+		self.textbox = Texto(self, font=ctk.CTkFont("Consolas", 30))
+		self.textbox.grid(row=0, column=0, sticky="nsew")
 
 	def set_textbox_height(self, height:int):
 		"""set the main textbox height in lines."""
 		return self.textbox._textbox.configure(height=height)
+
+
+class Texto(ctk.CTkTextbox):
+	def __init__(self, master, *args, **kwargs):
+		super().__init__(master, *args, **kwargs)
+
+
+	def __create_line_counter__(self, master):
+		self.update()
+		self.line_counter = TkLineNumbers(master, self, justify="right", colors=("#DCE4EE", "#1D1E1E"), bd=0)
+		self.line_counter.grid(row=0, column=0, sticky="nsew", pady=(6,0))
+		self.__enable_auto_redraw__()
+
+	def __enable_auto_redraw__(self):
+		self.bind("<Key>", lambda e: self.after_idle(self.line_counter.redraw), add=True)
 
 
 if __name__ == "__main__":
