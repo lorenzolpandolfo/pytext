@@ -2,6 +2,11 @@ import customtkinter as ctk
 import tkinter as tk
 from tklinenums import TkLineNumbers
 
+import pygments
+from pygments.lexers import get_lexer_by_name
+from pygments.token import Token
+
+
 from modules.UserConfig import UserConfig
 
 
@@ -85,20 +90,50 @@ class MainFrame(ctk.CTkFrame):
 
 
 class Texto(ctk.CTkTextbox):
-	def __init__(self, master, *args, **kwargs):
-		super().__init__(master, *args, **kwargs)
+    def __init__(self, master, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
 
+        self._lexer = pygments.lexers.PythonLexer
 
-	def __create_line_counter__(self, master):
-		self.update()
-		self.line_counter = TkLineNumbers(master, self, justify="right", colors=("#DCE4EE", "#1D1E1E"), bd=0)
-		self.line_counter.grid(row=0, column=0, sticky="nsew", pady=(6,0))
-		self.__enable_auto_redraw__()
+    def __create_line_counter__(self, master):
+        self.update()
+        self.line_counter = TkLineNumbers(master, self, justify="right", colors=("#DCE4EE", "#1D1E1E"), bd=0)
+        self.line_counter.grid(row=0, column=0, sticky="nsew", pady=(6,0))
+        self.__enable_auto_redraw__()
 
-	def __enable_auto_redraw__(self):
-		self.bind("<Key>", lambda e: self.after_idle(self.line_counter.redraw), add=True)
+    def __enable_auto_redraw__(self):
+        self.bind("<Key>", lambda e: self.after_idle(self.line_counter.redraw), add=True)
+        self.bind("<KeyRelease>", lambda e: self.highlight_line())
+	
+    
+    def highlight_line(self, lexer="python"):
+		
+        for tag in self.tag_names(index=None):
+            if tag.startswith("Token"):
+                self.tag_remove(tag, "1.0", "end")
+				
+        lexer = get_lexer_by_name(lexer)
+        content = self.get("1.0", "end")
+        tokens = list(pygments.lex(content, lexer))
+		
+        start_col = 0
+        for i, (token, text) in enumerate(tokens):
+            token = str(token)
+			
+            end_col = start_col + len(text)
+            if token not in ["Token.Text.Whitespace", "Token.Text"]:
+                print(token)
+                print(self.tag_names())
+                self.tag_add(token, f"{i+1}.{start_col}", f"{i+1}.{end_col}")
+                #self.tag_config(token, foreground="#1c92ba")
+            start_col = end_col
+            self._setup_tags()
+		
+    def _setup_tags(self):
+        for key in self.tag_names():
+            self.tag_config(f"{key}", foreground="#1c92ba")
 
-
+    
 if __name__ == "__main__":
 	app = MainApp()
 	app.mainloop()
