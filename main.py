@@ -1,69 +1,107 @@
 import customtkinter as ctk
-from tkinterdnd2 import TkinterDnD
+import tkinter as tk
+from tklinenums import TkLineNumbers
 
-import sys
-import os
+class MainApp(ctk.CTk):
+	def __init__(self):
+		super().__init__()
 
-from modules.commandManager import CommandManager
-from modules.gui            import GUI
-from modules.userConfig     import UserConfig
-from modules.counter        import Counter
-from modules.font           import Font
-from modules.fileManager    import FileManager
+		self.__create_gui__()
 
-class MainApp():
-    def __init__(self, root, file_name = ""):
-        self.root = root
-        self.modo = "view"
+	
+	def __load_user_config__(self):
+		pass
 
-        self.setup_instances(file_name)
-        self.init_gui()
-        self.init_command_manager()
-        if file_name != "":
-            self.FileManager.open_local_directory_or_file(file_name, self.GUI.main_textarea, self, self.GUI, False, True)
-        else:
-            # update to make sure gui is properly created before changing text 
-            self.root.update()
-            self.GUI.bottom_current_dir.configure(self.GUI.bottomframe, text="Welcome to The Pytext Editor!")
-        self.Counter.atualizar_contador()
+	def __create_gui__(self):
+		self.__create_window__()
+		self.__configure_grids__()
+		self.__create_frames__()
 
-    def setup_instances(self, file_name):
-        # loading instances from another classes
-        self.FileManager    = FileManager(file_name, os.getcwd())
-        self.UserConfig     = UserConfig(self)
-        self.Font           = Font(self)
-        self.Counter        = Counter(self)
-        self.GUI            = GUI(self)
-        self.CommandManager = CommandManager(self)
+		self.main_frame.__create_textbox__()
+		self.main_frame.textbox.__create_line_counter__(self.left_frame)
+	
+	def __create_window__(self):
+		self.title("The Pytext Editor Refactored")
+		self.geometry("1100x749")
+		self.resizable(True, True)
 
-        self.Counter.gui = self.GUI
+	def __configure_grids__(self):
+		self.grid_rowconfigure(0, weight=1)
+		self.grid_rowconfigure(1, weight=0)
 
+		self.grid_columnconfigure(0, weight=0, minsize=60)
+		self.grid_columnconfigure(1, weight=1)
 
-    def init_gui(self):
-        self.GUI.setup(self.CommandManager, self.UserConfig)
-        self.Font.start()
-        self.GUI.start()
+	def __create_frames__(self):
+		self.bottom_frame = BottomFrame(self)
+		self.bottom_frame.grid(row=1, column=0, sticky="we", columnspan=2, rowspan=2)
+
+		self.main_frame = MainFrame(self)
+		self.main_frame.grid(row=0, column=1, sticky="nsew")
+
+		self.left_frame = LeftFrame(self)
+		self.left_frame.grid(row=0, column=0, sticky="nsew")
 
 
-    def init_command_manager(self):
-        self.CommandManager.setup(self.GUI, self.UserConfig, self.Counter)
-        self.UserConfig.setup(self.GUI)
-        self.CommandManager.capture_keybinds()
+class UserConfig:
+	@staticmethod
+	def get_user_config(self):
+		pass
+	def __move_to_user_directory__(self, terminal_dir:str):
+		pass
 
 
-class Root(ctk.CTk, TkinterDnD.DnDWrapper):
-    def __init__(self, *args, **kwargs):
-        ctk.CTk.__init__(self, *args, **kwargs)
-        self.TkdndVersion = TkinterDnD._require(self)
+class LeftFrame(ctk.CTkFrame):
+	def __init__(self, master):
+		super().__init__(master)
+		self.grid_rowconfigure(0, weight=1)
+		self.grid_columnconfigure(0, weight=1)
+	
+
+class BottomFrame(ctk.CTkFrame):
+	def __init__(self, master):
+		super().__init__(master)
+
+		self.mode = ctk.CTkLabel(self, text="Insert", justify="center")
+		self.mode.grid(row=1, column=0)
+
+		self.output = ctk.CTkLabel(self, text="Welcome to Pytext refactored")
+		self.output.grid(row=2, column=0)
 
 
-def check_if_filename():
-    return len(sys.argv) > 1
+class MainFrame(ctk.CTkFrame):
+	def __init__(self, master):
+		super().__init__(master)
+
+		self.grid_rowconfigure(0, weight=1)
+		self.grid_columnconfigure(0, weight=1)
+
+
+	def __create_textbox__(self):
+		self.update()
+		self.textbox = Texto(self, font=ctk.CTkFont("Consolas", 30))
+		self.textbox.grid(row=0, column=0, sticky="nsew")
+
+	def set_textbox_height(self, height:int):
+		"""set the main textbox height in lines."""
+		return self.textbox._textbox.configure(height=height)
+
+
+class Texto(ctk.CTkTextbox):
+	def __init__(self, master, *args, **kwargs):
+		super().__init__(master, *args, **kwargs)
+
+
+	def __create_line_counter__(self, master):
+		self.update()
+		self.line_counter = TkLineNumbers(master, self, justify="right", colors=("#DCE4EE", "#1D1E1E"), bd=0)
+		self.line_counter.grid(row=0, column=0, sticky="nsew", pady=(6,0))
+		self.__enable_auto_redraw__()
+
+	def __enable_auto_redraw__(self):
+		self.bind("<Key>", lambda e: self.after_idle(self.line_counter.redraw), add=True)
 
 
 if __name__ == "__main__":
-    root = Root()
-    if check_if_filename():
-        app = MainApp(root, sys.argv[1])
-    else: app = MainApp(root)
-    root.mainloop()
+	app = MainApp()
+	app.mainloop()
