@@ -1,1 +1,1 @@
-__all__ = ["UserConfig.py"]
+__all__ = ["UserConfig.py", "SyntaxColors.py"]
