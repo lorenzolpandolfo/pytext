@@ -105,7 +105,7 @@ class Texto(ctk.CTkTextbox):
 
     def __enable_auto_redraw__(self):
         self.bind("<Key>", lambda e: self.after_idle(self.line_counter.redraw), add=True)
-        self.bind("<KeyRelease>", lambda e: self.highlight_line())
+        self.bind("<KeyRelease>", lambda e: self.highlight_all())
     
     
     def highlight_line(self, lexer="python", line_num:str=""):
@@ -133,7 +133,16 @@ class Texto(ctk.CTkTextbox):
                 if token.split(".")[1] in a:
                     self.tag_config(token, foreground=a[token.split(".")[1]])
             start_col = end_col
-        
+
+    def highlight_all(self, lexer="python"):
+        lines = self.get("1.0", "end")
+        line_offset = lines.count("\n") - lines.lstrip().count("\n")
+        print(1 + line_offset)
+        #start_index = str(self.tk.call(self, "index", f"1.0 + {line_offset} lines"))
+
+
+
+
     def _setup_tags(self):
         for key in self.tag_names():
             print(key)
