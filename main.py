@@ -99,13 +99,13 @@ class Texto(ctk.CTkTextbox):
 
     def __create_line_counter__(self, master):
         self.update()
-        self.line_counter = TkLineNumbers(master, self, justify="right", colors=("#DCE4EE", "#1D1E1E"), bd=0)
+        self.line_counter = TkLineNumbers(master, self, justify="right", colors=("#e3ba68", "#1D1E1E"),tilde="~", bd=0)
         self.line_counter.grid(row=0, column=0, sticky="nsew", pady=(6,0))
         self.__enable_auto_redraw__()
 
     def __enable_auto_redraw__(self):
         self.bind("<Key>", lambda e: self.after_idle(self.line_counter.redraw), add=True)
-        self.bind("<Key>", lambda e: self.highlight_line())
+        self.bind("<KeyRelease>", lambda e: self.highlight_line())
         self.bind("<Control-v>", lambda e: self.highlight_all())
         self.bind("<Prior>", lambda e: self.highlight_all())
     
