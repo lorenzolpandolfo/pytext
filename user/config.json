@@ -1,19 +1,14 @@
 {
-	"programming_language_format": "Python",
 	"auto_insert_delimiters": true,
 	"nonexistent_char":"~",
 	"tab_width": 4,
-	"window": {
-		"width"  : 1100,
-		"height" : 749
-	},
+	"window_size": "1100x749",
 	"font": {
-		"tip" : "font size below 25 and gui_size below 19 may cause pytext crashes on start. Try bigger sizes if your pytext is crashing.",
-		"_"	  : "If you want to add a custom font, go to pytext/fonts/ and paste your .ttf file. Then, set the file title in file_name key (without .ttf)",
+		"tip": "If you want to add a custom font, paste your .ttf file in pytext/fonts/. Then, set <title> key to font title (without .ttf)",
 
-		"file_name" : "",
+		"title"		: "",
 		"family"    : "Consolas",
-		"size"      : 28,
-		"gui_size"  : 19
+		"size"      : 26,
+		"gui_size"  : 17
     	}
 }

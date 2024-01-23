@@ -6,11 +6,11 @@ class SyntaxColors:
     @staticmethod
     def get_syntax_colors():
         SyntaxColors.__move_to_user_directory__()
-        return SyntaxColors.__load_config_file__()
+        return SyntaxColors.__load_syntaxColors_file__()
 
 
     @staticmethod
-    def __load_config_file__():
+    def __load_syntaxColors_file__():
         with open("syntaxColors.json", "r", encoding="utf8") as file:
             return json.load(file)
 
