@@ -19,7 +19,7 @@ class MainApp(ctk.CTk):
         self.__load_user_font__()
         self.__create_gui__()
 
-    
+
     def __load_user_config__(self):
         self.config = UserConfig.get_user_config()
     
@@ -40,15 +40,16 @@ class MainApp(ctk.CTk):
         else:
             self.font, self.gui_font = loader
 
-
     def __create_gui__(self):
         self.__create_window__()
         self.__configure_grids__()
         self.__create_frames__()
+        self.__create_widgets__()
 
+    def __create_widgets__(self):
         self.main_frame.__create_textbox__(font=self.font)
         self.main_frame.textbox.__create_line_counter__(self.left_frame)
-    
+
     def __create_window__(self):
         self.title("The Pytext Editor Refactored")
         self.geometry(self.config["window_size"])
@@ -100,14 +101,12 @@ class MainFrame(ctk.CTkFrame):
 
 
     def __create_textbox__(self, row:int = 0, column:int = 0, font:ctk.CTkFont | None = None):
-        self.update()
+        # self.update()
         self.textbox = Texto(self, font=font)
         self.textbox.grid(row=row, column=column, sticky="nsew")
         self.textbox.configure(bg_color="#1D1E1E")
-
-    def set_textbox_height(self, height:int):
-        """set the main textbox height in lines."""
-        return self.textbox._textbox.configure(height=height)
+        self.master.update()
+        self.textbox.focus_set()
 
 
 class Texto(ctk.CTkTextbox):
@@ -125,10 +124,11 @@ class Texto(ctk.CTkTextbox):
 
     def __enable_auto_redraw__(self):
         self.bind("<Key>", lambda e: self.after_idle(self._line_counter.redraw), add=True)
-        self.bind("<KeyRelease>", lambda e: self.highlight_line())
-        self.bind("<Control-v>", lambda e: self.highlight_all())
-        self.bind("<Prior>", lambda e: self.highlight_all())
+        #self.bind("<KeyRelease>", lambda e: self.highlight_line())
+        #self.bind("<Control-v>", lambda e: self.highlight_all())
+        #self.bind("<Prior>", lambda e: self.highlight_all())
 
+        # this yscrollcommand also auto resizes pytext to the current resolution
         self.configure(yscrollcommand=self.__y_scroll_command__)
     
     def __y_scroll_command__(self, *scroll_pos:tuple):
