@@ -1,19 +1,18 @@
-import customtkinter as ctk
-import tkinter as tk
-from tklinenums import TkLineNumbers
-
-import sys
 import os
+
+import customtkinter as ctk
+# import tkinter as tk
+from tklinenums import TkLineNumbers
 
 import pygments
 from pygments.lexers import get_lexer_by_name
-from pygments.token import Token
-
+# from pygments.token import Token
 
 from modules.UserConfig     import UserConfig
-from modules.SyntaxColors   import SyntaxColors
 from modules.FontManager    import FontManager
 from modules.ImageManager   import ImageManager
+from modules.SyntaxColors   import SyntaxColors
+from modules.FileManager    import FileManager
 
 
 class MainApp(ctk.CTk):
@@ -27,6 +26,8 @@ class MainApp(ctk.CTk):
         self.__load_user_font__()
         self.__create_gui__()
 
+        if file_name:
+            self.__load_argv_file__()
 
     def __load_user_config__(self):
         self.config = UserConfig.get_user_config()
@@ -55,8 +56,9 @@ class MainApp(ctk.CTk):
         self.__create_widgets__()
 
     def __create_widgets__(self):
-        self.main_frame.__create_textbox__(font=self.font)
-        self.main_frame.textbox.__create_line_counter__(self.left_frame)
+        self.main_frame.create_textbox(font=self.font)
+        self.main_frame.textbox.create_line_counter(self.left_frame)
+        self.main_frame.textbox.set_tab_width(tabwidth=self.config["tab_width"])
 
     def __create_window__(self):
         self.title("The Pytext Editor Refactored")
@@ -80,13 +82,25 @@ class MainApp(ctk.CTk):
         self.left_frame = LeftFrame(self)
         self.left_frame.grid(row=0, column=0, sticky="nsew")
 
+    def __load_argv_file__(self):
+        """Insert into main textbox the file that user specified as argv."""
+        full_path = os.path.join(self.terminal_dir, file_name)
+        content = FileManager.open_file(full_path)
+
+        if content:
+            self.main_frame.textbox.insert("1.0", content)
+
 
 class LeftFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
+
+        self.__grid_setup__()
+        self.configure(bg_color="#1D1E1E", fg_color="#1D1E1E")
+
+    def __grid_setup__(self):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        self.configure(bg_color="#1D1E1E", fg_color="#1D1E1E")
     
 
 class BottomFrame(ctk.CTkFrame):
@@ -113,16 +127,18 @@ class MainFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
 
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
+        self.__grid_setup__()
 
-
-    def __create_textbox__(self, row:int = 0, column:int = 0, font:ctk.CTkFont | None = None):
+    def create_textbox(self, row:int = 0, column:int = 0, font:ctk.CTkFont | None = None):
         self.textbox = Texto(self, font=font)
         self.textbox.grid(row=row, column=column, sticky="nsew")
         self.textbox.configure(bg_color="#1D1E1E")
         self.master.update()
         self.textbox.focus_set()
+
+    def __grid_setup__(self):
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
 
 
 class Texto(ctk.CTkTextbox):
@@ -132,7 +148,7 @@ class Texto(ctk.CTkTextbox):
         self._lexer = pygments.lexers.PythonLexer
         self._colors = SyntaxColors.get_syntax_colors()
 
-    def __create_line_counter__(self, master):
+    def create_line_counter(self, master):
         self.update()
         self._line_counter = TkLineNumbers(master, self, justify="right", colors=("#e3ba68", "#1D1E1E"),tilde="~", bd=0)
         self._line_counter.grid(row=0, column=0, sticky="nsew", pady=(6,0))
@@ -140,9 +156,9 @@ class Texto(ctk.CTkTextbox):
 
     def __enable_auto_redraw__(self):
         self.bind("<Key>", lambda e: self.after_idle(self._line_counter.redraw), add=True)
-        #self.bind("<KeyRelease>", lambda e: self.highlight_line())
-        #self.bind("<Control-v>", lambda e: self.highlight_all())
-        #self.bind("<Prior>", lambda e: self.highlight_all())
+        # self.bind("<KeyRelease>", lambda e: self.highlight_line())
+        # self.bind("<Control-v>", lambda e: self.highlight_all())
+        # self.bind("<Prior>", lambda e: self.highlight_all())
 
         # this yscrollcommand also auto resizes pytext to the current resolution
         self.configure(yscrollcommand=self.__y_scroll_command__)
@@ -151,9 +167,11 @@ class Texto(ctk.CTkTextbox):
         self._y_scrollbar.set(scroll_pos[0], scroll_pos[1])
         self._line_counter.redraw()
 
+    def set_tab_width(self, tabwidth:int):
+        self.configure(tabs=self.cget("font").measure(" ") * tabwidth)
 
     def highlight_line(self, lexer="python", line_num:str=""):
-        if line_num == "": line_num = int(self.index("insert").split(".")[0])
+        line_num = int(self.index("insert").split(".")[0]) if line_num == "" else line_num
 
         #for tag in self.tag_names(index=None):
         #    if tag.startswith("Token"):
@@ -182,7 +200,6 @@ class Texto(ctk.CTkTextbox):
                     self.tag_config(token, foreground=self._colors[token.split(".")[1]])
             start_col = end_col
 
-    def highlight_all(self, lexer="python"):
         self.update()
         all = self.get("1.0", "end")
         num_lines = all.count("\n")
@@ -194,40 +211,11 @@ class Texto(ctk.CTkTextbox):
 
         for i in range(first_line, last_line):
             self.highlight_line("python", i)
-        return 
-        #for tag in self.tag_names(index=None):
-        #    if tag.startswith("Token"):
-        #        self.tag_remove(tag, "1.0", "end")
-        #        self.tag_delete(tag)
-        #        print(tag, " removida")
-                
-        lexer = get_lexer_by_name(lexer)
-        content = self.get(f"1.0", f"end")
-        tokens = list(pygments.lex(content, lexer))
-        
-        content = content.split("\n")
-
-        start_col = 0
-        for (token, text) in tokens:
-            token = str(token)
-            print(token, text)
-
-            
-            end_col = start_col + len(text)
-            if token not in ["Token.Text.Whitespace", "Token.Text"]:
-                for i, linha in enumerate(content):
-                    if text in linha:
-                        line_num = i + 1
-
-                print(line_num)
-                self.tag_add(token, f"{line_num}.{start_col}", f"{line_num}.{end_col}")
-                print(f"{line_num}.{start_col}", f"{line_num}.{end_col}")
-                if token.split(".")[1] in a:
-                    self.tag_config(token, foreground=a[token.split(".")[1]])
-            start_col = end_col
 
 
 if __name__ == "__main__":
+    import sys
+
     file_name = sys.argv[1] if len(sys.argv) > 1 else ""
     app = MainApp(terminal_dir=os.getcwd(), file_name=file_name)
     app.mainloop()
