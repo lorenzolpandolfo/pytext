@@ -13,6 +13,7 @@ from pygments.token import Token
 from modules.UserConfig     import UserConfig
 from modules.SyntaxColors   import SyntaxColors
 from modules.FontManager    import FontManager
+from modules.ImageManager   import ImageManager
 
 
 class MainApp(ctk.CTk):
@@ -91,12 +92,21 @@ class LeftFrame(ctk.CTkFrame):
 class BottomFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
+        
+        self.__create_widgets__()
+        self.__load_icons__()
 
-        self.mode = ctk.CTkLabel(self, text="Insert", justify="center", font=master.gui_font)
+    def __create_widgets__(self):
+        self.mode = ctk.CTkLabel(self, text="Insert", justify="center", font=self.master.gui_font)
         self.mode.grid(row=1, column=0)
 
-        self.output = ctk.CTkLabel(self, text="Welcome to Pytext refactored", padx=10, font=master.gui_font)
+        self.output = ctk.CTkLabel(self, text="Welcome to Pytext refactored", padx=10, font=self.master.gui_font)
         self.output.grid(row=2, column=0)
+
+    def __load_icons__(self):
+        branch_image = ImageManager.get_image("branch", (22, 22))
+        self.branch = ctk.CTkLabel(self, image=branch_image, text="", justify="left")
+        self.branch.grid(row=2, column=0)
 
 
 class MainFrame(ctk.CTkFrame):
@@ -108,7 +118,6 @@ class MainFrame(ctk.CTkFrame):
 
 
     def __create_textbox__(self, row:int = 0, column:int = 0, font:ctk.CTkFont | None = None):
-        # self.update()
         self.textbox = Texto(self, font=font)
         self.textbox.grid(row=row, column=column, sticky="nsew")
         self.textbox.configure(bg_color="#1D1E1E")
