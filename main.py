@@ -2,6 +2,9 @@ import customtkinter as ctk
 import tkinter as tk
 from tklinenums import TkLineNumbers
 
+import sys
+import os
+
 import pygments
 from pygments.lexers import get_lexer_by_name
 from pygments.token import Token
@@ -13,8 +16,12 @@ from modules.FontManager    import FontManager
 
 
 class MainApp(ctk.CTk):
-    def __init__(self):
+    def __init__(self, terminal_dir:str, file_name:str):
         super().__init__()
+
+        self.terminal_dir  = terminal_dir
+        self.file_name     = file_name
+
         self.__load_user_config__()   
         self.__load_user_font__()
         self.__create_gui__()
@@ -166,7 +173,6 @@ class Texto(ctk.CTkTextbox):
                     self.tag_config(token, foreground=self._colors[token.split(".")[1]])
             start_col = end_col
 
-
     def highlight_all(self, lexer="python"):
         self.update()
         all = self.get("1.0", "end")
@@ -212,12 +218,7 @@ class Texto(ctk.CTkTextbox):
             start_col = end_col
 
 
-    def _setup_tags(self):
-        for key in self.tag_names():
-            print(key)
-            self.tag_config(f"{key}", foreground="#1c92ba")
-
-    
 if __name__ == "__main__":
-    app = MainApp()
+    file_name = sys.argv[1] if len(sys.argv) > 1 else ""
+    app = MainApp(terminal_dir=os.getcwd(), file_name=file_name)
     app.mainloop()
