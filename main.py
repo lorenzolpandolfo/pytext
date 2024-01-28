@@ -28,7 +28,6 @@ class MainApp(ctk.CTk):
         self.__create_gui__()
 
         if self.file_name:
-            print("ta tentando carregar o arquivo")
             self.__load_argv_file__()
 
     def __load_user_config__(self):
@@ -65,7 +64,6 @@ class MainApp(ctk.CTk):
         
         self.bottom_frame.create_widgets(output=(self.file_name if self.file_name else "Welcome to Pytext refactored"))
         self.bottom_frame.load_icons()
-
 
     def __create_window__(self):
         self.title("The Pytext Editor Refactored")
@@ -116,11 +114,14 @@ class BottomFrame(ctk.CTkFrame):
         super().__init__(master)
         
     def create_widgets(self, output:str):
-        self.mode = ctk.CTkLabel(self, text="Insert", justify="center", font=self.master.gui_font)
-        self.mode.grid(row=1, column=0)
+        self.mode = ctk.CTkLabel(self, text="View", justify="center", font=self.master.gui_font)
+        self.mode.grid(row=1, column=0, columnspan=2)
 
-        self.output = ctk.CTkLabel(self, text=output, padx=10, font=self.master.gui_font)
+        self.output = ctk.CTkLabel(self, text=output, padx=10, justify="left", font=self.master.gui_font)
         self.output.grid(row=2, column=0)
+
+        self.grid_columnconfigure(1, weight=1)
+
 
     def load_icons(self):
         self.branch_image = ImageManager.get_image("branch", (22, 22))
