@@ -10,7 +10,7 @@ Pytext code is under a total refactor process in the **unstable branch**. Use th
 Pytext default directory is inside your user's folder. So, it is recommended that you clone the repository there.
 To correctly install Pytext, follow these steps:
 - run `git clone https://github.com/lorenzolpandolfo/pytext` inside your user's folder
-- run `pip3 install -r requeriments.txt` to install Pytext's dependencies
+- run `pip3 install -r requirements.txt` to install Pytext's dependencies
 - (optional) add the Pytext's directory to your user PATH variable
 
 If you add Pytext to PATH, you can launch it in terminal with `pytext <file_name>`. If the file doesn't exist, Pytext will create it.
@@ -19,16 +19,16 @@ If you add Pytext to PATH, you can launch it in terminal with `pytext <file_name
 - run `git clone https://github.com/lorenzolpandolfo/pytext` inside your home folder
 - run `pip3 install -r requirements.txt` to install Pytext's dependencies
 
-Make sure you installed the packages below so tkinter works correctly:
-For Debian based distros:
+### Make sure you installed the packages below:
+
+For Ubuntu/Debian based distros:
 - `sudo apt install python3-tk python3-pil python3-pil.imagetk`
+
 For Archlinux based distros:
 - `sudo pacman -S python-pillow`
 
-
-
 # Preferences
-- If you want to change Pytext directory, don't forget to edit the `pytext.bat` file after adding the custom directory to PATH.
+- If you would like to change Pytext directory, don't forget to edit the `pytext.bat` (for Windows) or `pytext.sh` (for Linux) file after adding the custom directory to PATH.
 - You can edit the `user/config.json` and `user/theme.json` files to change some personal preferences.
 
 # Use
