@@ -43,7 +43,7 @@ class MainApp(ctk.CTk):
                 ))
         
         if isinstance(loader, int):
-            print(f"Error: could not load font '{font["title"]}'. Loading default font instead.")
+            print(f"Error: could not load font '{font['title']}'. Loading default font instead.")
             self.font     = ctk.CTkFont("Consolas", 26)
             self.gui_font = ctk.CTkFont("Consolas", 17)
         else:
