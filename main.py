@@ -126,10 +126,13 @@ class BottomFrame(ctk.CTkFrame):
     def load_icons(self):
         self.branch_image = ImageManager.get_image("branch", (20, 22))
     
-    def create_branch_icon(self, teste):
-        print("criando")
-        self.branch = ctk.CTkLabel(self, image=self.branch_image, text=teste, justify="center", compound="right", font=self.master.gui_font)
+    def create_branch_icon(self, branch:str):
+        if "\n" in branch:
+            branch = branch.replace("\n", "")
+
+        self.branch = ctk.CTkLabel(self, image=self.branch_image, text=branch, justify="left", compound="left", font=self.master.gui_font, padx=10)
         self.branch.grid(row=2, column=1, sticky="e")
+
     
     def destroy_branch_icon(self):
         print("Destruindo")
@@ -137,6 +140,7 @@ class BottomFrame(ctk.CTkFrame):
             self.branch.destroy()
         except AttributeError:
             pass
+
 
 class MainFrame(ctk.CTkFrame):
     """It is the main frame that contains the Maintext instance."""
