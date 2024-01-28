@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Caminho completo para o diretório onde o script main.py está localizado
+caminho_script="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+# Executa o main.py com o Python 3, repassando os argumentos
+python3 "$caminho_script/main.py" "$@"
+

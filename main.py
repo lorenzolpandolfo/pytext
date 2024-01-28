@@ -216,7 +216,7 @@ class Texto(ctk.CTkTextbox):
 
 if __name__ == "__main__":
     import sys
-
+    print(sys.argv)
     file_name = sys.argv[1] if len(sys.argv) > 1 else ""
     app = MainApp(terminal_dir=os.getcwd(), file_name=file_name)
     app.mainloop()

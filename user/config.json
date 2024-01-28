@@ -2,7 +2,7 @@
 	"auto_insert_delimiters": true,
 	"nonexistent_char":"~",
 	"tab_width": 4,
-	"window_size": "1100x749",
+	"window_size": "1000x649",
 	"font": {
 		"tip": "If you want to add a custom font, paste your .ttf file in pytext/fonts/. Then, set <title> key to font title (without .ttf)",
 
