@@ -27,7 +27,8 @@ class MainApp(ctk.CTk):
         self.__load_user_font__()
         self.__create_gui__()
 
-        if file_name:
+        if self.file_name:
+            print("ta tentando carregar o arquivo")
             self.__load_argv_file__()
 
     def __load_user_config__(self):
@@ -61,6 +62,11 @@ class MainApp(ctk.CTk):
         self.main_frame.textbox.create_line_counter(self.left_frame)
         self.main_frame.textbox.set_tab_width(tabwidth=self.config["tab_width"])
 
+        
+        self.bottom_frame.create_widgets(output=(self.file_name if self.file_name else "Welcome to Pytext refactored"))
+        self.bottom_frame.load_icons()
+
+
     def __create_window__(self):
         self.title("The Pytext Editor Refactored")
         self.geometry(self.config["window_size"])
@@ -90,6 +96,7 @@ class MainApp(ctk.CTk):
 
         if content:
             self.main_frame.textbox.insert("1.0", content)
+            self.main_frame.textbox.mark_set("insert", "1.0")
 
 
 class LeftFrame(ctk.CTkFrame):
@@ -108,19 +115,18 @@ class BottomFrame(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
         
-        self.__create_widgets__()
-        self.__load_icons__()
-
-    def __create_widgets__(self):
+    def create_widgets(self, output:str):
         self.mode = ctk.CTkLabel(self, text="Insert", justify="center", font=self.master.gui_font)
         self.mode.grid(row=1, column=0)
 
-        self.output = ctk.CTkLabel(self, text="Welcome to Pytext refactored", padx=10, font=self.master.gui_font)
+        self.output = ctk.CTkLabel(self, text=output, padx=10, font=self.master.gui_font)
         self.output.grid(row=2, column=0)
 
-    def __load_icons__(self):
-        branch_image = ImageManager.get_image("branch", (22, 22))
-        self.branch = ctk.CTkLabel(self, image=branch_image, text="", justify="left")
+    def load_icons(self):
+        self.branch_image = ImageManager.get_image("branch", (22, 22))
+    
+    def create_branch_icon(self):
+        self.branch = ctk.CTkLabel(self, image=self.branch_image, text="", justify="left")
         self.branch.grid(row=2, column=0)
 
 
@@ -216,7 +222,7 @@ class Texto(ctk.CTkTextbox):
 
 if __name__ == "__main__":
     import sys
-    print(sys.argv)
     file_name = sys.argv[1] if len(sys.argv) > 1 else ""
-    app = MainApp(terminal_dir=os.getcwd(), file_name=file_name)
+    if_argv_is_file = os.path.isfile(os.path.join(os.getcwd(), file_name))
+    app = MainApp(terminal_dir=os.getcwd(), file_name=file_name) if if_argv_is_file else MainApp(terminal_dir=os.getcwd(), file_name="")
     app.mainloop()
