@@ -23,13 +23,22 @@ class FileManager:
         pass
 
     @staticmethod
-    def check_if_file_or_dir(path:str) -> str | bool:
-        """Checks if a path is a file or a directory."""
-        if not os.path.exists(path):
-            return False
-        
-        elif os.path.isfile():
-            return "file"
-        
-        elif os.path.isdir():
-            return "dir"
+    def check_if_repository(dir_path:str) -> bool:
+        """Checks if a directory is a git repository."""
+        full_path_directory = os.path.dirname(dir_path)
+
+        if os.path.isdir(full_path_directory):
+            return os.path.exists(os.path.join(full_path_directory, ".git"))
+        return False
+    
+    @staticmethod
+    def get_git_branch(git_path:str) -> str | bool:
+        full_path_directory = os.path.dirname(git_path)
+        full_path_directory = os.path.join(full_path_directory, ".git")
+
+        if os.path.isdir(full_path_directory):
+            os.chdir(full_path_directory)
+            with open("HEAD", "r", encoding="utf8") as head_file:
+                content = head_file.read()
+                return content.split("/")[-1]
+        return False

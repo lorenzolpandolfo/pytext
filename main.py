@@ -28,8 +28,15 @@ class MainApp(ctk.CTk):
         self.__create_gui__()
 
         if self.file_name:
-            self.main_frame.textbox.open_file(self.terminal_dir, self.file_name)
+            full_path = os.path.join(self.terminal_dir, self.file_name)
 
+            self.main_frame.textbox.open_file(full_path)
+
+            if FileManager.check_if_repository(full_path):
+                self.bottom_frame.create_branch_icon(FileManager.get_git_branch(full_path))
+            # else:
+            #     self.bottom_frame.destroy_branch_icon()
+        
     def __load_user_config__(self):
         self.config = UserConfig.get_user_config()
     
@@ -89,6 +96,7 @@ class MainApp(ctk.CTk):
 
 
 class LeftFrame(ctk.CTkFrame):
+    """Contains the line counter."""
     def __init__(self, master):
         super().__init__(master)
 
@@ -101,6 +109,7 @@ class LeftFrame(ctk.CTkFrame):
     
 
 class BottomFrame(ctk.CTkFrame):
+    """Contains the outputs labels."""
     def __init__(self, master):
         super().__init__(master)
         
@@ -108,28 +117,36 @@ class BottomFrame(ctk.CTkFrame):
         self.mode = ctk.CTkLabel(self, text="View", justify="center", font=self.master.gui_font)
         self.mode.grid(row=1, column=0, columnspan=2)
 
-        self.output = ctk.CTkLabel(self, text=output, padx=10, justify="left", font=self.master.gui_font)
+        self.output = ctk.CTkLabel(self, text=output.replace("\\", "/"), padx=10, justify="left", font=self.master.gui_font)
         self.output.grid(row=2, column=0)
 
         self.grid_columnconfigure(1, weight=1)
 
 
     def load_icons(self):
-        self.branch_image = ImageManager.get_image("branch", (22, 22))
+        self.branch_image = ImageManager.get_image("branch", (20, 22))
     
-    def create_branch_icon(self):
-        self.branch = ctk.CTkLabel(self, image=self.branch_image, text="", justify="left")
-        self.branch.grid(row=2, column=0)
-
+    def create_branch_icon(self, teste):
+        print("criando")
+        self.branch = ctk.CTkLabel(self, image=self.branch_image, text=teste, justify="center", compound="right", font=self.master.gui_font)
+        self.branch.grid(row=2, column=1, sticky="e")
+    
+    def destroy_branch_icon(self):
+        print("Destruindo")
+        try:
+            self.branch.destroy()
+        except AttributeError:
+            pass
 
 class MainFrame(ctk.CTkFrame):
+    """It is the main frame that contains the Maintext instance."""
     def __init__(self, master):
         super().__init__(master)
 
         self.__grid_setup__()
 
     def create_textbox(self, row:int = 0, column:int = 0, font:ctk.CTkFont | None = None):
-        self.textbox = Texto(self, font=font)
+        self.textbox = Maintext(self, font=font)
         self.textbox.grid(row=row, column=column, sticky="nsew")
         self.textbox.configure(bg_color="#1D1E1E")
         self.master.update()
@@ -140,7 +157,8 @@ class MainFrame(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
 
 
-class Texto(ctk.CTkTextbox):
+class Maintext(ctk.CTkTextbox):
+    """Represents the main textbox of Pytext."""
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
@@ -211,9 +229,9 @@ class Texto(ctk.CTkTextbox):
         for i in range(first_line, last_line):
             self.highlight_line("python", i)
 
-    def open_file(self, terminal_dir_path:str, file_name:str):
+    def open_file(self, full_path:str):
         """Open a file through a directory and title. Then, write it."""
-        full_path = os.path.join(terminal_dir_path, file_name)
+
         content = FileManager.open_file(full_path)
 
         if content:
@@ -228,6 +246,8 @@ class Texto(ctk.CTkTextbox):
 if __name__ == "__main__":
     import sys
     file_name = sys.argv[1] if len(sys.argv) > 1 else ""
+    # check if this is not problematic. I think that it is not
+    file_name = file_name[2:] if file_name[:2] == ".\\" else file_name
     if_argv_is_file = os.path.isfile(os.path.join(os.getcwd(), file_name))
     app = MainApp(terminal_dir=os.getcwd(), file_name=file_name) if if_argv_is_file else MainApp(terminal_dir=os.getcwd(), file_name="")
     app.mainloop()
