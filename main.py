@@ -28,7 +28,7 @@ class MainApp(ctk.CTk):
         self.__create_gui__()
 
         if self.file_name:
-            self.__load_argv_file__()
+            self.main_frame.textbox.open_file(self.terminal_dir, self.file_name)
 
     def __load_user_config__(self):
         self.config = UserConfig.get_user_config()
@@ -86,15 +86,6 @@ class MainApp(ctk.CTk):
 
         self.left_frame = LeftFrame(self)
         self.left_frame.grid(row=0, column=0, sticky="nsew")
-
-    def __load_argv_file__(self):
-        """Insert into main textbox the file that user specified as argv."""
-        full_path = os.path.join(self.terminal_dir, file_name)
-        content = FileManager.open_file(full_path)
-
-        if content:
-            self.main_frame.textbox.insert("1.0", content)
-            self.main_frame.textbox.mark_set("insert", "1.0")
 
 
 class LeftFrame(ctk.CTkFrame):
@@ -219,6 +210,19 @@ class Texto(ctk.CTkTextbox):
 
         for i in range(first_line, last_line):
             self.highlight_line("python", i)
+
+    def open_file(self, terminal_dir_path:str, file_name:str):
+        """Open a file through a directory and title. Then, write it."""
+        full_path = os.path.join(terminal_dir_path, file_name)
+        content = FileManager.open_file(full_path)
+
+        if content:
+            self.write_file_content(content)
+    
+    def write_file_content(self, content:str):
+        """Directly write a file content."""
+        self.insert("1.0", content)
+        self.mark_set("insert", "1.0")
 
 
 if __name__ == "__main__":
