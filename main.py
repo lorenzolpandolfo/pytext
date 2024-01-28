@@ -2,7 +2,8 @@ import os
 
 import customtkinter as ctk
 # import tkinter as tk
-from tklinenums import TkLineNumbers
+# from tklinenums import TkLineNumbers
+from modules.tklinenums import TkLineNumbers
 
 import pygments
 from pygments.lexers import get_lexer_by_name
