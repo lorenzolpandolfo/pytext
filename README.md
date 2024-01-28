@@ -1,22 +1,34 @@
 # Pytext
-Pytext is a open-source Python text editor inspired by Vim, with its own keybindings, that uses Customtkinter to its interface. 
+Pytext is a open-source Python text editor inspired in Vim, with its own keybindings, that uses Customtkinter to its interface. 
 It's being developed on Windows and it may present instabilities on other operating systems. In future, It should support Linux and MacOS.
 The project have a lot of progress to be made and it can be unstable with different screen resolutions too.
 Feel free to open an issue or fork it!
 
 Pytext code is under a total refactor process in the **unstable branch**. Use the main branch if you would like to run Pytext in its stablest version.
 
-# Installation process
+# Installation process - Windows
 Pytext default directory is inside your user's folder. So, it is recommended that you clone the repository there.
 To correctly install Pytext, follow these steps:
 - run `git clone https://github.com/lorenzolpandolfo/pytext` inside your user's folder
-- run `pip install -r requeriments.txt` to install Pytext's dependencies
+- run `pip3 install -r requirements.txt` to install Pytext's dependencies
 - (optional) add the Pytext's directory to your user PATH variable
 
 If you add Pytext to PATH, you can launch it in terminal with `pytext <file_name>`. If the file doesn't exist, Pytext will create it.
 
+# Installation process - Linux
+- run `git clone https://github.com/lorenzolpandolfo/pytext` inside your home folder
+- run `pip3 install -r requirements.txt` to install Pytext's dependencies
+
+### Make sure you installed the packages below:
+
+For Ubuntu/Debian based distros:
+- `sudo apt install python3-tk python3-pil python3-pil.imagetk`
+
+For Archlinux based distros:
+- `sudo pacman -S python-pillow`
+
 # Preferences
-- If you want to change Pytext directory, don't forget to edit the `pytext.bat` file after adding the custom directory to PATH.
+- If you would like to change Pytext directory, don't forget to edit the `pytext.bat` (for Windows) or `pytext.sh` (for Linux) file after adding the custom directory to PATH.
 - You can edit the `user/config.json` and `user/theme.json` files to change some personal preferences.
 
 # Use
