@@ -2,8 +2,10 @@ import os
 
 import customtkinter as ctk
 # import tkinter as tk
-# from tklinenums import TkLineNumbers
+from tklinenums import TkLineNumbers
 from modules.tklinenums import TkLineNumbers
+from tkinter import ttk
+
 
 import pygments
 from pygments.lexers import get_lexer_by_name
@@ -117,6 +119,9 @@ class BottomFrame(ctk.CTkFrame):
         self.mode = ctk.CTkLabel(self, text="View", justify="center", font=self.master.gui_font)
         self.mode.grid(row=1, column=0, columnspan=2)
 
+        self.command = ctk.CTkLabel(self, text="99d", justify="left", font=self.master.gui_font)
+        self.command.grid(row=2, column=1, sticky="e")
+
         self.output = ctk.CTkLabel(self, text=output.replace("\\", "/"), padx=10, justify="left", font=self.master.gui_font)
         self.output.grid(row=2, column=0)
 
@@ -131,7 +136,7 @@ class BottomFrame(ctk.CTkFrame):
             branch = branch.replace("\n", "")
 
         self.branch = ctk.CTkLabel(self, image=self.branch_image, text=branch, justify="left", compound="left", font=self.master.gui_font, padx=10)
-        self.branch.grid(row=2, column=1, sticky="e")
+        self.branch.grid(row=2, column=2, sticky="e")
 
     
     def destroy_branch_icon(self):
@@ -172,7 +177,7 @@ class Maintext(ctk.CTkTextbox):
     def create_line_counter(self, master):
         self.update()
         self._line_counter = TkLineNumbers(master, self, justify="right", colors=("#e3ba68", "#1D1E1E"),tilde="~", bd=0)
-        self._line_counter.grid(row=0, column=0, sticky="nsew", pady=(6,0))
+        self._line_counter.grid(row=0, column=0, sticky="nsew", pady=(6 * (self._get_widget_scaling()) + 0.5,0))
         self.__enable_auto_redraw__()
 
     def __enable_auto_redraw__(self):

@@ -122,6 +122,7 @@ class TkLineNumbers(Canvas):
 
         # Only calculate max_lines and widget_font if user send a tilde char, for optimization reasons
         if self.tilde:
+            widget_scale = 1
             widget_font = self.textwidget.cget("font")
 
             # If tkinter default font is in use
@@ -155,6 +156,9 @@ class TkLineNumbers(Canvas):
                 )
 
             else:
+                widget_scale = self.textwidget._get_widget_scaling()
+                if widget_scale == 1.25:
+                    widget_scale = 1.19
                 used_font = widget_font
 
             # Get the max amount of lines that can fit in the textwidget
@@ -230,7 +234,7 @@ class TkLineNumbers(Canvas):
                     else int(self["width"])
                     if self.justify == "right"
                     else int(self["width"]) / 2,
-                    (lineno - 1) * used_font.metrics()["linespace"],
+                    (lineno - 1) * used_font.metrics()["linespace"] * widget_scale,
                     text=f" {self.tilde} "
                     if self.justify != "center"
                     else f"{self.tilde}",
@@ -421,3 +425,32 @@ class TkLineNumbers(Canvas):
             returned_colors: tuple[str, str] = self.colors()
             self.foreground_color: str = returned_colors[0]
             self["bg"]: str = returned_colors[1]
+
+
+if __name__ == "__main__":
+    from tkinter import Tk
+    from tkinter.ttk import Style
+
+    root = Tk()
+
+    style = Style()
+    style.configure("TkLineNumbers", foreground="#2197db", background="#ffffff")
+
+    text = Text(root)
+    text.pack(side="right")
+
+    for i in range(50):
+        text.insert("end", f"Line {i+1}\n")
+
+    def ttk_theme_colors() -> tuple[str, str]:
+        fg: str = style.lookup("TkLineNumbers", "foreground", default="black")
+        bg: str = style.lookup("TkLineNumbers", "background", default="white")
+        return (fg, bg)
+
+    linenums = TkLineNumbers(root, text, colors=ttk_theme_colors, tilde="~")
+    linenums.pack(fill="y", side="left", expand=True)
+
+    text.bind("<Key>", lambda _: text.after_idle(linenums.redraw))
+    text.config(font=("Courier New bold", 15))
+
+    root.mainloop()
