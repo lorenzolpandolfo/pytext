@@ -1,9 +1,40 @@
-{
-	"dark_line_background_color"	: "#2b2b2b",
-	"light_line_background_color"	: "#DBDBDB",
-	"dir_color"				: "#05BDDD",
-	"file_color"			: "#C8C6AB",
-	"current_dir_color"		: "#7ec699",
-	"nonexistent_char_color"	: "#616060",
-	"line_counter_color"		: "#c586c0"
+{	
+	"frames": {
+		"main": {
+			"bg": "#1f1f1f",
+			"bg_dark": "#fafafa"
+		},
+	
+		"left": {
+			"bg": "#ebebeb",
+			"bg_dark": "#181818"
+		},
+	
+		"bottom":{
+			"bg": "#ebebeb",
+			"bg_dark": "#2b2b2b"
+		}
+	},
+	"widgets": {
+		"main_textbox": {
+			"bg": "#1f1f1f",
+			"bg_dark": "#1f1f1f",
+			"selected_line": "",
+			"selected_line_dark": "#2b2b2b"
+		},
+		"line_counter": {
+			"bg"				: "",
+			"bg_dark"			: "",
+			"font"				: "",
+			"font_dark"			: "",
+			"tilde_char"		: "",
+			"tilde_char_dark"	: ""
+		}
+
+	},
+	"directory_explorer": {
+		"dir"			: "#05BDDD",
+		"file"			: "#C8C6AB",
+		"current_dir"	: "#7ec699"
+	}
 }
