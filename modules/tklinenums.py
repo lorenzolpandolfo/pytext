@@ -157,8 +157,8 @@ class TkLineNumbers(Canvas):
 
             else:
                 widget_scale = self.textwidget._get_widget_scaling()
-                if widget_scale == 1.25:
-                    widget_scale = 1.19
+                #if widget_scale == 1.25:
+                #    widget_scale = 1.19
                 used_font = widget_font
 
             # Get the max amount of lines that can fit in the textwidget
