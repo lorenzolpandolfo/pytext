@@ -136,6 +136,7 @@ class MainApp(ctk.CTk):
                 self.left_frame.show_textbox()
                 self.left_frame.textbox.focus_set()
 
+
 class LeftFrame(ctk.CTkFrame):
     """Contains the line counter."""
     def __init__(self, master, font:ctk.CTkFont):
@@ -172,7 +173,7 @@ class LeftFrame(ctk.CTkFrame):
     def show_textbox(self):
         if not self.textbox.winfo_ismapped():
             self.textbox.grid(row=0, column=0, sticky="nsew")
-
+            self.textbox.open_directory(self.master.terminal_dir)
 
     
 
@@ -344,10 +345,17 @@ class Maintext(ctk.CTkTextbox):
         if content:
             self.write_file_content(content)
     
-    def write_file_content(self, content:str):
+    def open_directory(self, dir_path:str):
+        content = FileManager.open_directory(dir_path)
+        if content:
+            self.delete("1.0", "end")
+            self.write_file_content(content[1])
+
+    def write_file_content(self, content:str, mark_set:str = "insert"):
         """Directly write a file content."""
         self.insert("1.0", content)
-        self.mark_set("insert", "1.0")
+        if mark_set:
+            self.mark_set(mark_set, "1.0")
 
 
 

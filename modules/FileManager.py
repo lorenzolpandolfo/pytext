@@ -18,9 +18,21 @@ class FileManager:
             return False
         
     @staticmethod
-    def open_directory(dir_path:str) -> list | bool:
-        """Returns a list with all files and directories inside the directory argument."""
-        pass
+    def open_directory(dir_path: str) -> tuple | bool:
+        """Returns a tuple with raw and formatted strings of all files and directories inside the directory argument."""
+        if os.path.isdir(dir_path):
+            files = os.listdir(dir_path)
+            raw_strfiles = "\n".join(files)
+
+            formatted_strfiles = "\n".join(
+                f"⮞ {file}" if os.path.isdir(os.path.join(dir_path, file)) else file
+                for file in files
+            )
+
+            return (raw_strfiles, formatted_strfiles + "\n")
+        else:
+            return False
+
 
     @staticmethod
     def check_if_repository(dir_path:str) -> bool:
