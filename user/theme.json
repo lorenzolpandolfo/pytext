@@ -1,34 +1,38 @@
 {	
 	"frames": {
 		"main": {
-			"bg": "#1f1f1f",
-			"bg_dark": "#fafafa"
+			"bg"		: "#fafafa",
+			"bg_dark"	: "#1f1f1f"
 		},
 	
 		"left": {
-			"bg": "#ebebeb",
-			"bg_dark": "#181818",
-			"fg": "#ebebeb",
-			"fg_dark": "#1D1E1E"
+			"bg"		: "#ebebeb",
+			"bg_dark"	: "#181818",
+			"fg"		: "#ebebeb",
+			"fg_dark"	: "#181818"
 		},
-	
+		
 		"bottom":{
-			"bg": "#ebebeb",
-			"bg_dark": "#2b2b2b"
+			"bg"		: "#ebebeb",
+			"bg_dark"	: "#181818",
+			"fg"		: "#ebebeb",
+			"fg_dark"	: "#181818"
 		}
 	},
 	"widgets": {
 		"main_textbox": {
-			"bg": "#1f1f1f",
-			"bg_dark": "#1f1f1f",
-			"selected_line": "",
-			"selected_line_dark": "#2b2b2b"
+			"bg"				: "#fafafa",
+			"bg_dark"			: "#1f1f1f",
+			"selected_line"		: "#2b2b2b",
+			"selected_line_dark": "#2b2b2b",
+			"font"				: "#e3ba68",
+			"font_dark"			: "#e3ba68"
 		},
 		"line_counter": {
-			"bg"				: "",
-			"bg_dark"			: "",
-			"font"				: "",
-			"font_dark"			: "",
+			"bg"				: "#ebebeb",
+			"bg_dark"			: "#181818",
+			"font"				: "#e3ba68",
+			"font_dark"			: "#e3ba68",
 			"tilde_char"		: "",
 			"tilde_char_dark"	: ""
 		}

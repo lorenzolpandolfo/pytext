@@ -121,7 +121,11 @@ class MainApp(ctk.CTk):
         focus = str(self.focus_get())
         left_textbox_visible = self.left_frame.textbox.winfo_ismapped()
 
-        if (event.state & 0x4) and event.keysym == "f":
+        if event.keysym == "Escape" and left_textbox_visible:
+            self.left_frame.hide_textbox()
+            self.main_frame.textbox.focus_set()
+        
+        elif (event.state & 0x4) and event.keysym == "f":
             if left_textbox_visible:
                 if "leftframe" in focus:
                     self.left_frame.hide_textbox()
@@ -139,9 +143,11 @@ class LeftFrame(ctk.CTkFrame):
 
         self.__grid_setup__()
         self.font = font
+        self.theme_mode = master.theme_mode
+        self.theme = master.theme
 
         self.__load_theme__()
-        self.configure(bg_color=self.bg, fg_color=self.fg)
+        self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
 
 
     def __grid_setup__(self):
@@ -150,17 +156,14 @@ class LeftFrame(ctk.CTkFrame):
 
 
     def __load_theme__(self):
-        if not self.master.theme_mode == "light":
-            self.bg = self.master.theme["frames"]["left"]["bg"]
-            self.fg = self.master.theme["frames"]["left"]["fg"]
-        else:
-            self.bg = self.master.theme["frames"]["left"]["bg_dark"]
-            self.fg = self.master.theme["frames"]["left"]["fg_dark"]
+        dark = "_dark" if self.master.theme_mode == "dark" else ""
+        self.bg_color = self.master.theme["frames"]["left"][f"bg{dark}"]
+        self.fg_color = self.master.theme["frames"]["left"][f"fg{dark}"]
 
 
     def create_textbox(self, row:int = 0, column:int = 0):
         self.textbox = Maintext(self, font=self.font, type="left")
-        self.textbox.configure(bg_color="#1D1E1E")
+        self.textbox.configure(bg_color=self.bg_color, fg_color=self.fg_color)
     
     def hide_textbox(self):
         if self.textbox.winfo_ismapped():
@@ -177,19 +180,26 @@ class BottomFrame(ctk.CTkFrame):
     """Contains the outputs labels."""
     def __init__(self, master):
         super().__init__(master)
+        self.__load_theme__()
+        self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
+
+    def __load_theme__(self):
+        dark = "_dark" if self.master.theme_mode == "dark" else ""
+        self.bg_color = self.master.theme["frames"]["bottom"][f"bg{dark}"]
+        self.fg_color = self.master.theme["frames"]["bottom"][f"fg{dark}"]
+
         
     def create_widgets(self, output:str):
-        self.mode = ctk.CTkLabel(self, text="View", justify="center", font=self.master.gui_font)
+        self.mode = ctk.CTkLabel(self, text="View", justify="center", bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
         self.mode.grid(row=1, column=0, columnspan=2)
 
-        self.command = ctk.CTkLabel(self, text="99d", justify="left", font=self.master.gui_font)
+        self.command = ctk.CTkLabel(self, text="99d", justify="left", bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
         self.command.grid(row=2, column=1, sticky="e")
 
-        self.output = ctk.CTkLabel(self, text=output.replace("\\", "/"), padx=10, justify="left", font=self.master.gui_font)
+        self.output = ctk.CTkLabel(self, text=output.replace("\\", "/"), bg_color=self.bg_color, fg_color=self.fg_color, padx=10, justify="left", font=self.master.gui_font)
         self.output.grid(row=2, column=0)
 
         self.grid_columnconfigure(1, weight=1)
-
 
     def load_icons(self):
         self.branch_image = ImageManager.get_image("branch", (20, 22))
@@ -215,13 +225,24 @@ class MainFrame(ctk.CTkFrame):
     def __init__(self, master, font:ctk.CTkFont):
         super().__init__(master)
         self.font = font
+        self.theme_mode = master.theme_mode
+        self.theme = master.theme
 
         self.__grid_setup__()
+        self.__load_theme__()
+
+
+    def __load_theme__(self):
+        dark = "_dark" if self.theme_mode == "dark" else ""
+        self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
+        self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
+        
+        
 
     def create_textbox(self, row:int = 0, column:int = 0):
         self.textbox = Maintext(self, font=self.font, type="main")
         self.textbox.grid(row=row, column=column, sticky="nsew")
-        self.textbox.configure(bg_color="#1D1E1E")
+        #self.textbox.configure(bg_color=self.bg_color, fg_color=self.bg_color)
         self.master.update()
         self.textbox.focus_set()
 
@@ -239,9 +260,23 @@ class Maintext(ctk.CTkTextbox):
         self._lexer = pygments.lexers.PythonLexer
         self._colors = SyntaxColors.get_syntax_colors()
 
+        self.__load_theme__()
+        self.configure(bg_color=self.bg_color, fg_color=self.bg_color)
+
+
+    def __load_theme__(self):
+        dark = "_dark" if self.master.theme_mode == "dark" else ""
+        self.bg_color = self.master.theme["widgets"]["main_textbox"][f"bg{dark}"]
+        self.selected_line_color = self.master.theme["widgets"]["main_textbox"][f"selected_line{dark}"]
+        self.font_color = self.master.theme["widgets"]["main_textbox"][f"font{dark}"]
+
     def create_line_counter(self, master):
+        dark = "_dark" if self.master.theme_mode == "dark" else ""
+        bg_color = self.master.theme["widgets"]["line_counter"][f"bg{dark}"]
+        font_color = self.master.theme["widgets"]["line_counter"][f"font{dark}"]
+
         self.update()
-        self._line_counter = TkLineNumbers(master, self, justify="right", colors=("#e3ba68", "#1D1E1E"),tilde="~", bd=0)
+        self._line_counter = TkLineNumbers(master, self, justify="right", colors=(font_color, bg_color),tilde="~", bd=0)
         self._line_counter.grid(row=0, column=1, sticky="nsew", pady=(6 * (self._get_widget_scaling()) + 0.5,0))
         self.__enable_auto_redraw__()
 
