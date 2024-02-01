@@ -260,14 +260,12 @@ class Generaltext(ctk.CTkTextbox):
     
     def enable_auto_highlight_line(self):
         self.bind("<Key>", lambda _: self.after_idle(lambda: self.highlight_selected_line()))
-    
-    
+        
     def highlight_selected_line(self, event=None):
         line_start = int(self.index("insert").split(".")[0])
         self.tag_remove("current_line_color", "1.0", "end")
         self.tag_add("current_line_color", f"{line_start}.0", f"{line_start + 1}.0")
         self.tag_config("current_line_color", background=self.selected_line_color)
-
 
     def load_theme(self, child):
         dark = "_dark" if self.master.theme_mode == "dark" else ""
@@ -285,19 +283,35 @@ class Generaltext(ctk.CTkTextbox):
 
         return (bg_color, selected_line_color, font_color)
 
-
     def write_file_content(self, content:str, mark_set:str = "insert"):
         """Directly write a file content."""
+        self.delete("1.0", "end")
         self.insert("1.0", content)
         if mark_set:
             self.mark_set(mark_set, "1.0")
     
+    def open_file(self, full_path:str):
+        """Open a file through a directory and title. Then, write it."""
+        content = FileManager.open_file(full_path)
+        if content:
+            self.write_file_content(content)
+
+    def open_directory(self, dir_path:str, auto_write:bool = True):
+        content = FileManager.open_directory(dir_path)
+        if content and auto_write:
+            self.write_file_content(content[1])
+
+    def set_tab_width(self, tabwidth:int):
+        self.configure(tabs=self.cget("font").measure(" ") * tabwidth)
+
+
+
 class Maintext(Generaltext):
     """Represents the main textbox of Pytext."""
     def __init__(self, master, type:str, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         super().enable_auto_highlight_line()
-        
+
         self.bg_color, self.selected_line_color, self.font_color = super().load_theme(self)
         self.configure(bg_color=self.bg_color, fg_color=self.bg_color)
 
@@ -334,8 +348,6 @@ class Maintext(Generaltext):
         self._y_scrollbar.set(scroll_pos[0], scroll_pos[1])
         self._line_counter.redraw()
 
-    def set_tab_width(self, tabwidth:int):
-        self.configure(tabs=self.cget("font").measure(" ") * tabwidth)
 
     def highlight_line(self, lexer="python", line_num:str=""):
         line_num = int(self.index("insert").split(".")[0]) if line_num == "" else line_num
@@ -379,23 +391,8 @@ class Maintext(Generaltext):
         for i in range(first_line, last_line):
             self.highlight_line("python", i)
 
-    def open_file(self, full_path:str):
-        """Open a file through a directory and title. Then, write it."""
-        content = FileManager.open_file(full_path)
-        if content:
-            self.write_file_content(content)
     
-    def open_directory(self, dir_path:str):
-        content = FileManager.open_directory(dir_path)
-        if content:
-            self.delete("1.0", "end")
-            self.write_file_content(content[1])
 
-    def write_file_content(self, content:str, mark_set:str = "insert"):
-        """Directly write a file content."""
-        self.insert("1.0", content)
-        if mark_set:
-            self.mark_set(mark_set, "1.0")
 
 
 class Lefttext(Generaltext):
@@ -405,12 +402,6 @@ class Lefttext(Generaltext):
 
         self.bg_color, self.selected_line_color, self.font_color = super().load_theme(self)
         self.configure(bg_color=self.bg_color, fg_color=self.bg_color)
-
-    def open_directory(self, dir_path:str):
-        content = FileManager.open_directory(dir_path)
-        if content:
-            self.delete("1.0", "end")
-            super().write_file_content(content[1])
 
 
 if __name__ == "__main__":
