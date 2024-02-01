@@ -253,45 +253,64 @@ class MainFrame(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
 
 
-class Maintext(ctk.CTkTextbox):
-    """Represents the main textbox of Pytext."""
-    def __init__(self, master, type:str, *args, **kwargs):
+class Generaltext(ctk.CTkTextbox):
+    def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
-        self._type:str = type # can be "main" or "left"
-        self._lexer = pygments.lexers.PythonLexer
-        self._colors = SyntaxColors.get_syntax_colors()
-
-        self.last_cursor_position = "1.0"
-
-        self.__load_theme__()
-        self.configure(bg_color=self.bg_color, fg_color=self.bg_color)
-
-        self._enable_binds_()
-
-
-    def __load_theme__(self):
-        dark = "_dark" if self.master.theme_mode == "dark" else ""
-        self.bg_color = self.master.theme["widgets"]["main_textbox"][f"bg{dark}"]
-        self.selected_line_color = self.master.theme["widgets"]["main_textbox"][f"selected_line{dark}"]
-        self.font_color = self.master.theme["widgets"]["main_textbox"][f"font{dark}"]
-
-    def _enable_binds_(self):
-            self.bind("<Key>", lambda e: self.after_idle(lambda: self.__bind_dealing__(e)))
-
-
-    def __bind_dealing__(self, event):
-        self.highlight_selected_line()
-            
-
-    def highlight_selected_line(self):
+    
+    def enable_auto_highlight_line(self):
+        self.bind("<Key>", lambda _: self.after_idle(lambda: self.highlight_selected_line()))
+    
+    
+    def highlight_selected_line(self, event=None):
         line_start = int(self.index("insert").split(".")[0])
         self.tag_remove("current_line_color", "1.0", "end")
         self.tag_add("current_line_color", f"{line_start}.0", f"{line_start + 1}.0")
         self.tag_config("current_line_color", background=self.selected_line_color)
+
+
+    def load_theme(self, child):
+        dark = "_dark" if self.master.theme_mode == "dark" else ""
+        child = str(child)
+
+        if "maintext" in child:
+            bg_color = self.master.theme["widgets"]["main_textbox"][f"bg{dark}"]
+            selected_line_color = self.master.theme["widgets"]["main_textbox"][f"selected_line{dark}"]
+            font_color = self.master.theme["widgets"]["main_textbox"][f"font{dark}"]
+
+        elif "lefttext" in child:
+            bg_color = self.master.theme["widgets"]["left_textbox"][f"bg{dark}"]
+            selected_line_color = self.master.theme["widgets"]["left_textbox"][f"selected_line{dark}"]
+            font_color = self.master.theme["widgets"]["left_textbox"][f"font{dark}"]
+
+        return (bg_color, selected_line_color, font_color)
+
+
+    def write_file_content(self, content:str, mark_set:str = "insert"):
+        """Directly write a file content."""
+        self.insert("1.0", content)
+        if mark_set:
+            self.mark_set(mark_set, "1.0")
+    
+class Maintext(Generaltext):
+    """Represents the main textbox of Pytext."""
+    def __init__(self, master, type:str, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
+        super().enable_auto_highlight_line()
         
+        self.bg_color, self.selected_line_color, self.font_color = super().load_theme(self)
+        self.configure(bg_color=self.bg_color, fg_color=self.bg_color)
 
+        self._lexer = pygments.lexers.PythonLexer
+        self._colors = SyntaxColors.get_syntax_colors()
+        #self._enable_binds_()
 
+    def _enable_binds_(self):
+            self.bind("<Key>", lambda e: self.after_idle(lambda: self.__bind_dealing__(e)))
+
+    def __bind_dealing__(self, event):
+        pass
+            
     def create_line_counter(self, master):
         dark = "_dark" if self.master.theme_mode == "dark" else ""
         bg_color = self.master.theme["widgets"]["line_counter"][f"bg{dark}"]
@@ -379,32 +398,19 @@ class Maintext(ctk.CTkTextbox):
             self.mark_set(mark_set, "1.0")
 
 
-class Lefttext(ctk.CTkTextbox):
+class Lefttext(Generaltext):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-        
-        self.__load_theme__()
+        super().enable_auto_highlight_line()
+
+        self.bg_color, self.selected_line_color, self.font_color = super().load_theme(self)
         self.configure(bg_color=self.bg_color, fg_color=self.bg_color)
-
-
-    def __load_theme__(self):
-        dark = "_dark" if self.master.theme_mode == "dark" else ""
-        self.bg_color = self.master.theme["widgets"]["left_textbox"][f"bg{dark}"]
-        self.selected_line_color = self.master.theme["widgets"]["left_textbox"][f"selected_line{dark}"]
-        self.font_color = self.master.theme["widgets"]["left_textbox"][f"font{dark}"]
-
 
     def open_directory(self, dir_path:str):
         content = FileManager.open_directory(dir_path)
         if content:
             self.delete("1.0", "end")
-            self.write_file_content(content[1])
-
-    def write_file_content(self, content:str, mark_set:str = "insert"):
-        """Directly write a file content."""
-        self.insert("1.0", content)
-        if mark_set:
-            self.mark_set(mark_set, "1.0")
+            super().write_file_content(content[1])
 
 
 if __name__ == "__main__":
