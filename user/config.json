@@ -4,11 +4,11 @@
 	"tab_width": 4,
 	"window_size": "1000x649",
 	"font": {
-		"tip": "If you want to add a custom font, paste your .ttf file in pytext/fonts/. Then, set <title> key to font title (without .ttf)",
+		"tip": "If you want to add a custom font, paste your .ttf file in pytext/fonts/. Then, set <title> key to font title.ttf (example: Arial.ttf)",
 
 		"title"		: "",
 		"family"    : "Consolas",
-		"size"      : 17,
-		"gui_size"  : 17
+		"size"      : 19,
+		"gui_size"  : 18
     	}
 }

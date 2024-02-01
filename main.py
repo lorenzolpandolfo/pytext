@@ -1,11 +1,7 @@
 import os
 
 import customtkinter as ctk
-# import tkinter as tk
 from tklinenums import TkLineNumbers
-from modules.tklinenums import TkLineNumbers
-from tkinter import ttk
-
 
 import pygments
 from pygments.lexers import get_lexer_by_name
@@ -17,6 +13,7 @@ from modules.ImageManager   import ImageManager
 from modules.SyntaxColors   import SyntaxColors
 from modules.FileManager    import FileManager
 from modules.ThemeManager   import ThemeManager
+from modules.tklinenums     import TkLineNumbers
 
 
 class MainApp(ctk.CTk):
@@ -42,13 +39,7 @@ class MainApp(ctk.CTk):
     
     def __load_user_font__(self):
         font = self.config["font"]
-
-        loader = (
-            FontManager.load_user_font(family=font["family"], size=font["size"], gui_size=font["gui_size"])
-            if font["title"] == ""
-            else FontManager.load_user_font(
-                is_custom = True, title=font["title"], family=font["family"], size=font["size"], gui_size=font["gui_size"]
-                ))
+        loader = FontManager.load_user_font(font)
         
         if isinstance(loader, int):
             print(f"Error: could not load font '{font['title']}'. Loading default font instead.")
@@ -134,6 +125,7 @@ class MainApp(ctk.CTk):
                 self.left_frame.textbox.focus_set()
 
 
+
 class LeftFrame(ctk.CTkFrame):
     """Contains the line counter."""
     def __init__(self, master, font:ctk.CTkFont):
@@ -173,7 +165,6 @@ class LeftFrame(ctk.CTkFrame):
             self.textbox.open_directory(self.master.terminal_dir)
 
     
-
 class BottomFrame(ctk.CTkFrame):
     """Contains the outputs labels."""
     def __init__(self, master):
@@ -305,7 +296,6 @@ class Generaltext(ctk.CTkTextbox):
         self.highlight_selected_line()
 
 
-
 class Maintext(Generaltext):
     """Represents the main textbox of Pytext."""
     def __init__(self, master, *args, **kwargs):
@@ -392,7 +382,6 @@ class Maintext(Generaltext):
 
         for i in range(first_line, last_line):
             self.highlight_line("python", i)
-
 
 
 class Lefttext(Generaltext):
