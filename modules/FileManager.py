@@ -32,7 +32,7 @@ class FileManager:
 
             formatted_strfiles = f"▼ {os.path.split(dir_path)[-1]}\n" + formatted_strfiles
 
-            return (raw_strfiles, formatted_strfiles + "\n")
+            return (raw_strfiles, formatted_strfiles)
         else:
             return False
 

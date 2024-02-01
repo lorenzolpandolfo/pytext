@@ -258,27 +258,52 @@ class Generaltext(ctk.CTkTextbox):
         dark = "_dark" if self.master.theme_mode == "dark" else ""
         child = str(child)
 
-        if "maintext" in child:
-            bg_color = self.master.theme["widgets"]["main_textbox"][f"bg{dark}"]
-            selected_line_color = self.master.theme["widgets"]["main_textbox"][f"selected_line{dark}"]
-            font_color = self.master.theme["widgets"]["main_textbox"][f"font{dark}"]
+        widget = "main_textbox" if "maintext" in child else "left_textbox"
 
-        elif "lefttext" in child:
-            bg_color = self.master.theme["widgets"]["left_textbox"][f"bg{dark}"]
-            selected_line_color = self.master.theme["widgets"]["left_textbox"][f"selected_line{dark}"]
-            font_color = self.master.theme["widgets"]["left_textbox"][f"font{dark}"]
+        bg_color            = self.master.theme["widgets"][widget][f"bg{dark}"]
+        selected_line_color = self.master.theme["widgets"][widget][f"selected_line{dark}"]
+        font_color          = self.master.theme["widgets"][widget][f"font{dark}"]
+        exp_dir_color       = self.master.theme["explorer"][f"dir{dark}"]
+        exp_file_color      = self.master.theme["explorer"][f"file{dark}"]
+        exp_curdir_color    = self.master.theme["explorer"][f"curdir{dark}"]
 
-        return (bg_color, selected_line_color, font_color)
+        return (bg_color, selected_line_color, font_color, exp_dir_color, exp_file_color, exp_curdir_color)
 
-    def write_file_content(self, content:str, mark_set:str = "insert"):
-        """Directly write a file content."""
+    def write_file_content(self, content:str | tuple, mark_set:str = "insert"):
+        """ Directly write a file content. """
         self.delete("1.0", "end")
         self.insert("1.0", content)
         if mark_set:
             self.mark_set(mark_set, "1.0")
+
+
+    def write_directory_content(self, content:tuple, colors:tuple, mark_set:str = "insert"):
+        """ Write files from a directory. Deals with directories colors. """
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+        raw_content = content[0]
+        formatted_content = content[1]
+
+        self.delete("1.0", "end")
+        self.insert("1.0", formatted_content)
+        
+        # adding colors to other directories inside of the content
+        for i, file in enumerate(raw_content.split("\n")):
+            full_path = os.path.join(os.getcwd(), file)
+
+            if os.path.isdir(full_path):
+                self.tag_add("directory_color", f"{i + 2}.0", f"{i + 3}.0")
+                self.tag_config("directory_color", foreground=colors[0])
+            
+            elif os.path.isfile(full_path):
+                self.tag_add("file_color", f"{i + 2}.0", f"{i + 3}.0")
+                self.tag_config("file_color", foreground=colors[1])
+        if mark_set:
+            self.mark_set(mark_set, "1.0")
+
     
     def open_file(self, full_path:str):
-        """Open a file through a directory and title. Then, write it."""
+        """ Open a file through a directory and title. Then, write it. """
         content = FileManager.open_file(full_path)
         if content:
             self.write_file_content(content)
@@ -286,7 +311,7 @@ class Generaltext(ctk.CTkTextbox):
     def open_directory(self, dir_path:str, auto_write:bool = True):
         content = FileManager.open_directory(dir_path)
         if content and auto_write:
-            self.write_file_content(content[1])
+            self.write_directory_content(content, colors=(self.exp_dir_color, self.exp_file_color, self.exp_curdir_color))
 
     def set_tab_width(self, tabwidth:int):
         self.configure(tabs=self.cget("font").measure(" ") * tabwidth)
@@ -302,7 +327,7 @@ class Maintext(Generaltext):
         super().__init__(master, *args, **kwargs)
         super().enable_auto_highlight_line()
 
-        self.bg_color, self.selected_line_color, self.font_color = super().load_theme(self)
+        self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color, self.exp_file_color, self.exp_curdir_color = super().load_theme(self)
         self.configure(bg_color=self.bg_color, fg_color=self.bg_color)
 
         self._lexer = pygments.lexers.PythonLexer
@@ -389,7 +414,7 @@ class Lefttext(Generaltext):
         super().__init__(master, *args, **kwargs)
         super().enable_auto_highlight_line()
 
-        self.bg_color, self.selected_line_color, self.font_color = super().load_theme(self)
+        self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color, self.exp_file_color, self.exp_curdir_color = super().load_theme(self)
         self.configure(bg_color=self.bg_color, fg_color=self.bg_color)
 
 
