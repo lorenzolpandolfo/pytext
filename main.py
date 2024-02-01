@@ -135,6 +135,7 @@ class LeftFrame(ctk.CTkFrame):
         self.font = font
         self.theme_mode = master.theme_mode
         self.theme = master.theme
+        self.terminal_dir = os.path.join(master.terminal_dir, os.path.dirname(master.file_name))
 
         self.__load_theme__()
         self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
@@ -162,7 +163,7 @@ class LeftFrame(ctk.CTkFrame):
     def show_textbox(self):
         if not self.textbox.winfo_ismapped():
             self.textbox.grid(row=0, column=0, sticky="nsew")
-            self.textbox.open_directory(self.master.terminal_dir)
+            self.textbox.open_directory(self.terminal_dir)
 
     
 class BottomFrame(ctk.CTkFrame):
@@ -280,6 +281,7 @@ class Generaltext(ctk.CTkTextbox):
     def write_directory_content(self, content:tuple, colors:tuple, mark_set:str = "insert"):
         """ Write files from a directory. Deals with directories colors. """
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        self.configure(state="normal")
 
         raw_content = content[0]
         formatted_content = content[1]
@@ -289,7 +291,7 @@ class Generaltext(ctk.CTkTextbox):
         
         # adding colors to other directories inside of the content
         for i, file in enumerate(raw_content.split("\n")):
-            full_path = os.path.join(os.getcwd(), file)
+            full_path = os.path.join(self.master.terminal_dir, file)
 
             if os.path.isdir(full_path):
                 self.tag_add("directory_color", f"{i + 2}.0", f"{i + 3}.0")
@@ -300,6 +302,9 @@ class Generaltext(ctk.CTkTextbox):
                 self.tag_config("file_color", foreground=colors[1])
         if mark_set:
             self.mark_set(mark_set, "1.0")
+        
+        self.configure(state="disabled")
+
 
     
     def open_file(self, full_path:str):
@@ -415,7 +420,7 @@ class Lefttext(Generaltext):
         super().enable_auto_highlight_line()
 
         self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color, self.exp_file_color, self.exp_curdir_color = super().load_theme(self)
-        self.configure(bg_color=self.bg_color, fg_color=self.bg_color)
+        self.configure(bg_color=self.bg_color, fg_color=self.bg_color, state="disabled")
 
 
 

@@ -47,9 +47,12 @@
 		}
 
 	},
-	"directory_explorer": {
-		"dir"			: "#05BDDD",
+	"explorer": {
+		"dir"			: "#e3ba68",
+		"dir_dark"		: "#e3ba68",
 		"file"			: "#C8C6AB",
-		"current_dir"	: "#7ec699"
+		"file_dark"		: "#C8C6AB",
+		"curdir"		: "#7ec699",
+		"curdir_dark"	: "#7ec699"
 	}
 }
