@@ -25,9 +25,11 @@ class FileManager:
             raw_strfiles = "\n".join(files)
 
             formatted_strfiles = "\n".join(
-                f"⮞ {file}" if os.path.isdir(os.path.join(dir_path, file)) else file
+                f" /{file}" if os.path.isdir(os.path.join(dir_path, file)) else f" {file}"
                 for file in files
             )
+
+            formatted_strfiles = f"▼ {os.path.split(dir_path)[-1]}\n" + formatted_strfiles
 
             return (raw_strfiles, formatted_strfiles + "\n")
         else:

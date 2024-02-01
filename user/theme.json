@@ -28,6 +28,15 @@
 			"font"				: "#e3ba68",
 			"font_dark"			: "#e3ba68"
 		},
+		"left_textbox": {
+			"bg"				: "#fafafa",
+			"bg_dark"			: "#181818",
+			"selected_line"		: "#2b2b2b",
+			"selected_line_dark": "#2b2b2b",
+			"font"				: "#e3ba68",
+			"font_dark"			: "#e3ba68"
+
+		},
 		"line_counter": {
 			"bg"				: "#ebebeb",
 			"bg_dark"			: "#181818",
