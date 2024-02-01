@@ -1,21 +1,13 @@
-import os
-import json
+from modules.FileManager import FileManager as fm
 
 class UserConfig:
     @staticmethod
     def get_user_config():
-        UserConfig.__move_to_user_directory__()
-        return UserConfig.__load_config_file__()
+        try:
+            fm.move_to_directory("user")
+            return fm.open_json_file("config.json")
         
-
-    @staticmethod
-    def __move_to_user_directory__():
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        os.chdir("..")
-        os.chdir("user")
-
-    @staticmethod
-    def __load_config_file__():
-        with open("config.json", "r", encoding="utf8") as file:
-            return json.load(file)
-
+        except Exception as error:
+            print(f"Error: could not load 'user/config.json'. Loading f_config.json instead.")
+            fm.move_to_directory("user", "fallbacks")
+            return fm.open_json_file("f_config.json")

@@ -1,4 +1,5 @@
 import os
+import json
 
 class FileManager:
     """Deals with file management. Used to open files and directories, check if path is a file or directory, etc."""
@@ -56,3 +57,18 @@ class FileManager:
                 content = head_file.read()
                 return content.split("/")[-1]
         return False
+
+
+    @staticmethod
+    def move_to_directory(*args):
+        """Used to move inside a directory inside Pytext root directory."""
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
+        os.chdir("..")
+        if args:
+            for arg in args:
+                os.chdir(arg)
+
+    @staticmethod
+    def open_json_file(file_title:str):
+        with open(file_title, "r", encoding="utf8") as file:
+            return json.load(file)

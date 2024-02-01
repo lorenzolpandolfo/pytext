@@ -25,23 +25,18 @@ class MainApp(ctk.CTk):
 
         self.terminal_dir  = terminal_dir
         self.file_name     = file_name
+        self.theme_mode = self._get_appearance_mode()
 
         self.__load_user_config__()   
         self.__load_user_font__()
         self.__load_user_theme__()
-        self.theme_mode = self._get_appearance_mode()
-
-        
-
         self.__create_gui__()
 
         if self.file_name:
             self.__load_argv_file__()
-        
         self.__enable_binds__()
 
-
-        
+      
     def __load_user_config__(self):
         self.config = UserConfig.get_user_config()
     

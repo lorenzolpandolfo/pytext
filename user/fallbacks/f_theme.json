@@ -1,0 +1,55 @@
+{	
+	"frames": {
+		"main": {
+			"bg"		: "#fafafa",
+			"bg_dark"	: "#1f1f1f"
+		},
+	
+		"left": {
+			"bg"		: "#ebebeb",
+			"bg_dark"	: "#181818",
+			"fg"		: "#ebebeb",
+			"fg_dark"	: "#181818"
+		},
+		
+		"bottom":{
+			"bg"		: "#ebebeb",
+			"bg_dark"	: "#181818",
+			"fg"		: "#ebebeb",
+			"fg_dark"	: "#181818"
+		}
+	},
+	"widgets": {
+		"main_textbox": {
+			"bg"				: "#fafafa",
+			"bg_dark"			: "#1f1f1f",
+			"selected_line"		: "#2b2b2b",
+			"selected_line_dark": "#2b2b2b",
+			"font"				: "#e3ba68",
+			"font_dark"			: "#e3ba68"
+		},
+		"left_textbox": {
+			"bg"				: "#fafafa",
+			"bg_dark"			: "#181818",
+			"selected_line"		: "#2b2b2b",
+			"selected_line_dark": "#2b2b2b",
+			"font"				: "#e3ba68",
+			"font_dark"			: "#e3ba68"
+
+		},
+		"line_counter": {
+			"bg"				: "#ebebeb",
+			"bg_dark"			: "#181818",
+			"font"				: "#e3ba68",
+			"font_dark"			: "#e3ba68",
+			"tilde_char"		: "",
+			"tilde_char_dark"	: ""
+		}
+
+	},
+	"directory_explorer": {
+		"dir"			: "#05BDDD",
+		"file"			: "#C8C6AB",
+		"current_dir"	: "#7ec699"
+	}
+}
