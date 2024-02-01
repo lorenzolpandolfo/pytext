@@ -242,7 +242,7 @@ class MainFrame(ctk.CTkFrame):
         
 
     def create_textbox(self, row:int = 0, column:int = 0):
-        self.textbox = Maintext(self, font=self.font, type="main")
+        self.textbox = Maintext(self, font=self.font)
         self.textbox.grid(row=row, column=column, sticky="nsew")
         #self.textbox.configure(bg_color=self.bg_color, fg_color=self.bg_color)
         self.master.update()
@@ -253,11 +253,12 @@ class MainFrame(ctk.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
 
 
+
 class Generaltext(ctk.CTkTextbox):
+    """Includes methods that Maintext and Lefttext use"""
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
-    
     def enable_auto_highlight_line(self):
         self.bind("<Key>", lambda _: self.after_idle(lambda: self.highlight_selected_line()))
         
@@ -304,11 +305,15 @@ class Generaltext(ctk.CTkTextbox):
     def set_tab_width(self, tabwidth:int):
         self.configure(tabs=self.cget("font").measure(" ") * tabwidth)
 
+    def focus_set(self):
+        super().focus_set()
+        self.highlight_selected_line()
+
 
 
 class Maintext(Generaltext):
     """Represents the main textbox of Pytext."""
-    def __init__(self, master, type:str, *args, **kwargs):
+    def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         super().enable_auto_highlight_line()
 
@@ -326,11 +331,14 @@ class Maintext(Generaltext):
         pass
             
     def create_line_counter(self, master):
-        dark = "_dark" if self.master.theme_mode == "dark" else ""
-        bg_color = self.master.theme["widgets"]["line_counter"][f"bg{dark}"]
-        font_color = self.master.theme["widgets"]["line_counter"][f"font{dark}"]
+        def load_line_counter_theme() -> tuple:
+            dark = "_dark" if self.master.theme_mode == "dark" else ""
+            bg_color = self.master.theme["widgets"]["line_counter"][f"bg{dark}"]
+            font_color = self.master.theme["widgets"]["line_counter"][f"font{dark}"]
+            return (bg_color, font_color)
+        bg_color, font_color = load_line_counter_theme()
 
-        self.update()
+        #self.update()
         self._line_counter = TkLineNumbers(master, self, justify="right", colors=(font_color, bg_color),tilde="~", bd=0)
         self._line_counter.grid(row=0, column=1, sticky="nsew", pady=(6 * (self._get_widget_scaling()) + 0.5,0))
         self.__enable_auto_redraw__()
@@ -347,7 +355,6 @@ class Maintext(Generaltext):
     def __y_scroll_command__(self, *scroll_pos:tuple):
         self._y_scrollbar.set(scroll_pos[0], scroll_pos[1])
         self._line_counter.redraw()
-
 
     def highlight_line(self, lexer="python", line_num:str=""):
         line_num = int(self.index("insert").split(".")[0]) if line_num == "" else line_num
@@ -391,8 +398,6 @@ class Maintext(Generaltext):
         for i in range(first_line, last_line):
             self.highlight_line("python", i)
 
-    
-
 
 
 class Lefttext(Generaltext):
@@ -402,6 +407,7 @@ class Lefttext(Generaltext):
 
         self.bg_color, self.selected_line_color, self.font_color = super().load_theme(self)
         self.configure(bg_color=self.bg_color, fg_color=self.bg_color)
+
 
 
 if __name__ == "__main__":
