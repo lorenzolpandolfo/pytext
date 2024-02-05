@@ -105,9 +105,30 @@ class MainApp(ctk.CTk):
     def __enable_binds__(self):
         self.bind("<Key>", lambda e: self.bind_dealing(e))
     
-    def bind_dealing(self, event):
+    def bind_dealing(self, event = None):
         focus = str(self.focus_get())
         left_textbox_visible = self.left_frame.textbox.winfo_ismapped()
+
+        if left_textbox_visible:
+            if event.keysym == "Return":
+                file_name = self.left_frame.textbox.get_current_line_content().strip()
+                if file_name[0] == "▼":
+                    self.left_frame.textbox.updir()
+                    return self.left_frame.textbox.open_directory(self.left_frame.textbox.path)
+                
+                elif file_name[0] == "/":
+                    file_name = file_name[1:]
+
+                content = os.path.join(self.left_frame.textbox.path, file_name)
+
+                if os.path.isdir(content):
+                    return self.left_frame.textbox.open_directory(content)
+                else:
+                    # contar quantos diretorios tem antes e ir salvando a posicao do cursor pra retomar
+                    if self.main_frame.textbox.open_file(content):
+                        self.main_frame.textbox.focus_set()
+
+            
 
         if event.keysym == "Escape" and left_textbox_visible:
             self.left_frame.hide_textbox()
@@ -116,6 +137,7 @@ class MainApp(ctk.CTk):
         elif (event.state & 0x4) and event.keysym == "f":
             if left_textbox_visible:
                 if "leftframe" in focus:
+                    print("??")
                     self.left_frame.hide_textbox()
                     self.main_frame.textbox.focus_set()
                 else:
@@ -312,11 +334,16 @@ class Generaltext(ctk.CTkTextbox):
         content = FileManager.open_file(full_path)
         if content:
             self.write_file_content(content)
+        else:
+            return False
 
     def open_directory(self, dir_path:str, auto_write:bool = True):
         content = FileManager.open_directory(dir_path)
-        if content and auto_write:
-            self.write_directory_content(content, colors=(self.exp_dir_color, self.exp_file_color, self.exp_curdir_color))
+        if content:
+            self.path = dir_path
+
+            if auto_write:
+                self.write_directory_content(content, colors=(self.exp_dir_color, self.exp_file_color, self.exp_curdir_color))
 
     def set_tab_width(self, tabwidth:int):
         self.configure(tabs=self.cget("font").measure(" ") * tabwidth)
@@ -324,6 +351,11 @@ class Generaltext(ctk.CTkTextbox):
     def focus_set(self):
         super().focus_set()
         self.highlight_selected_line()
+
+    def get_current_line_content(self):
+        line_start = int(self.index("insert").split(".")[0])
+        return self.get(f"{line_start}.0", f"{line_start + 1}.0")
+
 
 
 class Maintext(Generaltext):
@@ -421,6 +453,9 @@ class Lefttext(Generaltext):
 
         self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color, self.exp_file_color, self.exp_curdir_color = super().load_theme(self)
         self.configure(bg_color=self.bg_color, fg_color=self.bg_color, state="disabled")
+    
+    def updir(self):
+        self.path = os.path.dirname(self.path)
 
 
 
