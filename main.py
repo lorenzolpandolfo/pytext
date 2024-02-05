@@ -106,8 +106,10 @@ class MainApp(ctk.CTk):
         self.bind("<Key>", lambda e: self.bind_dealing(e))
     
     def bind_dealing(self, event = None):
+        # TODO - separar essa grande função em funções menores
         focus = str(self.focus_get())
         left_textbox_visible = self.left_frame.textbox.winfo_ismapped()
+        print(event)
 
         if left_textbox_visible:
             if event.keysym == "Return":
@@ -145,11 +147,16 @@ class MainApp(ctk.CTk):
             else:
                 self.left_frame.show_textbox()
                 self.left_frame.textbox.focus_set()
+        
+        else:
+            cur_text = self.bottom_frame.command.cget("text")
+            if event.char.isalpha() or event.char.isdigit():
+                self.bottom_frame.command.configure(text=cur_text + event.char)
 
 
 
 class LeftFrame(ctk.CTkFrame):
-    """Contains the line counter."""
+    """ Contains the line counter. """
     def __init__(self, master, font:ctk.CTkFont):
         super().__init__(master)
 
@@ -264,7 +271,7 @@ class MainFrame(ctk.CTkFrame):
 
 
 class Generaltext(ctk.CTkTextbox):
-    """Includes methods that Maintext and Lefttext use"""
+    """ Includes methods that Maintext and Lefttext use. """
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
@@ -313,7 +320,7 @@ class Generaltext(ctk.CTkTextbox):
         
         # adding colors to other directories inside of the content
         for i, file in enumerate(raw_content.split("\n")):
-            full_path = os.path.join(self.master.terminal_dir, file)
+            full_path = os.path.join(self.path, file)
 
             if os.path.isdir(full_path):
                 self.tag_add("directory_color", f"{i + 2}.0", f"{i + 3}.0")
@@ -322,6 +329,7 @@ class Generaltext(ctk.CTkTextbox):
             elif os.path.isfile(full_path):
                 self.tag_add("file_color", f"{i + 2}.0", f"{i + 3}.0")
                 self.tag_config("file_color", foreground=colors[1])
+            
         if mark_set:
             self.mark_set(mark_set, "1.0")
         
@@ -334,8 +342,7 @@ class Generaltext(ctk.CTkTextbox):
         content = FileManager.open_file(full_path)
         if content:
             self.write_file_content(content)
-        else:
-            return False
+        return content
 
     def open_directory(self, dir_path:str, auto_write:bool = True):
         content = FileManager.open_directory(dir_path)
