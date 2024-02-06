@@ -112,7 +112,7 @@ class MainApp(ctk.CTk):
         left_textbox_visible = self.left_frame.textbox.winfo_ismapped()
         # print(event)
 
-        if left_textbox_visible and event.keysym == "Return":
+        if left_textbox_visible and "leftframe" in focus and event.keysym == "Return":
             file_name = self.left_frame.textbox.get_current_line_content().strip()
             if file_name[0] == "▼":
                 self.left_frame.textbox.updir()
