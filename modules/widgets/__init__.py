@@ -1,0 +1,1 @@
+all = ["widgets.py"]

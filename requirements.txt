@@ -1,5 +1,4 @@
 customtkinter
 tkinterdnd2
 pillow
-tklinenums
 pygments
