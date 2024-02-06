@@ -109,24 +109,23 @@ class MainApp(ctk.CTk):
         left_textbox_visible = self.left_frame.textbox.winfo_ismapped()
         # print(event)
 
-        if left_textbox_visible:
-            if event.keysym == "Return":
-                file_name = self.left_frame.textbox.get_current_line_content().strip()
-                if file_name[0] == "▼":
-                    self.left_frame.textbox.updir()
-                    return self.left_frame.textbox.open_directory(self.left_frame.textbox.path)
-                
-                elif file_name[0] == "/":
-                    file_name = file_name[1:]
+        if left_textbox_visible and event.keysym == "Return":
+            file_name = self.left_frame.textbox.get_current_line_content().strip()
+            if file_name[0] == "▼":
+                self.left_frame.textbox.updir()
+                return self.left_frame.textbox.open_directory(self.left_frame.textbox.path)
+            
+            elif file_name[0] == "/":
+                file_name = file_name[1:]
 
-                content = os.path.join(self.left_frame.textbox.path, file_name)
+            content = os.path.join(self.left_frame.textbox.path, file_name)
 
-                if os.path.isdir(content):
-                    return self.left_frame.textbox.open_directory(content)
-                else:
-                    # contar quantos diretorios tem antes e ir salvando a posicao do cursor pra retomar
-                    if self.main_frame.textbox.open_file(content):
-                        self.main_frame.textbox.focus_set()
+            if os.path.isdir(content):
+                return self.left_frame.textbox.open_directory(content)
+            else:
+                # contar quantos diretorios tem antes e ir salvando a posicao do cursor pra retomar
+                if self.main_frame.textbox.open_file(content):
+                    self.main_frame.textbox.focus_set()
 
             
         if self.mode == "view":
@@ -149,13 +148,17 @@ class MainApp(ctk.CTk):
             if write:
                 self.bottom_frame.command.configure(text=cur_text + event.char)
 
-        if event.keysym == "Escape":
-            if left_textbox_visible:
-                self.left_frame.hide_textbox()
-                self.main_frame.textbox.focus_set()
+        elif self.mode == "insert":
+            if event.keysym == "Escape":
+                return self.switch_mode()
+      
+        # if event.keysym == "Escape":
+        #     if left_textbox_visible:
+        #         self.left_frame.hide_textbox()
+        #         self.main_frame.textbox.focus_set()
             
-            else:
-                self.switch_mode()
+        #     else:
+        #         self.switch_mode()
         
         if (event.state & 0x4) and event.keysym == "f":
             if left_textbox_visible:

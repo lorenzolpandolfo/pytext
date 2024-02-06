@@ -12,11 +12,10 @@ class LeftFrame(CTkFrame):
         self.__grid_setup__()
         self.font = font
         
+        self.terminal_dir = master.terminal_dir
         self.theme_mode = master.theme_mode
         self.theme = master.theme
         self.mode = master.mode
-
-        self.terminal_dir = os.path.join(master.terminal_dir, os.path.dirname(master.file_name))
 
         self.__load_theme__()
         self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
@@ -45,6 +44,7 @@ class LeftFrame(CTkFrame):
         if not self.textbox.winfo_ismapped():
             self.textbox.grid(row=0, column=0, sticky="nsew")
             self.textbox.open_directory(self.terminal_dir)
+
 
     
 class BottomFrame(CTkFrame):
@@ -96,7 +96,7 @@ class MainFrame(CTkFrame):
     def __init__(self, master, font:CTkFont):
         super().__init__(master)
         self.font = font
-        
+
         self.theme_mode = master.theme_mode
         self.theme = master.theme
         self.mode = master.mode
@@ -122,3 +122,9 @@ class MainFrame(CTkFrame):
     def __grid_setup__(self):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+
+    def switch_mode(self):
+        return self.master.switch_mode()
+
+    def get_mode(self):
+        return self.master.mode

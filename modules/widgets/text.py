@@ -41,10 +41,19 @@ class Generaltext(CTkTextbox):
 
     def write_file_content(self, content:str | tuple, mark_set:str = "insert"):
         """ Directly write a file content. """
+        self.configure(state="normal")
+
         self.delete("1.0", "end")
         self.insert("1.0", content)
+
         if mark_set:
             self.mark_set(mark_set, "1.0")
+        
+        if self.master.get_mode() == "insert":
+            self.master.switch_mode()
+        else:
+            self.configure(state="disabled")
+
 
 
     def write_directory_content(self, content:tuple, colors:tuple, mark_set:str = "insert"):
@@ -82,8 +91,7 @@ class Generaltext(CTkTextbox):
         content = FileManager.open_file(full_path)
         if content:
             self.write_file_content(content)
-            #if self.master.mode == "insert":
-            #    self.master.switch_mode()
+            
         return content
 
     def open_directory(self, dir_path:str, auto_write:bool = True):

@@ -23,33 +23,33 @@
 		"main_textbox": {
 			"bg"				: "#000000",
 			"bg_dark"			: "#000000",
-			"selected_line"		: "#4e9a06",
-			"selected_line_dark": "#4e9a06",
+			"selected_line"		: "#555753",
+			"selected_line_dark": "#555753",
 			"font"				: "#4e9a06",
 			"font_dark"			: "#4e9a06"
 		},
 		"left_textbox": {
 			"bg"				: "#000000",
 			"bg_dark"			: "#000000",
-			"selected_line"		: "#4e9a06",
-			"selected_line_dark": "#4e9a06",
+			"selected_line"		: "#555753",
+			"selected_line_dark": "#555753",
 			"font"				: "#4e9a06",
-			"font_dark"			: "#4e9a06"
+			"font_dark"			: "#4e9a06"	
 
 		},
 		"line_counter": {
-			"bg"				: "#4e9a06",
-			"bg_dark"			: "#4e9a06",
-			"font"				: "#ffffff",
-			"font_dark"			: "#ffffff",
+			"bg"				: "#000000",
+			"bg_dark"			: "#000000",
+			"font"				: "#4e9a06",
+			"font_dark"			: "#4e9a06",
 			"tilde_char"		: "",
 			"tilde_char_dark"	: ""
 		}
 
 	},
 	"explorer": {
-		"dir"			: "#729fcf",
-		"dir_dark"		: "#729fcf",
+		"dir"			: "#4e9a06",
+		"dir_dark"		: "#4e9a06",
 		"file"			: "#C8C6AB",
 		"file_dark"		: "#C8C6AB",
 		"curdir"		: "#7ec699",
