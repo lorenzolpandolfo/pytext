@@ -7,6 +7,7 @@ from modules.UserConfig     import UserConfig
 from modules.FontManager    import FontManager
 from modules.FileManager    import FileManager
 from modules.ThemeManager   import ThemeManager
+from modules.Application    import Application
 
 from modules.frames.frames import MainFrame, LeftFrame, BottomFrame
 
@@ -21,6 +22,8 @@ class MainApp(ctk.CTk):
         self.theme_mode     = self._get_appearance_mode()
         self.mode           = "view"
 
+        Application.mainapp = self
+        Application.set_mode("view")
 
         self.__load_user_config__()   
         self.__load_user_font__()
@@ -128,14 +131,15 @@ class MainApp(ctk.CTk):
                     self.main_frame.textbox.focus_set()
 
             
-        if self.mode == "view":
+        #if self.mode == "view":
+        if Application.get_mode() == "view":
             write = False
             cur_text = self.bottom_frame.command.cget("text")
             if event.char.isalpha():
                 write = True
                 # quick commands, as i to enter insert mode
                 if event.char in ["i"]:
-                    return self.switch_mode()
+                    return Application.switch_mode()
 
                 num_chars = len(re.findall(r"[a-zA-Z]", cur_text))
                 if num_chars:
@@ -148,9 +152,10 @@ class MainApp(ctk.CTk):
             if write:
                 self.bottom_frame.command.configure(text=cur_text + event.char)
 
-        elif self.mode == "insert":
+        #elif self.mode == "insert":
+        elif Application.get_mode() == "insert":
             if event.keysym == "Escape":
-                return self.switch_mode()
+                return Application.switch_mode()
       
         # if event.keysym == "Escape":
         #     if left_textbox_visible:
@@ -171,16 +176,6 @@ class MainApp(ctk.CTk):
                 self.left_frame.show_textbox()
                 self.left_frame.textbox.focus_set()
 
-
-
-    def switch_mode(self):
-        self.mode = "view" if self.mode == "insert" else "insert"
-        self.bottom_frame.mode.configure(text=self.mode)
-
-        state = "disabled" if self.mode == "view" else "normal"
-        self.main_frame.textbox.configure(state=state)
-
-        self.bottom_frame.command.configure(text="")
 
 
 if __name__ == "__main__":

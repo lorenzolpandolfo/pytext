@@ -1,1 +1,1 @@
-__all__ = ["UserConfig.py", "SyntaxColors.py", "FileManager.py", "FontManager.py", "ImageManager.py", "ThemeManager.py", "tklinenums.py", "widgets"]
+__all__ = ["UserConfig.py", "SyntaxColors.py", "FileManager.py", "FontManager.py", "ImageManager.py", "ThemeManager.py", "tklinenums.py", "widgets", "Application.py"]

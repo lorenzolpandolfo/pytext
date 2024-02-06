@@ -4,6 +4,7 @@ import os
 from modules.FileManager    import FileManager
 from modules.tklinenums     import TkLineNumbers
 from modules.SyntaxColors   import SyntaxColors
+from modules.Application    import Application
 
 import pygments
 from pygments.lexers import get_lexer_by_name
@@ -49,8 +50,11 @@ class Generaltext(CTkTextbox):
         if mark_set:
             self.mark_set(mark_set, "1.0")
         
-        if self.master.get_mode() == "insert":
-            self.master.switch_mode()
+        # if self.master.get_mode() == "insert":
+        #     self.master.switch_mode()
+        if Application.get_mode() == "insert":
+            # self.master.switch_mode()
+            Application.switch_mode()
         else:
             self.configure(state="disabled")
 

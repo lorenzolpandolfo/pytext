@@ -122,9 +122,3 @@ class MainFrame(CTkFrame):
     def __grid_setup__(self):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-
-    def switch_mode(self):
-        return self.master.switch_mode()
-
-    def get_mode(self):
-        return self.master.mode
