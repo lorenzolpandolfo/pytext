@@ -82,6 +82,8 @@ class Generaltext(CTkTextbox):
         content = FileManager.open_file(full_path)
         if content:
             self.write_file_content(content)
+            #if self.master.mode == "insert":
+            #    self.master.switch_mode()
         return content
 
     def open_directory(self, dir_path:str, auto_write:bool = True):
@@ -111,7 +113,7 @@ class Maintext(Generaltext):
         super().enable_auto_highlight_line()
 
         self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color, self.exp_file_color, self.exp_curdir_color = super().load_theme(self)
-        self.configure(bg_color=self.bg_color, fg_color=self.bg_color)
+        self.configure(bg_color=self.bg_color, fg_color=self.bg_color, state="disabled")
 
         self._lexer = pygments.lexers.PythonLexer
         self._colors = SyntaxColors.get_syntax_colors()

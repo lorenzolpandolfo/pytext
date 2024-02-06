@@ -1,4 +1,5 @@
 import os
+import re
 
 import customtkinter as ctk
 
@@ -15,9 +16,11 @@ class MainApp(ctk.CTk):
     def __init__(self, terminal_dir:str, file_name:str):
         super().__init__()
 
-        self.terminal_dir  = terminal_dir
-        self.file_name     = file_name
-        self.theme_mode = self._get_appearance_mode()
+        self.terminal_dir   = terminal_dir
+        self.file_name      = file_name
+        self.theme_mode     = self._get_appearance_mode()
+        self.mode           = "view"
+
 
         self.__load_user_config__()   
         self.__load_user_font__()
@@ -104,7 +107,7 @@ class MainApp(ctk.CTk):
         # TODO - separar essa grande função em funções menores
         focus = str(self.focus_get())
         left_textbox_visible = self.left_frame.textbox.winfo_ismapped()
-        print(event)
+        # print(event)
 
         if left_textbox_visible:
             if event.keysym == "Return":
@@ -126,12 +129,35 @@ class MainApp(ctk.CTk):
                         self.main_frame.textbox.focus_set()
 
             
+        if self.mode == "view":
+            write = False
+            cur_text = self.bottom_frame.command.cget("text")
+            if event.char.isalpha():
+                write = True
+                # quick commands, as i to enter insert mode
+                if event.char in ["i"]:
+                    return self.switch_mode()
 
-        if event.keysym == "Escape" and left_textbox_visible:
-            self.left_frame.hide_textbox()
-            self.main_frame.textbox.focus_set()
+                num_chars = len(re.findall(r"[a-zA-Z]", cur_text))
+                if num_chars:
+                    print("Acionando o comando")
+
+
+            elif event.char.isdigit():
+                write = True
+
+            if write:
+                self.bottom_frame.command.configure(text=cur_text + event.char)
+
+        if event.keysym == "Escape":
+            if left_textbox_visible:
+                self.left_frame.hide_textbox()
+                self.main_frame.textbox.focus_set()
+            
+            else:
+                self.switch_mode()
         
-        elif (event.state & 0x4) and event.keysym == "f":
+        if (event.state & 0x4) and event.keysym == "f":
             if left_textbox_visible:
                 if "leftframe" in focus:
                     self.left_frame.hide_textbox()
@@ -141,12 +167,17 @@ class MainApp(ctk.CTk):
             else:
                 self.left_frame.show_textbox()
                 self.left_frame.textbox.focus_set()
-        
-        else:
-            cur_text = self.bottom_frame.command.cget("text")
-            if event.char.isalpha() or event.char.isdigit():
-                self.bottom_frame.command.configure(text=cur_text + event.char)
 
+
+
+    def switch_mode(self):
+        self.mode = "view" if self.mode == "insert" else "insert"
+        self.bottom_frame.mode.configure(text=self.mode)
+
+        state = "disabled" if self.mode == "view" else "normal"
+        self.main_frame.textbox.configure(state=state)
+
+        self.bottom_frame.command.configure(text="")
 
 
 if __name__ == "__main__":

@@ -11,8 +11,11 @@ class LeftFrame(CTkFrame):
 
         self.__grid_setup__()
         self.font = font
+        
         self.theme_mode = master.theme_mode
         self.theme = master.theme
+        self.mode = master.mode
+
         self.terminal_dir = os.path.join(master.terminal_dir, os.path.dirname(master.file_name))
 
         self.__load_theme__()
@@ -58,10 +61,10 @@ class BottomFrame(CTkFrame):
 
         
     def create_widgets(self, output:str):
-        self.mode = CTkLabel(self, text="View", justify="center", bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
+        self.mode = CTkLabel(self, text=self.master.mode, justify="center", bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
         self.mode.grid(row=1, column=0, columnspan=2)
 
-        self.command = CTkLabel(self, text="99d", justify="left", bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
+        self.command = CTkLabel(self, text="", justify="left", bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
         self.command.grid(row=2, column=1, sticky="e")
 
         self.output = CTkLabel(self, text=output.replace("\\", "/"), bg_color=self.bg_color, fg_color=self.fg_color, padx=10, justify="left", font=self.master.gui_font)
@@ -93,8 +96,11 @@ class MainFrame(CTkFrame):
     def __init__(self, master, font:CTkFont):
         super().__init__(master)
         self.font = font
+        
         self.theme_mode = master.theme_mode
         self.theme = master.theme
+        self.mode = master.mode
+
 
         self.__grid_setup__()
         self.__load_theme__()
