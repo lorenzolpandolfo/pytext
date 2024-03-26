@@ -1,4 +1,4 @@
-from customtkinter import CTkTextbox
+from customtkinter import CTkTextbox, CTkScrollbar
 import os
 
 from modules.FileManager    import FileManager
@@ -213,6 +213,17 @@ class Lefttext(Generaltext):
 
         self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color, self.exp_file_color, self.exp_curdir_color = super().load_theme(self)
         self.configure(bg_color=self.bg_color, fg_color=self.bg_color, state="disabled")
-    
+
+
+        self.scrollbar = CTkScrollbar(self, orientation="horizontal", command=self.xview)
+        self.scrollbar.grid(row=1, column=0, sticky="we")
+
+        self.configure(xscrollcommand=self.teste(*self.xview()))
+        #self.configure(xscrollcommand=self.scrollbar.set)
+
+
     def updir(self):
         self.path = os.path.dirname(self.path)
+    
+    def teste(self, first, last):
+        self.scrollbar.set(first, last)

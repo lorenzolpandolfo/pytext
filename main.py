@@ -7,7 +7,9 @@ from modules.UserConfig     import UserConfig
 from modules.FontManager    import FontManager
 from modules.FileManager    import FileManager
 from modules.ThemeManager   import ThemeManager
+
 from modules.Application    import Application
+from modules.CommandManager import CommandManager
 
 from modules.frames.frames import MainFrame, LeftFrame, BottomFrame
 
@@ -22,7 +24,8 @@ class MainApp(ctk.CTk):
         self.theme_mode     = self._get_appearance_mode()
         self.mode           = "view"
 
-        Application.mainapp = self
+        Application.mainapp     = self
+        CommandManager.mainapp  = self
         Application.set_mode("view")
 
         self.__load_user_config__()   
@@ -110,8 +113,8 @@ class MainApp(ctk.CTk):
         # TODO - separar essa grande função em funções menores
         focus = str(self.focus_get())
         left_textbox_visible = self.left_frame.textbox.winfo_ismapped()
-        # print(event)
 
+        # accessing a file or directory
         if left_textbox_visible and "leftframe" in focus and event.keysym == "Return":
             file_name = self.left_frame.textbox.get_current_line_content().strip()
             if file_name[0] == "▼":
@@ -130,40 +133,38 @@ class MainApp(ctk.CTk):
                 if self.main_frame.textbox.open_file(content):
                     self.main_frame.textbox.focus_set()
 
-            
-        #if self.mode == "view":
-        if Application.get_mode() == "view":
-            write = False
-            cur_text = self.bottom_frame.command.cget("text")
-            if event.char.isalpha():
-                write = True
-                # quick commands, as i to enter insert mode
-                if event.char in ["i"]:
-                    return Application.switch_mode()
+        # running commands in the maintext
+        if "mainframe" in focus and Application.get_mode() == "view":
+            cur_command = self.bottom_frame.command.cget("text")
 
-                num_chars = len(re.findall(r"[a-zA-Z]", cur_text))
-                if num_chars:
-                    print("Acionando o comando")
+            if cur_command and event.keysym == "Escape":
+                self.bottom_frame.command.configure(text="")
+                return
+
+            if event.char.isalpha() or event.char.isdigit():
+                self.bottom_frame.command.configure(text=cur_command + event.char)
+                cur_command = cur_command + event.char
+                CommandManager.validate_command(cur_command)
 
 
-            elif event.char.isdigit():
-                write = True
+            # if event.char.isalpha():
+            #     num_chars = len(re.findall(r"[a-zA-Z]", cur_text))
+            #     print(num_chars)
+            #     if num_chars:
+            #         CommandManager.validate_command(cur_text)
+    
 
-            if write:
-                self.bottom_frame.command.configure(text=cur_text + event.char)
+            # elif event.char.isdigit():
+            #     write = True
+
+            # if write:
+            #     self.bottom_frame.command.configure(text=cur_text + event.char)
 
         #elif self.mode == "insert":
         elif Application.get_mode() == "insert":
             if event.keysym == "Escape":
                 return Application.switch_mode()
       
-        # if event.keysym == "Escape":
-        #     if left_textbox_visible:
-        #         self.left_frame.hide_textbox()
-        #         self.main_frame.textbox.focus_set()
-            
-        #     else:
-        #         self.switch_mode()
         
         if (event.state & 0x4) and event.keysym == "f":
             if left_textbox_visible:
