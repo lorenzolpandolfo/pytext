@@ -1,4 +1,4 @@
-from customtkinter import CTkFrame, CTkFont, CTkLabel
+from customtkinter import CTkFrame, CTkFont, CTkLabel, CTkScrollableFrame
 import os
 from modules.widgets.text import Lefttext, Maintext
 from modules.ImageManager import ImageManager

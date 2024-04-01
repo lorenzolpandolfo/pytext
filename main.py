@@ -144,7 +144,9 @@ class MainApp(ctk.CTk):
             if event.char.isalpha() or event.char.isdigit():
                 self.bottom_frame.command.configure(text=cur_command + event.char)
                 cur_command = cur_command + event.char
-                CommandManager.validate_command(cur_command)
+                if (CommandManager.validate_command(cur_command)):
+                    self.bottom_frame.command.configure(text='')
+
 
 
             # if event.char.isalpha():
