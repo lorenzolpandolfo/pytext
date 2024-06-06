@@ -21,6 +21,10 @@ class Application:
         cls.mainapp.main_frame.textbox.configure(state=state)
         cls.mainapp.bottom_frame.command.configure(text="")
 
+    @classmethod
+    def set_current_file(cls, path):
+        cls.mainapp.file_name = path
+
 
     # def switch_mode(self):
     #     self.mode = "view" if self.mode == "insert" else "insert"

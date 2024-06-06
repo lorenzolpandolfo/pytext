@@ -24,6 +24,8 @@ class MainApp(ctk.CTk):
         self.theme_mode     = self._get_appearance_mode()
         self.mode           = "view"
 
+        print("File name: ", file_name)
+
         Application.mainapp     = self
         CommandManager.mainapp  = self
         Application.set_mode("view")

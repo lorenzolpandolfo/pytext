@@ -41,7 +41,7 @@ class Generaltext(CTkTextbox):
         return (bg_color, selected_line_color, font_color, exp_dir_color, exp_file_color, exp_curdir_color)
 
     def write_file_content(self, content:str | tuple, mark_set:str = "insert"):
-        """ Directly write a file content. """
+        """ Directly write a file content. Used when user opens a file with left sidebar """
         self.configure(state="normal")
 
         self.delete("1.0", "end")
@@ -50,13 +50,11 @@ class Generaltext(CTkTextbox):
         if mark_set:
             self.mark_set(mark_set, "1.0")
         
-        # if self.master.get_mode() == "insert":
-        #     self.master.switch_mode()
         if Application.get_mode() == "insert":
-            # self.master.switch_mode()
             Application.switch_mode()
         else:
             self.configure(state="disabled")
+
 
 
 
@@ -95,6 +93,7 @@ class Generaltext(CTkTextbox):
         content = FileManager.open_file(full_path)
         if content:
             self.write_file_content(content)
+        Application.set_current_file(full_path)
             
         return content
 
