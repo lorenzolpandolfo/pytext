@@ -90,6 +90,8 @@ class BottomFrame(CTkFrame):
         except AttributeError:
             pass
 
+    def clear_command_output(self):
+        self.command.configure(text='')
 
 class MainFrame(CTkFrame):
     """It is the main frame that contains the Maintext instance."""

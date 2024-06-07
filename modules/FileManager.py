@@ -5,7 +5,7 @@ class FileManager:
     """Deals with file management. Used to open files and directories, check if path is a file or directory, etc."""
 
     @staticmethod
-    def open_file(file_path:str) -> str | bool:
+    def open_file(file_path: str) -> str | bool:
         """Returns file content to be loaded."""
 
         if os.path.isfile(file_path):
@@ -35,9 +35,8 @@ class FileManager:
         else:
             return False
 
-
     @staticmethod
-    def check_if_repository(dir_path:str) -> bool:
+    def check_if_repository(dir_path: str) -> bool:
         """Checks if a directory is a git repository."""
         full_path_directory = os.path.dirname(dir_path)
 
@@ -46,7 +45,7 @@ class FileManager:
         return False
     
     @staticmethod
-    def get_git_branch(git_path:str) -> str | bool:
+    def get_git_branch(git_path: str) -> str | bool:
         full_path_directory = os.path.dirname(git_path)
         full_path_directory = os.path.join(full_path_directory, ".git")
 
@@ -56,7 +55,6 @@ class FileManager:
                 content = head_file.read()
                 return content.split("/")[-1]
         return False
-
 
     @staticmethod
     def move_to_directory(*args):

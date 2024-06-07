@@ -94,7 +94,6 @@ class Generaltext(CTkTextbox):
         if content:
             self.write_file_content(content)
         Application.set_current_file(full_path)
-            
         return content
 
     def open_directory(self, dir_path:str, auto_write:bool = True):

@@ -14,7 +14,6 @@ from modules.CommandManager import CommandManager
 from modules.frames.frames import MainFrame, LeftFrame, BottomFrame
 
 
-
 class MainApp(ctk.CTk):
     def __init__(self, terminal_dir:str, file_name:str):
         super().__init__()
@@ -24,7 +23,7 @@ class MainApp(ctk.CTk):
         self.theme_mode     = self._get_appearance_mode()
         self.mode           = "view"
 
-        print("File name: ", file_name)
+        print(self.file_name)
 
         Application.mainapp     = self
         CommandManager.mainapp  = self
@@ -39,7 +38,6 @@ class MainApp(ctk.CTk):
             self.__load_argv_file__()
         self.__enable_binds__()
 
-      
     def __load_user_config__(self):
         self.config = UserConfig.get_user_config()
     
@@ -56,7 +54,6 @@ class MainApp(ctk.CTk):
 
     def __load_user_theme__(self):
         self.theme = ThemeManager.get_user_theme()
-
 
     def __create_gui__(self):
         self.__create_window__()
@@ -96,37 +93,33 @@ class MainApp(ctk.CTk):
         self.bottom_frame.create_widgets(output=(self.file_name if self.file_name else "Welcome to Pytext refactored"))
         self.bottom_frame.load_icons()
 
-
     def __load_argv_file__(self):
         full_path = os.path.join(self.terminal_dir, self.file_name)
-
         self.main_frame.textbox.open_file(full_path)
-
         if FileManager.check_if_repository(full_path):
             self.bottom_frame.create_branch_icon(FileManager.get_git_branch(full_path))
         # else:
         #     self.bottom_frame.destroy_branch_icon()
 
-
     def __enable_binds__(self):
         self.bind("<Key>", lambda e: self.bind_dealing(e))
     
-    def bind_dealing(self, event = None):
+    def bind_dealing(self, event=None):
         # TODO - separar essa grande função em funções menores
         focus = str(self.focus_get())
         left_textbox_visible = self.left_frame.textbox.winfo_ismapped()
 
         # accessing a file or directory
         if left_textbox_visible and "leftframe" in focus and event.keysym == "Return":
-            file_name = self.left_frame.textbox.get_current_line_content().strip()
-            if file_name[0] == "▼":
+            side_bar_selected_file_name = self.left_frame.textbox.get_current_line_content().strip()
+            if side_bar_selected_file_name[0] == "▼":
                 self.left_frame.textbox.updir()
                 return self.left_frame.textbox.open_directory(self.left_frame.textbox.path)
             
-            elif file_name[0] == "/":
-                file_name = file_name[1:]
+            elif side_bar_selected_file_name[0] == "/":
+                side_bar_selected_file_name = side_bar_selected_file_name[1:]
 
-            content = os.path.join(self.left_frame.textbox.path, file_name)
+            content = os.path.join(self.left_frame.textbox.path, side_bar_selected_file_name)
 
             if os.path.isdir(content):
                 return self.left_frame.textbox.open_directory(content)
@@ -138,38 +131,24 @@ class MainApp(ctk.CTk):
         # running commands in the maintext
         if "mainframe" in focus and Application.get_mode() == "view":
             cur_command = self.bottom_frame.command.cget("text")
+            cur_command_chars = ''.join(re.findall(r'[a-zA-Z]+', cur_command))
 
-            if cur_command and event.keysym == "Escape":
-                self.bottom_frame.command.configure(text="")
+            if (cur_command and event.keysym == "Escape") or (len(cur_command_chars) >= 3):
+                self.bottom_frame.clear_command_output()
                 return
 
             if event.char.isalpha() or event.char.isdigit():
                 self.bottom_frame.command.configure(text=cur_command + event.char)
                 cur_command = cur_command + event.char
-                if (CommandManager.validate_command(cur_command)):
-                    self.bottom_frame.command.configure(text='')
 
+                ans_command = CommandManager.validate_command(cur_command)
+                if ans_command:
+                    self.bottom_frame.clear_command_output()
 
-
-            # if event.char.isalpha():
-            #     num_chars = len(re.findall(r"[a-zA-Z]", cur_text))
-            #     print(num_chars)
-            #     if num_chars:
-            #         CommandManager.validate_command(cur_text)
-    
-
-            # elif event.char.isdigit():
-            #     write = True
-
-            # if write:
-            #     self.bottom_frame.command.configure(text=cur_text + event.char)
-
-        #elif self.mode == "insert":
         elif Application.get_mode() == "insert":
             if event.keysym == "Escape":
                 return Application.switch_mode()
-      
-        
+
         if (event.state & 0x4) and event.keysym == "f":
             if left_textbox_visible:
                 if "leftframe" in focus:
@@ -182,11 +161,9 @@ class MainApp(ctk.CTk):
                 self.left_frame.textbox.focus_set()
 
 
-
 if __name__ == "__main__":
     import sys
     file_name = sys.argv[1] if len(sys.argv) > 1 else ""
-    # check if this is not problematic. I think that it is not
     file_name = file_name[2:] if file_name[:2] == ".\\" else file_name
     if_argv_is_file = os.path.isfile(os.path.join(os.getcwd(), file_name))
     app = MainApp(terminal_dir=os.getcwd(), file_name=file_name) if if_argv_is_file else MainApp(terminal_dir=os.getcwd(), file_name="")

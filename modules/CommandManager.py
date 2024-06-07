@@ -29,9 +29,11 @@ class CommandManager:
 
             case "dd":
                 return cls.delete_line_content(range=numeric)
+
             case "sq" | "wq":
                 print("sair e salvar")
                 return cls.save_file()
+
         return False
             
     
@@ -50,7 +52,7 @@ class CommandManager:
         return True
     
     @classmethod
-    def move_cursor(cls, to:str, textbox, range:int):
+    def move_cursor(cls, to: str, textbox, range: int):
         cur_line   = int(textbox.index("insert").split('.')[0])
         cur_column = int(textbox.index("insert").split('.')[1])
 
@@ -71,11 +73,15 @@ class CommandManager:
 
     @classmethod
     def save_file(cls):
-        print(Application.mainapp.file_name)
-        if not Application.mainapp.file_name:
-            print("Não tenho arquivo salvo")
-        else:
-            print("tenho arquivo pra salvar")
+        cur_file_path = Application.mainapp.file_name
+        if not cur_file_path:
+            return False
+
+        content = Application.mainapp.main_frame.textbox.get("1.0", "end-1c")
+        with open(cur_file_path, "w", encoding="utf8") as f:
+            r = f.write(content)
+        print(r)
+        return r
 
         #def save(textbox, mainapp, gui):
 #

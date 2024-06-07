@@ -1,3 +1,4 @@
+import os.path
 from dataclasses import dataclass
 
 @dataclass
@@ -24,7 +25,7 @@ class Application:
     @classmethod
     def set_current_file(cls, path):
         cls.mainapp.file_name = path
-
+        cls.mainapp.bottom_frame.output.configure(text=path)
 
     # def switch_mode(self):
     #     self.mode = "view" if self.mode == "insert" else "insert"
