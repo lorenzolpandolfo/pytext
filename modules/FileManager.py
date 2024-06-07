@@ -1,6 +1,7 @@
 import os
 import json
 
+
 class FileManager:
     """Deals with file management. Used to open files and directories, check if path is a file or directory, etc."""
 

@@ -15,6 +15,7 @@ class Generaltext(CTkTextbox):
     """ Includes methods that Maintext and Lefttext use. """
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.path = None
 
     def enable_auto_highlight_line(self):
         self.bind("<Key>", lambda _: self.after_idle(lambda: self.highlight_selected_line()))
@@ -40,9 +41,12 @@ class Generaltext(CTkTextbox):
 
         return (bg_color, selected_line_color, font_color, exp_dir_color, exp_file_color, exp_curdir_color)
 
-    def write_file_content(self, content:str | tuple, mark_set:str = "insert"):
-        """ Directly write a file content. Used when user opens a file with left sidebar """
+    def write_file_content(self, content: str | tuple, mark_set: str = "insert"):
+        """ Directly write a file content. Used when user opens a file with left sidebar or argv"""
+        if not content:
+            content = ''
         self.configure(state="normal")
+        print(content)
 
         self.delete("1.0", "end")
         self.insert("1.0", content)
@@ -55,10 +59,7 @@ class Generaltext(CTkTextbox):
         else:
             self.configure(state="disabled")
 
-
-
-
-    def write_directory_content(self, content:tuple, colors:tuple, mark_set:str = "insert"):
+    def write_directory_content(self, content: tuple, colors: tuple, mark_set: str = "insert"):
         """ Write files from a directory. Deals with directories colors. """
         os.chdir(os.path.dirname(os.path.abspath(__file__)))
         self.configure(state="normal")
@@ -69,7 +70,7 @@ class Generaltext(CTkTextbox):
         self.delete("1.0", "end")
         self.insert("1.0", formatted_content)
         
-        # adding colors to other directories inside of the content
+        # adding colors to other directories inside the content
         for i, file in enumerate(raw_content.split("\n")):
             full_path = os.path.join(self.path, file)
 
@@ -86,17 +87,15 @@ class Generaltext(CTkTextbox):
         
         self.configure(state="disabled")
 
-
-    
-    def open_file(self, full_path:str):
+    def open_file(self, full_path: str):
         """ Open a file through a directory and title. Then, write it. """
         content = FileManager.open_file(full_path)
-        if content:
-            self.write_file_content(content)
+        self.write_file_content(content)
+
         Application.set_current_file(full_path)
         return content
 
-    def open_directory(self, dir_path:str, auto_write:bool = True):
+    def open_directory(self, dir_path: str, auto_write:bool = True):
         content = FileManager.open_directory(dir_path)
         if content:
             self.path = dir_path

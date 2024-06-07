@@ -15,7 +15,7 @@ from modules.frames.frames import MainFrame, LeftFrame, BottomFrame
 
 
 class MainApp(ctk.CTk):
-    def __init__(self, terminal_dir:str, file_name:str):
+    def __init__(self, terminal_dir: str, file_name: str):
         super().__init__()
 
         self.terminal_dir   = terminal_dir
@@ -98,8 +98,6 @@ class MainApp(ctk.CTk):
         self.main_frame.textbox.open_file(full_path)
         if FileManager.check_if_repository(full_path):
             self.bottom_frame.create_branch_icon(FileManager.get_git_branch(full_path))
-        # else:
-        #     self.bottom_frame.destroy_branch_icon()
 
     def __enable_binds__(self):
         self.bind("<Key>", lambda e: self.bind_dealing(e))
@@ -165,6 +163,6 @@ if __name__ == "__main__":
     import sys
     file_name = sys.argv[1] if len(sys.argv) > 1 else ""
     file_name = file_name[2:] if file_name[:2] == ".\\" else file_name
-    if_argv_is_file = os.path.isfile(os.path.join(os.getcwd(), file_name))
-    app = MainApp(terminal_dir=os.getcwd(), file_name=file_name) if if_argv_is_file else MainApp(terminal_dir=os.getcwd(), file_name="")
+    is_argv_file = os.path.isfile(os.path.join(os.getcwd(), file_name))
+    app = MainApp(terminal_dir=os.getcwd(), file_name=file_name)
     app.mainloop()
