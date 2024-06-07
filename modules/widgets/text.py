@@ -46,7 +46,6 @@ class Generaltext(CTkTextbox):
         if not content:
             content = ''
         self.configure(state="normal")
-        print(content)
 
         self.delete("1.0", "end")
         self.insert("1.0", content)

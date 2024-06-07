@@ -27,7 +27,10 @@ class CommandManager:
                 return cls.move_cursor("right", cls.mainapp.main_frame.textbox, numeric)
             case "A":
                 return cls.move_cursor("left", cls.mainapp.main_frame.textbox, numeric)
-
+            case "F":
+                return cls.move_cursor("up", cls.mainapp.main_frame.textbox, "0")
+            case "V":
+                return cls.move_cursor("down", cls.mainapp.main_frame.textbox, "end")
             case "dd":
                 return cls.delete_line_content(del_range=numeric)
 
@@ -52,16 +55,18 @@ class CommandManager:
         return True
     
     @classmethod
-    def move_cursor(cls, to: str, textbox, mov_range: int):
+    def move_cursor(cls, to: str, textbox, mov_range: int | str):
         cur_line   = int(textbox.index("insert").split('.')[0])
         cur_column = int(textbox.index("insert").split('.')[1])
         new_cursor_pos = f"{cur_line}.{cur_column}"
 
         match to:
             case "up":
-                new_cursor_pos = f"{cur_line - mov_range}.{cur_column}"
+                y = mov_range if isinstance(mov_range, str) else cur_line - mov_range
+                new_cursor_pos = f"{y}.{cur_column}"
             case "down":
-                new_cursor_pos = f"{cur_line + mov_range}.{cur_column}"
+                y = mov_range if isinstance(mov_range, str) else cur_line + mov_range
+                new_cursor_pos = "end" if mov_range == "end" else f"{y}.{cur_column}"
             case "left":
                 new_cursor_pos = f"{cur_line}.{cur_column - mov_range}"
             case "right":
