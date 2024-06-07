@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from modules.Application import Application
 import re
 
+
 @dataclass
 class CommandManager:
     mainapp: str
@@ -9,7 +10,7 @@ class CommandManager:
 
     @classmethod
     def validate_command(cls, command: str, *args):
-        print("Command manager recieved: ", command)
+        # print("Command manager recieved: ", command)
 
         numeric = int(''.join(re.findall(r'\d+', command))) if (re.search(r'\d', command)) else 1
         alphabetical = ''.join(re.findall(r'[a-zA-Z]+', command))
@@ -31,8 +32,8 @@ class CommandManager:
                 return cls.delete_line_content(del_range=numeric)
 
             case "sq" | "wq":
-                print("sair e salvar")
-                return cls.save_file()
+                cls.save_file()
+                exit(0)
 
         return False
 
@@ -80,49 +81,3 @@ class CommandManager:
         with open(cur_file_path, "w", encoding="utf8") as f:
             f.write(content)
         return True
-
-        #def save(textbox, mainapp, gui):
-#
-        #    if mainapp.FileManager.file_name != "":
-        #        # print("FILE NAME: ", mainapp.FileManager.file_name)
-        #        # In this case, you're saving the SavePreset file
-        #        if mainapp.FileManager.file_name == "__pytextSavePreset__":
-        #            mainapp.FileManager.file_name = textbox.get("1.0", "1.end")
-        #            content = gui.buffer_content
-#
-        #        # Creating a new dir title
-        #        elif mainapp.FileManager.file_name == "__pytextNewDirTitle__":
-        #            dir_name = textbox.get("1.0", "1.end")
-        #            return mainapp.FileManager.create_new_directory(dir_name, textbox, mainapp)
-#
-        #        else:
-        #            # Get all the content in this current file
-        #            content = textbox.get("1.0", "end-1c")
-        #            gui.buffer_content = content
-#
-        #        full_path = os.path.join(mainapp.FileManager.terminal_directory, mainapp.FileManager.file_name)
-#
-        #        with open(full_path, "w", encoding="utf8") as new_file:
-        #            new_file.write(content)
-#
-        #            # check if you just added a title to a non-title file
-        #            if mainapp.FileManager.file_name == textbox.get("1.0", "1.end"):
-        #                # Loading the old file
-        #                gui.write_another_file_content(gui.buffer_content, file_name=textbox.get("1.0", "1.end"))
-#
-        #            return f"{mainapp.FileManager.file_name} saved"
-#
-        #    # this runs when you save a file that doesn't have a title yet
-        #    else:
-        #        # Saving the current file content so you can edit the SavePreset file
-        #        gui.buffer_content = textbox.get("1.0", ctk.END)
-#
-        #        os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        #        os.chdir("..")
-        #        savepreset = os.path.join(os.getcwd(), ".temp", "__pytextSavePreset__.txt")
-#
-        #        with open(savepreset, "r", encoding="utf8") as savepresetfile:
-        #            content = savepresetfile.read()
-        #            gui.write_another_file_content(content, "", True)
-#
-        #        mainapp.FileManager.file_name = "__pytextSavePreset__"
