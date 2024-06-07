@@ -38,6 +38,12 @@ class CommandManager:
                 cls.save_file()
                 exit(0)
 
+            case "ww":
+                cls.save_file()
+
+            case "qq":
+                exit(0)
+
         return False
 
     @classmethod
