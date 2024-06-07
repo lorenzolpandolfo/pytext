@@ -46,7 +46,6 @@ class LeftFrame(CTkFrame):
             self.textbox.open_directory(self.terminal_dir)
 
 
-    
 class BottomFrame(CTkFrame):
     """Contains the outputs labels."""
     def __init__(self, master):
@@ -56,8 +55,13 @@ class BottomFrame(CTkFrame):
 
     def __load_theme__(self):
         dark = "_dark" if self.master.theme_mode == "dark" else ""
-        self.bg_color = self.master.theme["frames"]["bottom"][f"bg{dark}"]
-        self.fg_color = self.master.theme["frames"]["bottom"][f"fg{dark}"]
+        self.bg_color       = self.master.theme["frames"]["bottom"][f"bg{dark}"]
+        self.fg_color       = self.master.theme["frames"]["bottom"][f"fg{dark}"]
+
+        self.mode_color     = self.master.theme["widgets"]["bottom"][f"mode{dark}"]
+        self.command_color  = self.master.theme["widgets"]["bottom"][f"command{dark}"]
+        self.output_color   = self.master.theme["widgets"]["bottom"][f"output{dark}"]
+        self.branch         = self.master.theme["widgets"]["bottom"][f"output{dark}"]
 
         
     def create_widgets(self, output:str):
@@ -92,6 +96,7 @@ class BottomFrame(CTkFrame):
 
     def clear_command_output(self):
         self.command.configure(text='')
+
 
 class MainFrame(CTkFrame):
     """It is the main frame that contains the Maintext instance."""
