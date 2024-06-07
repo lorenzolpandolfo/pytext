@@ -47,16 +47,16 @@ In the **insert mode**, you can insert text to the current document and use **Ct
 You can add numbers after or before the keybind to run it more than one time. More keybinds will be added with time, as well as way to
 remap them.
 - **dd**: delete current line
-- **wasd**: move through lines
-- **S**: save file
+- **WASD**: move through lines
+- **ss**: save file
 - **Q**: quit
-- **SQ, QS, wq, WQ**: save and quit
+- **sq, wq**: save and quit
 - **O**: **On local directory**: List all files and folders in the current directory. You can select them with Return (enter) to navigate through directories and files
 - **SO, so**: save and run On local directory command
 - **nd** (**New Directory**): Creates a new directory in your local terminal directory
 - **nf** (**New File**): Creates a new file in your local terminal directory
-- **gg**: move to the first line
-- **bb**: move to the last line
+- **F**: move to the first line
+- **V**: move to the last line
 
 # Current TO-DO:
 These features are not sure to be in the final version, but they look like a good idea at time. Features with ~strikethrough~ are already implemented or deprecated.
