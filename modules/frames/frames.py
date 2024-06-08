@@ -44,6 +44,7 @@ class LeftFrame(CTkFrame):
             file_abs_path = os.path.dirname(os.path.join(self.terminal_dir, self.file_name))
             isdir = os.path.isdir(file_abs_path)
             path = file_abs_path if isdir else self.terminal_dir
+            print("abrindo ", path)
             self.textbox.open_directory(path)
 
 
@@ -51,22 +52,30 @@ class BottomFrame(CTkFrame):
     """Contains the outputs labels."""
     def __init__(self, master):
         super().__init__(master)
+        self.output       = None
+        self.command      = None
+        self.branch_image = None
+        self.branch       = None
+
+        self.sys_theme = master.sys_theme
+        self.theme     = master.theme
+        self.mode      = master.mode
+
         self.__load_theme__()
         self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
 
     def __load_theme__(self):
-        dark = "_dark" if self.master.sys_theme == "dark" else ""
-        self.bg_color       = self.master.theme["frames"]["bottom"][f"bg{dark}"]
-        self.fg_color       = self.master.theme["frames"]["bottom"][f"fg{dark}"]
+        dark = "_dark" if self.sys_theme == "dark" else ""
+        self.bg_color       = self.theme["frames"]["bottom"][f"bg{dark}"]
+        self.fg_color       = self.theme["frames"]["bottom"][f"fg{dark}"]
 
-        self.mode_color     = self.master.theme["widgets"]["bottom"][f"mode{dark}"]
-        self.command_color  = self.master.theme["widgets"]["bottom"][f"command{dark}"]
-        self.output_color   = self.master.theme["widgets"]["bottom"][f"output{dark}"]
-        self.branch_color   = self.master.theme["widgets"]["bottom"][f"output{dark}"]
+        self.mode_color     = self.theme["widgets"]["bottom"][f"mode{dark}"]
+        self.command_color  = self.theme["widgets"]["bottom"][f"command{dark}"]
+        self.output_color   = self.theme["widgets"]["bottom"][f"output{dark}"]
+        self.branch_color   = self.theme["widgets"]["bottom"][f"branch{dark}"]
 
-        
-    def create_widgets(self, output:str):
-        self.mode = CTkLabel(self, text=self.master.mode, justify="center", text_color=self.mode_color, bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
+    def create_widgets(self, output: str):
+        self.mode = CTkLabel(self, text=self.mode, justify="center", text_color=self.mode_color, bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
         self.mode.grid(row=1, column=0, columnspan=2)
 
         self.command = CTkLabel(self, text="", justify="left", text_color=self.command_color, bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
@@ -80,7 +89,7 @@ class BottomFrame(CTkFrame):
     def load_icons(self):
         self.branch_image = ImageManager.get_image("branch", (20, 22))
     
-    def create_branch_icon(self, branch:str):
+    def create_branch_icon(self, branch: str):
         if "\n" in branch:
             branch = branch.replace("\n", "")
 

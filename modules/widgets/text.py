@@ -10,7 +10,6 @@ import pygments
 from pygments.lexers import get_lexer_by_name
 
 
-
 class Generaltext(CTkTextbox):
     """ Includes methods that Maintext and Lefttext use. """
     def __init__(self, master, *args, **kwargs):

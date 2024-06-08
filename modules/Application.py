@@ -1,10 +1,11 @@
 import os.path
 from dataclasses import dataclass
 
+
 @dataclass
 class Application:
-    mainapp:str
-    mode:str = "view"
+    mainapp : str
+    mode    : str = "view"
 
     @classmethod
     def set_mode(cls, arg:str):
@@ -26,14 +27,3 @@ class Application:
     def set_current_file(cls, path):
         cls.mainapp.file_name = path
         cls.mainapp.bottom_frame.output.configure(text=path)
-
-    # def switch_mode(self):
-    #     self.mode = "view" if self.mode == "insert" else "insert"
-    #     self.bottom_frame.mode.configure(text=self.mode)
-
-    #     Application.set_mode(self.mode)
-
-    #     state = "disabled" if self.mode == "view" else "normal"
-    #     self.main_frame.textbox.configure(state=state)
-
-    #     self.bottom_frame.command.configure(text="")
