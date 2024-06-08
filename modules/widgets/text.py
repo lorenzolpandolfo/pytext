@@ -148,8 +148,8 @@ class Maintext(Generaltext):
             return (bg_color, font_color)
         bg_color, font_color = load_line_counter_theme()
 
-        #self.update()
-        self._line_counter = TkLineNumbers(master, self, justify="right", colors=(font_color, bg_color),tilde="~", bd=0)
+        tilde_char = Application.mainapp.config["nonexistent_char"]
+        self._line_counter = TkLineNumbers(master, self, justify="right", colors=(font_color, bg_color),tilde=tilde_char, bd=0)
         self._line_counter.grid(row=0, column=1, sticky="nsew", pady=(6 * (self._get_widget_scaling()) + 0.5,0))
         self.__enable_auto_redraw__()
 
