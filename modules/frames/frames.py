@@ -13,6 +13,7 @@ class LeftFrame(CTkFrame):
         self.font = font
         
         self.terminal_dir = master.terminal_dir
+        self.file_name = master.file_name
         self.sys_theme = master.sys_theme
         self.theme = master.theme
         self.mode = master.mode
@@ -40,7 +41,10 @@ class LeftFrame(CTkFrame):
     def show_textbox(self):
         if not self.textbox.winfo_ismapped():
             self.textbox.grid(row=0, column=0, sticky="nsew")
-            self.textbox.open_directory(self.terminal_dir)
+            file_abs_path = os.path.dirname(os.path.join(self.terminal_dir, self.file_name))
+            isdir = os.path.isdir(file_abs_path)
+            path = file_abs_path if isdir else self.terminal_dir
+            self.textbox.open_directory(path)
 
 
 class BottomFrame(CTkFrame):
