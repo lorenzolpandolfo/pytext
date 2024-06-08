@@ -27,7 +27,7 @@ class Generaltext(CTkTextbox):
         self.tag_config("current_line_color", background=self.selected_line_color)
 
     def load_theme(self, child):
-        dark = "_dark" if self.master.theme_mode == "dark" else ""
+        dark = "_dark" if self.master.sys_theme == "dark" else ""
         child = str(child)
 
         widget = "main_textbox" if "maintext" in child else "left_textbox"
@@ -135,7 +135,7 @@ class Maintext(Generaltext):
             
     def create_line_counter(self, master):
         def load_line_counter_theme() -> tuple:
-            dark = "_dark" if self.master.theme_mode == "dark" else ""
+            dark = "_dark" if self.master.sys_theme == "dark" else ""
             bg_color = self.master.theme["widgets"]["line_counter"][f"bg{dark}"]
             font_color = self.master.theme["widgets"]["line_counter"][f"font{dark}"]
             return (bg_color, font_color)

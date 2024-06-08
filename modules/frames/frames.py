@@ -13,24 +13,21 @@ class LeftFrame(CTkFrame):
         self.font = font
         
         self.terminal_dir = master.terminal_dir
-        self.theme_mode = master.theme_mode
+        self.sys_theme = master.sys_theme
         self.theme = master.theme
         self.mode = master.mode
 
         self.__load_theme__()
         self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
 
-
     def __grid_setup__(self):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
-
     def __load_theme__(self):
-        dark = "_dark" if self.master.theme_mode == "dark" else ""
+        dark = "_dark" if self.master.sys_theme == "dark" else ""
         self.bg_color = self.master.theme["frames"]["left"][f"bg{dark}"]
         self.fg_color = self.master.theme["frames"]["left"][f"fg{dark}"]
-
 
     def create_textbox(self, row:int = 0, column:int = 0):
         self.textbox = Lefttext(self, font=self.font)
@@ -54,7 +51,7 @@ class BottomFrame(CTkFrame):
         self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
 
     def __load_theme__(self):
-        dark = "_dark" if self.master.theme_mode == "dark" else ""
+        dark = "_dark" if self.master.sys_theme == "dark" else ""
         self.bg_color       = self.master.theme["frames"]["bottom"][f"bg{dark}"]
         self.fg_color       = self.master.theme["frames"]["bottom"][f"fg{dark}"]
 
@@ -104,7 +101,7 @@ class MainFrame(CTkFrame):
         super().__init__(master)
         self.font = font
 
-        self.theme_mode = master.theme_mode
+        self.sys_theme = master.sys_theme
         self.theme = master.theme
         self.mode = master.mode
 
@@ -114,7 +111,7 @@ class MainFrame(CTkFrame):
 
 
     def __load_theme__(self):
-        dark = "_dark" if self.theme_mode == "dark" else ""
+        dark = "_dark" if self.sys_theme == "dark" else ""
         self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
         self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
         

@@ -39,7 +39,7 @@ class CommandManager:
                 exit(0)
 
             case "ww":
-                cls.save_file()
+                return cls.save_file()
 
             case "qq":
                 exit(0)

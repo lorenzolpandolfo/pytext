@@ -20,17 +20,14 @@ class MainApp(ctk.CTk):
 
         self.terminal_dir   = terminal_dir
         self.file_name      = file_name
-        self.theme_mode     = self._get_appearance_mode()
-        # self.theme_mode     = "dark"
         self.mode           = "view"
-
-        print(self.file_name)
 
         Application.mainapp     = self
         CommandManager.mainapp  = self
         Application.set_mode("view")
 
-        self.__load_user_config__()   
+        self.__load_user_config__()
+        self.__load_system_theme__()
         self.__load_user_font__()
         self.__load_user_theme__()
         self.__create_gui__()
@@ -52,6 +49,10 @@ class MainApp(ctk.CTk):
             self.gui_font = ctk.CTkFont("Consolas", 17)
         else:
             self.font, self.gui_font = loader
+
+    def __load_system_theme__(self):
+        forced_theme = self.config["forced_theme"]
+        self.sys_theme = forced_theme if forced_theme else self._get_appearance_mode()
 
     def __load_user_theme__(self):
         self.theme = ThemeManager.get_user_theme()
