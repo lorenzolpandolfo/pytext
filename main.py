@@ -21,6 +21,7 @@ class MainApp(ctk.CTk):
         self.terminal_dir   = terminal_dir
         self.file_name      = file_name
         self.theme_mode     = self._get_appearance_mode()
+        # self.theme_mode     = "dark"
         self.mode           = "view"
 
         print(self.file_name)

@@ -1,5 +1,6 @@
 from modules.FileManager import FileManager as fm
 
+
 class ThemeManager:
     @staticmethod
     def get_user_theme() -> str:
