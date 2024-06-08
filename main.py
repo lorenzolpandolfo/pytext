@@ -88,7 +88,6 @@ class MainApp(ctk.CTk):
     def __create_widgets__(self):
         self.main_frame.create_textbox()
         self.main_frame.textbox.create_line_counter(self.left_frame)
-        self.main_frame.textbox.set_tab_width(tabwidth=self.config["tab_width"])
 
         self.left_frame.create_textbox()
         

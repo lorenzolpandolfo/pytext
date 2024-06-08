@@ -16,6 +16,7 @@ class Generaltext(CTkTextbox):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.path = None
+        self.tab_width = Application.mainapp.config["tab_width"]
 
     def enable_auto_highlight_line(self):
         self.bind("<Key>", lambda _: self.after_idle(lambda: self.highlight_selected_line()))
@@ -125,14 +126,20 @@ class Maintext(Generaltext):
 
         self._lexer = pygments.lexers.PythonLexer
         self._colors = SyntaxColors.get_syntax_colors()
-        #self._enable_binds_()
+        self._enable_binds_()
 
     def _enable_binds_(self):
-            self.bind("<Key>", lambda e: self.after_idle(lambda: self.__bind_dealing__(e)))
+        # self.bind("<Key>", lambda e: self.after_idle(lambda: self.__bind_dealing__(e)))
+        self.bind("<Tab>", self.__add_tab__)
 
     def __bind_dealing__(self, event):
         pass
-            
+
+    def __add_tab__(self, e):
+        c = self.index("insert")
+        self.insert(c, " "*self.tab_width)
+        return "break"
+
     def create_line_counter(self, master):
         def load_line_counter_theme() -> tuple:
             dark = "_dark" if self.master.sys_theme == "dark" else ""
