@@ -1,55 +1,76 @@
 {	
 	"frames": {
 		"main": {
-			"bg"		: "#fafafa",
-			"bg_dark"	: "#1f1f1f"
+			"bg"		: "#000000",
+			"bg_dark"	: "#000000"
 		},
-	
+
 		"left": {
-			"bg"		: "#ebebeb",
-			"bg_dark"	: "#181818",
-			"fg"		: "#ebebeb",
-			"fg_dark"	: "#181818"
+			"bg"		: "#000000",
+			"bg_dark"	: "#000000",
+
+			"fg"		: "#000000",
+			"fg_dark"	: "#000000"
 		},
-		
-		"bottom":{
-			"bg"		: "#ebebeb",
-			"bg_dark"	: "#181818",
-			"fg"		: "#ebebeb",
-			"fg_dark"	: "#181818"
+
+		"bottom": {
+			"bg"		: "#000000",
+			"bg_dark"	: "#000000",
+
+			"fg"		: "#000000",
+			"fg_dark"	: "#000000"
 		}
 	},
 	"widgets": {
 		"main_textbox": {
-			"bg"				: "#fafafa",
-			"bg_dark"			: "#1f1f1f",
-			"selected_line"		: "#2b2b2b",
-			"selected_line_dark": "#2b2b2b",
-			"font"				: "#e3ba68",
-			"font_dark"			: "#e3ba68"
+			"bg"				: "#000000",
+			"bg_dark"			: "#000000",
+
+			"selected_line"		: "#555753",
+			"selected_line_dark": "#555753",
+
+			"font"				: "#4e9a06",
+			"font_dark"			: "#4e9a06"
 		},
 		"left_textbox": {
-			"bg"				: "#fafafa",
-			"bg_dark"			: "#181818",
-			"selected_line"		: "#2b2b2b",
-			"selected_line_dark": "#2b2b2b",
-			"font"				: "#e3ba68",
-			"font_dark"			: "#e3ba68"
+			"bg"				: "#000000",
+			"bg_dark"			: "#000000",
+
+			"selected_line"		: "#555753",
+			"selected_line_dark": "#555753",
+
+			"font"				: "#4e9a06",
+			"font_dark"			: "#4e9a06"
 
 		},
 		"line_counter": {
-			"bg"				: "#ebebeb",
-			"bg_dark"			: "#181818",
-			"font"				: "#e3ba68",
-			"font_dark"			: "#e3ba68",
+			"bg"				: "#000000",
+			"bg_dark"			: "#000000",
+
+			"font"				: "#4e9a06",
+			"font_dark"			: "#4e9a06",
+
 			"tilde_char"		: "",
 			"tilde_char_dark"	: ""
+		},
+		"bottom": {
+			"mode": "#4e9a06",
+			"mode_dark": "#4e9a06",
+
+			"command": "#4e9a06",
+			"command_dark": "#4e9a06",
+
+			"output": "#4e9a06",
+			"output_dark": "#4e9a06",
+
+			"branch": "#4e9a06",
+			"branch_dark": "#4e9a06"
 		}
 
 	},
 	"explorer": {
-		"dir"			: "#e3ba68",
-		"dir_dark"		: "#e3ba68",
+		"dir"			: "#4e9a06",
+		"dir_dark"		: "#4e9a06",
 		"file"			: "#C8C6AB",
 		"file_dark"		: "#C8C6AB",
 		"curdir"		: "#7ec699",

@@ -4,7 +4,7 @@
 			"bg"		: "#000000",
 			"bg_dark"	: "#000000"
 		},
-	
+
 		"left": {
 			"bg"		: "#000000",
 			"bg_dark"	: "#000000",
@@ -12,7 +12,7 @@
 			"fg"		: "#000000",
 			"fg_dark"	: "#000000"
 		},
-		
+
 		"bottom": {
 			"bg"		: "#000000",
 			"bg_dark"	: "#000000",
@@ -40,7 +40,7 @@
 			"selected_line_dark": "#555753",
 
 			"font"				: "#4e9a06",
-			"font_dark"			: "#4e9a06"	
+			"font_dark"			: "#4e9a06"
 
 		},
 		"line_counter": {
@@ -54,17 +54,17 @@
 			"tilde_char_dark"	: ""
 		},
 		"bottom": {
-			"mode": "",
-			"mode_dark": "",
+			"mode": "#4e9a06",
+			"mode_dark": "#4e9a06",
 
-			"command": "",
-			"command_dark": "",
+			"command": "#4e9a06",
+			"command_dark": "#4e9a06",
 
-			"output": "",
-			"output_dark": "",
+			"output": "#4e9a06",
+			"output_dark": "#4e9a06",
 
-			"branch": "",
-			"branch_dark": ""
+			"branch": "#4e9a06",
+			"branch_dark": "#4e9a06"
 		}
 
 	},

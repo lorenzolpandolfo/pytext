@@ -61,17 +61,17 @@ class BottomFrame(CTkFrame):
         self.mode_color     = self.master.theme["widgets"]["bottom"][f"mode{dark}"]
         self.command_color  = self.master.theme["widgets"]["bottom"][f"command{dark}"]
         self.output_color   = self.master.theme["widgets"]["bottom"][f"output{dark}"]
-        self.branch         = self.master.theme["widgets"]["bottom"][f"output{dark}"]
+        self.branch_color   = self.master.theme["widgets"]["bottom"][f"output{dark}"]
 
         
     def create_widgets(self, output:str):
-        self.mode = CTkLabel(self, text=self.master.mode, justify="center", bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
+        self.mode = CTkLabel(self, text=self.master.mode, justify="center", text_color=self.mode_color, bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
         self.mode.grid(row=1, column=0, columnspan=2)
 
-        self.command = CTkLabel(self, text="", justify="left", bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
+        self.command = CTkLabel(self, text="", justify="left", text_color=self.command_color, bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
         self.command.grid(row=2, column=1, sticky="e")
 
-        self.output = CTkLabel(self, text=output.replace("\\", "/"), bg_color=self.bg_color, fg_color=self.fg_color, padx=10, justify="left", font=self.master.gui_font)
+        self.output = CTkLabel(self, text=output.replace("\\", "/"), text_color=self.output_color, bg_color=self.bg_color, fg_color=self.fg_color, padx=10, justify="left", font=self.master.gui_font)
         self.output.grid(row=2, column=0)
 
         self.grid_columnconfigure(1, weight=1)
@@ -83,7 +83,7 @@ class BottomFrame(CTkFrame):
         if "\n" in branch:
             branch = branch.replace("\n", "")
 
-        self.branch = CTkLabel(self, image=self.branch_image, text=branch, justify="left", compound="left", font=self.master.gui_font, padx=10)
+        self.branch = CTkLabel(self, image=self.branch_image, text=branch, text_color=self.branch_color, justify="left", compound="left", font=self.master.gui_font, padx=10)
         self.branch.grid(row=2, column=2, sticky="e")
 
     
