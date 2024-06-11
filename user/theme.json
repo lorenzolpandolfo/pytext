@@ -3,25 +3,34 @@
   {
     "main":
     {
-      "bg"                 : "#ffffff",
+      "bg"                 : "#fef5ff",
       "bg_dark"            : "#1e1f22"
     },
 
     "left":
     {
-      "bg"                 : "#ffffff",
+      "bg"                 : "#fddfff",
       "bg_dark"           	: "#2b2d30",
 
-      "fg"                 : "#ffffff",
+      "fg"                 : "#fddfff",
       "fg_dark"           	: "#2b2d30"
+    },
+
+    "line_counter":
+    {
+        "bg"               : "#fef5ff",
+        "bg_dark"          : "#2b2d30",
+
+        "fg"               : "#fef5ff",
+        "fg_dark"          : "#2b2d30"
     },
 
     "bottom":
     {
-      "bg"		           : "#f7f8fa",
+      "bg"		           : "#fddfff",
       "bg_dark"           	: "#2b2d30",
 
-      "fg"	                : "#f7f8fa",
+      "fg"	                : "#fddfff",
       "fg_dark"	           : "#2b2d30"
     }
   },
@@ -29,7 +38,7 @@
   {
     "main_textbox":
     {
-      "bg"                 : "#ffffff",
+      "bg"                 : "#fef5ff",
       "bg_dark"            : "#1e1f22",
 
       "selected_line"      : "#f3d2f3",
@@ -53,7 +62,7 @@
 
     "line_counter":
     {
-      "bg"                 : "#ffffff",
+      "bg"                 : "#fef5ff",
       "bg_dark"            : "#2b2d30",
 
       "font"               : "#808080",

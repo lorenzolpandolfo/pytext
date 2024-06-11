@@ -66,8 +66,8 @@ class LineCounterFrame(CTkFrame):
 
     def __load_theme__(self):
         dark = "_dark" if self.sys_theme == "dark" else ""
-        self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
-        self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
+        self.bg_color = self.theme["frames"]["line_counter"][f"bg{dark}"]
+        self.fg_color = self.theme["frames"]["line_counter"][f"fg{dark}"]
         self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
 
 class BottomFrame(CTkFrame):
