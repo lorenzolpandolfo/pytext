@@ -141,15 +141,31 @@ self.exp_file_color, self.exp_curdir_color) = super().load_theme(self)
         self.configure(bg_color=self.bg_color, fg_color=self.bg_color, text_color=self.font_color, state="disabled")
 
     def _enable_binds_(self):
-        # self.bind("<Key>", lambda e: self.after_idle(lambda: self.__bind_dealing__(e)))
+        self.bind("<Key>", lambda e: self.after_idle(lambda: self.__bind_dealing__(e)))
         self.bind("<Tab>", self.__add_tab__)
+        self.bind("<Shift-Tab>", self.__untab__)
 
     def __bind_dealing__(self, event):
-        pass
+        SHIFT_PRESSED = "ISO_Left_Tab"
+
+        if event.keysym == SHIFT_PRESSED:
+            self.__untab__()
 
     def __add_tab__(self, e):
         index = self.index("insert")
         self.insert(index, " "*self.tab_width)
+        self.highlight_selected_line()
+        return "break"
+
+    def __untab__(self):
+        index = self.index("insert linestart")
+        line_start = self.get(index, f"{index} + {self.tab_width}c")
+
+        if line_start.startswith(" " * self.tab_width):
+            self.delete(index, f"{index} + {self.tab_width}c")
+        elif line_start.startswith("\t"):
+            self.delete(index)
+
         self.highlight_selected_line()
         return "break"
 
