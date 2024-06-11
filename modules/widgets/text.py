@@ -1,4 +1,4 @@
-from customtkinter import CTkTextbox, CTkScrollbar
+from customtkinter import CTkTextbox
 import os
 
 from modules.FileManager    import FileManager
@@ -13,7 +13,7 @@ from pygments.lexers import get_lexer_by_name
 class Generaltext(CTkTextbox):
     """ Includes methods that Maintext and Lefttext use. """
     def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+        super().__init__(master, *args, **kwargs, insertofftime=0)
         self.selected_line_color = None
         self.path = None
 
