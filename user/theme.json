@@ -65,16 +65,16 @@
 
     "bottom":
     {
-      "mode"         : "#000000",
+      "mode"         : "#424242",
       "mode_dark"    : "#C8C6AB",
 
-      "command"      : "#000000",
+      "command"      : "#424242",
       "command_dark" : "#C8C6AB",
 
-      "output"       : "#000000",
+      "output"       : "#424242",
       "output_dark"  : "#C8C6AB",
 
-      "branch"       : "#000000",
+      "branch"       : "#424242",
       "branch_dark"  : "#C8C6AB"
     }
   },

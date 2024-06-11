@@ -3,6 +3,8 @@ import os
 from modules.widgets.text import Lefttext, Maintext
 from modules.ImageManager import ImageManager
 
+DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 500
+
 
 class LeftFrame(CTkScrollableFrame):
     """ Contains the file explorer. """
@@ -22,7 +24,6 @@ class LeftFrame(CTkScrollableFrame):
         self.mode = master.mode
 
         self.__load_theme__()
-        self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
 
     def __grid_setup__(self):
         self.grid_rowconfigure(0, weight=1)
@@ -32,10 +33,11 @@ class LeftFrame(CTkScrollableFrame):
         dark = "_dark" if self.sys_theme == "dark" else ""
         self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
         self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
+        self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
 
     def create_textbox(self, row: int = 0, column: int = 0):
-        self.textbox = Lefttext(self, font=self.font, width=500)
-        # self.textbox.configure(bg_color=self.bg_color, fg_color=self.fg_color)
+        self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET)
+        self.textbox.configure(bg_color=self.bg_color, fg_color=self.fg_color)
     
     def hide_textbox(self):
         if self.textbox.winfo_ismapped():
@@ -66,7 +68,6 @@ class LineCounterFrame(CTkFrame):
         dark = "_dark" if self.sys_theme == "dark" else ""
         self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
         self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
-
         self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
 
 class BottomFrame(CTkFrame):

@@ -16,10 +16,14 @@ class Generaltext(CTkTextbox):
         super().__init__(master, *args, **kwargs)
         self.selected_line_color = None
         self.path = None
+
+        self.sys_theme = master.sys_theme
+        self.theme = master.theme
         self.tab_width = Application.mainapp.config["tab_width"]
 
     def enable_auto_highlight_line(self):
         self.bind("<Key>", lambda _: self.after_idle(self.highlight_selected_line))
+        self.bind("<Button-1>", lambda _: self.after_idle(self.highlight_selected_line))
 
     def highlight_selected_line(self, event=None):
         line_start = int(self.index("insert").split(".")[0])
@@ -28,19 +32,19 @@ class Generaltext(CTkTextbox):
         self.tag_config("current_line_color", background=self.selected_line_color)
 
     def load_theme(self, child):
-        dark = "_dark" if self.master.sys_theme == "dark" else ""
+        dark = "_dark" if self.sys_theme == "dark" else ""
         child = str(child)
 
         widget = "main_textbox" if "maintext" in child else "left_textbox"
 
-        bg_color            = self.master.theme["widgets"][widget][f"bg{dark}"]
-        selected_line_color = self.master.theme["widgets"][widget][f"selected_line{dark}"]
-        font_color          = self.master.theme["widgets"][widget][f"font{dark}"]
-        exp_dir_color       = self.master.theme["explorer"][f"dir{dark}"]
-        exp_file_color      = self.master.theme["explorer"][f"file{dark}"]
-        exp_curdir_color    = self.master.theme["explorer"][f"curdir{dark}"]
+        bg_color            = self.theme["widgets"][widget][f"bg{dark}"]
+        selected_line_color = self.theme["widgets"][widget][f"selected_line{dark}"]
+        font_color          = self.theme["widgets"][widget][f"font{dark}"]
+        exp_dir_color       = self.theme["explorer"][f"dir{dark}"]
+        exp_file_color      = self.theme["explorer"][f"file{dark}"]
+        exp_curdir_color    = self.theme["explorer"][f"curdir{dark}"]
 
-        return (bg_color, selected_line_color, font_color, exp_dir_color, exp_file_color, exp_curdir_color)
+        return bg_color, selected_line_color, font_color, exp_dir_color, exp_file_color, exp_curdir_color
 
     def write_file_content(self, content: str | tuple, mark_set: str = "insert"):
         """ Directly write a file content. Used when user opens a file with left sidebar or argv"""
@@ -120,14 +124,21 @@ class Maintext(Generaltext):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self._line_counter = None
-        super().enable_auto_highlight_line()
 
-        self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color, self.exp_file_color, self.exp_curdir_color = super().load_theme(self)
-        self.configure(bg_color=self.bg_color, fg_color=self.bg_color, text_color=self.font_color, state="disabled")
+        self.sys_theme = master.sys_theme
+        self.theme = master.theme
+        self.__load_theme__()
+
+        super().enable_auto_highlight_line()
 
         self._lexer = pygments.lexers.PythonLexer
         self._colors = SyntaxColors.get_syntax_colors()
         self._enable_binds_()
+
+    def __load_theme__(self):
+        (self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color,
+self.exp_file_color, self.exp_curdir_color) = super().load_theme(self)
+        self.configure(bg_color=self.bg_color, fg_color=self.bg_color, text_color=self.font_color, state="disabled")
 
     def _enable_binds_(self):
         # self.bind("<Key>", lambda e: self.after_idle(lambda: self.__bind_dealing__(e)))
@@ -137,15 +148,16 @@ class Maintext(Generaltext):
         pass
 
     def __add_tab__(self, e):
-        c = self.index("insert")
-        self.insert(c, " "*self.tab_width)
+        index = self.index("insert")
+        self.insert(index, " "*self.tab_width)
+        self.highlight_selected_line()
         return "break"
 
     def create_line_counter(self, master):
         def load_line_counter_theme() -> tuple:
-            dark = "_dark" if self.master.sys_theme == "dark" else ""
-            bg_color = self.master.theme["widgets"]["line_counter"][f"bg{dark}"]
-            font_color = self.master.theme["widgets"]["line_counter"][f"font{dark}"]
+            dark = "_dark" if self.sys_theme == "dark" else ""
+            bg_color = self.theme["widgets"]["line_counter"][f"bg{dark}"]
+            font_color = self.theme["widgets"]["line_counter"][f"font{dark}"]
             return (bg_color, font_color)
         bg_color, font_color = load_line_counter_theme()
 
@@ -223,6 +235,3 @@ class Lefttext(Generaltext):
 
     def updir(self):
         self.path = os.path.dirname(self.path)
-    
-    def teste(self, first, last):
-        self.scrollbar.set(first, last)
