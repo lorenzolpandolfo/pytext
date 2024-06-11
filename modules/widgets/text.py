@@ -14,12 +14,13 @@ class Generaltext(CTkTextbox):
     """ Includes methods that Maintext and Lefttext use. """
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self.selected_line_color = None
         self.path = None
         self.tab_width = Application.mainapp.config["tab_width"]
 
     def enable_auto_highlight_line(self):
-        self.bind("<Key>", lambda _: self.after_idle(lambda: self.highlight_selected_line()))
-        
+        self.bind("<Key>", lambda _: self.after_idle(self.highlight_selected_line))
+
     def highlight_selected_line(self, event=None):
         line_start = int(self.index("insert").split(".")[0])
         self.tag_remove("current_line_color", "1.0", "end")
@@ -118,6 +119,7 @@ class Maintext(Generaltext):
     """Represents the main textbox of Pytext."""
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
+        self._line_counter = None
         super().enable_auto_highlight_line()
 
         self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color, self.exp_file_color, self.exp_curdir_color = super().load_theme(self)
@@ -148,8 +150,11 @@ class Maintext(Generaltext):
         bg_color, font_color = load_line_counter_theme()
 
         tilde_char = Application.mainapp.config["nonexistent_char"]
-        self._line_counter = TkLineNumbers(master, self, justify="right", colors=(font_color, bg_color),tilde=tilde_char, bd=0)
-        self._line_counter.grid(row=0, column=1, sticky="nsew", pady=(6 * (self._get_widget_scaling()) + 0.5,0))
+        self._line_counter = TkLineNumbers(
+            master, self, justify="right", colors=(font_color, bg_color), tilde=tilde_char, bd=0
+        )
+
+        self._line_counter.grid(row=0, column=0, sticky="nsew", pady=(6 * (self._get_widget_scaling()) + 0.5,0))
         self.__enable_auto_redraw__()
 
     def __enable_auto_redraw__(self):
@@ -215,14 +220,6 @@ class Lefttext(Generaltext):
 
         self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color, self.exp_file_color, self.exp_curdir_color = super().load_theme(self)
         self.configure(bg_color=self.bg_color, fg_color=self.bg_color, state="disabled")
-
-
-        self.scrollbar = CTkScrollbar(self, orientation="horizontal", command=self.xview)
-        self.scrollbar.grid(row=1, column=0, sticky="we")
-
-        self.configure(xscrollcommand=self.teste(*self.xview()))
-        #self.configure(xscrollcommand=self.scrollbar.set)
-
 
     def updir(self):
         self.path = os.path.dirname(self.path)

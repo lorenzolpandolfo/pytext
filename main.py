@@ -11,7 +11,7 @@ from modules.ThemeManager   import ThemeManager
 from modules.Application    import Application
 from modules.CommandManager import CommandManager
 
-from modules.frames.frames import MainFrame, LeftFrame, BottomFrame
+from modules.frames.frames import MainFrame, LeftFrame, BottomFrame, LineCounterFrame
 
 
 class MainApp(ctk.CTk):
@@ -72,22 +72,26 @@ class MainApp(ctk.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=0)
 
-        self.grid_columnconfigure(0, weight=0, minsize=60)
-        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(0, weight=0)
+        self.grid_columnconfigure(1, weight=0)
+        self.grid_columnconfigure(2, weight=2)
 
     def __create_frames__(self):
         self.bottom_frame = BottomFrame(self)
-        self.bottom_frame.grid(row=1, column=0, sticky="we", columnspan=2, rowspan=2)
+        self.bottom_frame.grid(row=1, column=0, sticky="we", columnspan=3, rowspan=3)
 
         self.main_frame = MainFrame(self, self.font)
-        self.main_frame.grid(row=0, column=1, sticky="nsew")
+        self.main_frame.grid(row=0, column=2, sticky="nsew")
 
         self.left_frame = LeftFrame(self, self.font)
-        self.left_frame.grid(row=0, column=0, sticky="nsew")
-        
+
+        self.line_counter_frame = LineCounterFrame(self)
+        self.line_counter_frame.grid(row=0, column=1, sticky="nsew")
+
+
     def __create_widgets__(self):
         self.main_frame.create_textbox()
-        self.main_frame.textbox.create_line_counter(self.left_frame)
+        self.main_frame.textbox.create_line_counter(self.line_counter_frame)
 
         self.left_frame.create_textbox()
         

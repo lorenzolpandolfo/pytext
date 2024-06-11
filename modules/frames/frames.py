@@ -4,14 +4,17 @@ from modules.widgets.text import Lefttext, Maintext
 from modules.ImageManager import ImageManager
 
 
-class LeftFrame(CTkFrame):
-    """ Contains the line counter. """
+class LeftFrame(CTkScrollableFrame):
+    """ Contains the file explorer. """
     def __init__(self, master, font:CTkFont):
-        super().__init__(master)
+        super().__init__(master, orientation="horizontal")
 
+        self.textbox = None
         self.__grid_setup__()
         self.font = font
-        
+        self.sys_theme = master.sys_theme
+        self.theme = master.theme
+
         self.terminal_dir = master.terminal_dir
         self.file_name = master.file_name
         self.sys_theme = master.sys_theme
@@ -26,27 +29,45 @@ class LeftFrame(CTkFrame):
         self.grid_columnconfigure(0, weight=1)
 
     def __load_theme__(self):
-        dark = "_dark" if self.master.sys_theme == "dark" else ""
-        self.bg_color = self.master.theme["frames"]["left"][f"bg{dark}"]
-        self.fg_color = self.master.theme["frames"]["left"][f"fg{dark}"]
+        dark = "_dark" if self.sys_theme == "dark" else ""
+        self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
+        self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
 
-    def create_textbox(self, row:int = 0, column:int = 0):
-        self.textbox = Lefttext(self, font=self.font)
+    def create_textbox(self, row: int = 0, column: int = 0):
+        self.textbox = Lefttext(self, font=self.font, width=500)
         # self.textbox.configure(bg_color=self.bg_color, fg_color=self.fg_color)
     
     def hide_textbox(self):
         if self.textbox.winfo_ismapped():
-            self.textbox.grid_forget()
+            self.grid_forget()
     
     def show_textbox(self):
         if not self.textbox.winfo_ismapped():
+            self.grid(row=0, column=0, sticky="nsew")
             self.textbox.grid(row=0, column=0, sticky="nsew")
             file_abs_path = os.path.dirname(os.path.join(self.terminal_dir, self.file_name))
             isdir = os.path.isdir(file_abs_path)
             path = file_abs_path if isdir else self.terminal_dir
-            print("abrindo ", path)
             self.textbox.open_directory(path)
 
+
+class LineCounterFrame(CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=0)
+
+        self.sys_theme = master.sys_theme
+        self.theme = master.theme
+        self.__load_theme__()
+
+    def __load_theme__(self):
+        dark = "_dark" if self.sys_theme == "dark" else ""
+        self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
+        self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
+
+        self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
 
 class BottomFrame(CTkFrame):
     """Contains the outputs labels."""

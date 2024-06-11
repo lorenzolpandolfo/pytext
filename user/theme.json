@@ -32,10 +32,10 @@
       "bg"      : "#ffffff",
       "bg_dark" : "#1e1f22",
 
-      "selected_line"      : "#f5f8fe",
+      "selected_line"      : "#f3d2f3",
       "selected_line_dark" : "#26282e",
 
-      "font"      : "#000000",
+      "font"      : "#424242",
       "font_dark" : "#C8C6AB"
     },
 
@@ -44,7 +44,7 @@
       "bg"      : "#f7f8fa",
       "bg_dark" : "#2b2d30",
 
-      "selected_line"      : "#dfe1e5",
+      "selected_line"      : "#f3d2f3",
       "selected_line_dark" : "#43454a",
 
       "font"      : "#000000",
@@ -56,7 +56,7 @@
       "bg"      : "#ffffff",
       "bg_dark" : "#2b2d30",
 
-      "font"      : "#000000",
+      "font"      : "#808080",
       "font_dark"	: "#C8C6AB",
 
       "tilde_char"      : "#000000",
@@ -81,9 +81,9 @@
 
   "explorer":
   {
-    "dir"			  : "#3574f0",
+    "dir"			  : "#B309B3",
     "dir_dark"		  : "#3574f0",
-    "file"			  : "#000000",
+    "file"			  : "#656565",
     "file_dark"	  : "#C8C6AB",
     "curdir"      : "#000000",
     "curdir_dark"	: "#26282e"
