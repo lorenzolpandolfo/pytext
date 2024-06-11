@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 from modules.Application import Application
 import re
@@ -86,7 +87,7 @@ class CommandManager:
     def save_file(cls):
         cur_file_path = Application.mainapp.file_name
         if not cur_file_path:
-            return False
+            cur_file_path = os.path.join(Application.mainapp.terminal_dir, "untitled.txt")
 
         content = Application.mainapp.main_frame.textbox.get("1.0", "end-1c")
         with open(cur_file_path, "w", encoding="utf8") as f:
