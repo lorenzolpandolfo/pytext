@@ -82,10 +82,10 @@
   "explorer":
   {
     "dir"			  : "#B309B3",
-    "dir_dark"		  : "#3574f0",
+    "dir_dark"		  : "#B247B2",
     "file"			  : "#656565",
     "file_dark"	  : "#C8C6AB",
     "curdir"      : "#000000",
-    "curdir_dark"	: "#26282e"
+    "curdir_dark"	: "#B247B2"
   }
 }
