@@ -57,7 +57,7 @@ class Generaltext(CTkTextbox):
 
         if mark_set:
             self.mark_set(mark_set, "1.0")
-        
+
         if Application.get_mode() == "insert":
             Application.switch_mode()
         else:
@@ -73,7 +73,7 @@ class Generaltext(CTkTextbox):
 
         self.delete("1.0", "end")
         self.insert("1.0", formatted_content)
-        
+
         # adding colors to other directories inside the content
         for i, file in enumerate(raw_content.split("\n")):
             full_path = os.path.join(self.path, file)
@@ -81,11 +81,11 @@ class Generaltext(CTkTextbox):
             if os.path.isdir(full_path):
                 self.tag_add("directory_color", f"{i + 2}.0", f"{i + 3}.0")
                 self.tag_config("directory_color", foreground=colors[0])
-            
+
             elif os.path.isfile(full_path):
                 self.tag_add("file_color", f"{i + 2}.0", f"{i + 3}.0")
                 self.tag_config("file_color", foreground=colors[1])
-            
+
         if mark_set:
             self.mark_set(mark_set, "1.0")
         
@@ -137,7 +137,7 @@ class Maintext(Generaltext):
 
     def __load_theme__(self):
         (self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color,
-self.exp_file_color, self.exp_curdir_color) = super().load_theme(self)
+            self.exp_file_color, self.exp_curdir_color) = super().load_theme(self)
         self.configure(bg_color=self.bg_color, fg_color=self.bg_color, text_color=self.font_color, state="disabled")
 
     def _enable_binds_(self):
@@ -193,7 +193,7 @@ self.exp_file_color, self.exp_curdir_color) = super().load_theme(self)
 
         # this yscrollcommand also auto resizes pytext to the current resolution
         self.configure(yscrollcommand=self.__y_scroll_command__)
-    
+
     def __y_scroll_command__(self, *scroll_pos:tuple):
         self._y_scrollbar.set(scroll_pos[0], scroll_pos[1])
         self._line_counter.redraw()
@@ -206,11 +206,11 @@ self.exp_file_color, self.exp_curdir_color) = super().load_theme(self)
         #        self.tag_remove(tag, "1.0", "end")
         #        self.tag_delete(tag)
         #        print(tag, " removida")
-                
+
         lexer = get_lexer_by_name(lexer)
         content = self.get(f"{line_num}.0 linestart", f"{line_num}.0 lineend")
         tokens = list(pygments.lex(content, lexer))
-        
+
         for tag in self.tag_names("insert"):
             if tag != "sel":
                 # print(tag)
@@ -231,7 +231,7 @@ self.exp_file_color, self.exp_curdir_color) = super().load_theme(self)
         self.update()
         all = self.get("1.0", "end")
         num_lines = all.count("\n")
-        
+
         first_line = int(self.index("@0,0").split(".")[0])
         last_line = int(
             self.index(f"@0,{self.winfo_height()}").split(".")[0]
