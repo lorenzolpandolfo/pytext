@@ -107,6 +107,8 @@ class CommandManager:
         comment_symbol = comments[file_ext]
 
         selected_lines = CommandManager.get_selected_lines(textbox)
+        if not selected_lines:
+            selected_lines = [textbox.index("insert").split('.')[0]]
 
         for line in selected_lines:
             start_index = f"{line}.0"
