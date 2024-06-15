@@ -145,7 +145,11 @@ class Maintext(Generaltext):
         self.bind("<Key>", lambda e: self.after_idle(lambda: self.__bind_dealing__(e)))
         self.bind("<Tab>", self.__add_tab__)
         self.bind("<Shift-Tab>", self.__untab__)
-        self.bind("<Control-d>", lambda _: CommandManager.comment_lines(self))
+        self.bind("<Control-d>", lambda _: self.__comment_lines__())
+
+    def __comment_lines__(self):
+        CommandManager.comment_lines(self)
+        return "break"
 
     def __bind_dealing__(self, event):
         SHIFT_PRESSED = "ISO_Left_Tab"

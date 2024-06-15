@@ -36,8 +36,6 @@ class CommandManager:
                 return cls.move_cursor("down", cls.mainapp.main_frame.textbox, "end")
             case "dd":
                 return cls.delete_line_content(del_range=numeric)
-            case "x":
-                return cls.comment_lines(cls.mainapp.main_frame.textbox)
             case "sq" | "wq":
                 cls.save_file()
                 exit(0)
@@ -99,7 +97,9 @@ class CommandManager:
 
     @classmethod
     def comment_lines(cls, textbox):
-        if not Application.mode == "insert": return False
+        if Application.mode != "insert":
+            return False
+
         fm.move_to_directory("languages")
         comments = fm.open_json_file("comments.json")
         cur_file = Application.mainapp.file_name
@@ -107,16 +107,15 @@ class CommandManager:
         comment_symbol = comments[file_ext]
 
         selected_lines = CommandManager.get_selected_lines(textbox)
-        if not selected_lines:
-            selected_lines = textbox.index("insert").split('.')[0]
 
         for line in selected_lines:
-            start_index = textbox.index(f"{line}.0")
-            if textbox.get(start_index) == f"{comment_symbol}":
-                textbox.delete(f"{line}.0", f"{line}.{len(comment_symbol) + 1}")
+            start_index = f"{line}.0"
+            current_line_text = textbox.get(start_index, f"{line}.end")
+
+            if current_line_text.startswith(comment_symbol):
+                textbox.delete(start_index, f"{line}.{len(comment_symbol) + 1}")
             else:
                 textbox.insert(start_index, f"{comment_symbol} ")
-
         return True
 
     @classmethod
