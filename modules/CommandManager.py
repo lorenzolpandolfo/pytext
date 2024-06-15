@@ -1,6 +1,8 @@
 import os
+import tkinter
 from dataclasses import dataclass
 from modules.Application import Application
+from modules.FileManager import FileManager as fm
 import re
 
 
@@ -34,7 +36,8 @@ class CommandManager:
                 return cls.move_cursor("down", cls.mainapp.main_frame.textbox, "end")
             case "dd":
                 return cls.delete_line_content(del_range=numeric)
-
+            case "x":
+                return cls.comment_lines(cls.mainapp.main_frame.textbox)
             case "sq" | "wq":
                 cls.save_file()
                 exit(0)
@@ -93,3 +96,37 @@ class CommandManager:
         with open(cur_file_path, "w", encoding="utf8") as f:
             f.write(content)
         return True
+
+    @classmethod
+    def comment_lines(cls, textbox):
+        if not Application.mode == "insert": return False
+        fm.move_to_directory("languages")
+        comments = fm.open_json_file("comments.json")
+        cur_file = Application.mainapp.file_name
+        _, file_ext = os.path.splitext(cur_file)
+        comment_symbol = comments[file_ext]
+
+        selected_lines = CommandManager.get_selected_lines(textbox)
+        if not selected_lines:
+            selected_lines = textbox.index("insert").split('.')[0]
+
+        for line in selected_lines:
+            start_index = textbox.index(f"{line}.0")
+            if textbox.get(start_index) == f"{comment_symbol}":
+                textbox.delete(f"{line}.0", f"{line}.{len(comment_symbol) + 1}")
+            else:
+                textbox.insert(start_index, f"{comment_symbol} ")
+
+        return True
+
+    @classmethod
+    def get_selected_lines(cls, textbox):
+        try:
+            start = textbox.index("sel.first")
+            end = textbox.index("sel.last")
+            start_line = int(start.split('.')[0])
+            end_line = int(end.split('.')[0])
+            selected_lines = list(range(start_line, end_line + 1))
+            return selected_lines
+        except tkinter.TclError:
+            return []

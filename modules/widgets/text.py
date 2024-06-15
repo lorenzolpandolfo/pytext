@@ -5,6 +5,7 @@ from modules.FileManager    import FileManager
 from modules.tklinenums     import TkLineNumbers
 from modules.SyntaxColors   import SyntaxColors
 from modules.Application    import Application
+from modules.CommandManager import CommandManager
 
 import pygments
 from pygments.lexers import get_lexer_by_name
@@ -144,6 +145,7 @@ class Maintext(Generaltext):
         self.bind("<Key>", lambda e: self.after_idle(lambda: self.__bind_dealing__(e)))
         self.bind("<Tab>", self.__add_tab__)
         self.bind("<Shift-Tab>", self.__untab__)
+        self.bind("<Control-d>", lambda _: CommandManager.comment_lines(self))
 
     def __bind_dealing__(self, event):
         SHIFT_PRESSED = "ISO_Left_Tab"
