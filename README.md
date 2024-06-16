@@ -1,10 +1,7 @@
 # Pytext
 Pytext is a open-source Python text editor inspired by Vim, with its own keybindings, that uses Customtkinter to its interface. 
-It's being developed on Windows and it may present instabilities on other operating systems. In future, It should support Linux and MacOS.
-The project have a lot of progress to be made and it can be unstable with different screen resolutions too.
-Feel free to open an issue or fork it!
 
-Pytext code is under a total refactor process in the **unstable branch**. Use the main branch if you would like to run Pytext in its stablest version.
+The project is in development and may not work correctly in MacOS. Feel free to open an issue to report bugs or share new ideas.
 
 # Installation process - Windows
 Pytext default directory is inside your user's folder. So, it is recommended that you clone the repository there.
