@@ -23,6 +23,7 @@ Pytext installation process:
 - You can edit the `user/config.json` and `user/theme.json` files to change personal preferences.
 
 ## How to use
+After adding pytext directory to your PATH variable, you can use `pytext <file>` to open a file.
 Pytext has two modes: **view** and **insert**.
 In the view mode, you can navigate through the document and input keybinds.
 And, in the insert mode, you can insert text to the file.
@@ -31,8 +32,9 @@ To switch from view mode to insert mode, just press i. And, to go to view mode, 
 ## Insert mode shortcuts:
 Shortcut | Description
 --- | --- 
-Ctrl + z | undo
-Ctrl + y | redo
+Ctrl + f | open/close file explorer
+Ctrl + z/y | undo/redo
+Ctrl + c/v | copy/paste
 Ctrl + x | cut the selected line(s)
 Alt + up/down | move selected line(s) up/down
 Alt + shift + up/down | clone selected line(s) up/down
