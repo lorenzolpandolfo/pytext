@@ -16,10 +16,10 @@ Make sure you installed the packages below:
 
 Pytext installation process:
 - run `git clone https://github.com/lorenzolpandolfo/pytext` inside your home folder
-- run `pip3 install -r requirements.txt` to install Pytext's dependencies
+- run `pip3 install -r requirements.txt` to install dependencies
+- add the pytext directory to your user PATH variable
 
 ## Preferences
-- If you would like to change Pytext directory, don't forget to edit the `pytext.bat` (for Windows) or `pytext.sh` (for Linux) file after adding the custom directory to PATH.
 - You can edit the `user/config.json` and `user/theme.json` files to change personal preferences.
 
 ## How to use
@@ -33,11 +33,11 @@ To switch from view mode to insert mode, just press i. And, to go to view mode, 
 Shortcut | Description
 --- | --- 
 Ctrl + f | open/close file explorer
-Ctrl + z/y | undo/redo
-Ctrl + c/v | copy/paste
+Ctrl + z / y | undo / redo
+Ctrl + c / v | copy / paste
 Ctrl + x | cut the selected line(s)
-Alt + up/down | move selected line(s) up/down
-Alt + shift + up/down | clone selected line(s) up/down
+Alt + up / down | move selected line(s) up / down
+Alt + shift + up / down | clone selected line(s) up / down
 
 ## View mode keybinds:
 You can add a number before the keybind to execute _n_ times. For example, the keybind `10W` will move the cursor up 10 lines.
@@ -45,7 +45,7 @@ Keybind | Description
 --- | --- 
 dd | delete line
 WASD | move cursor
-F/V | move to the first/last line
+F / V | move to the first / last line
 ww | save file
 qq | quit without saving
 wq | save and quit
