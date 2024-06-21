@@ -32,7 +32,9 @@ To switch from view mode to insert mode, just press i. And, to go to view mode, 
 ## Insert mode shortcuts:
 Shortcut | Description
 --- | --- 
-Ctrl + f | open/close file explorer
+Ctrl + e | open/close file explorer
+Ctrl + Return | new line above
+Ctrl + F5 | run code
 Ctrl + z / y | undo / redo
 Ctrl + c / v | copy / paste
 Ctrl + x | cut the selected line(s)
@@ -47,6 +49,6 @@ dd | delete line
 WASD | move cursor
 F / V | move to the first / last line
 ww | save file
-qq | quit without saving
+qq | quit
 wq | save and quit
 
