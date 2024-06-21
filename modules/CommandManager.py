@@ -12,9 +12,32 @@ class CommandManager:
     Application: Application
 
     @classmethod
-    def validate_command(cls, command: str, *args):
-        # print("Command manager recieved: ", command)
+    def command_dealing(cls, event):
+        focus = str(Application.mainapp.focus_get())
+        if ("mainframe" in focus) and (Application.get_mode() == "view"):
+            cur_command = Application.mainapp.bottom_frame.command.cget("text")
+            cur_command_chars = ''.join(re.findall(r'[a-zA-Z]+', cur_command))
 
+            if (cur_command and event.keysym == "Escape") or (len(cur_command_chars) >= 3):
+                return True
+
+            if event.char.isalpha() or event.char.isdigit():
+                command = CommandManager.add_char_to_command(cur_command, event.char)
+                Application.mainapp.bottom_frame.command.configure(text=command)
+                return CommandManager.validate_command(command)
+
+    @classmethod
+    def add_char_to_command(cls, cur_command, char):
+        new_command = []
+        for c in cur_command:
+            new_command.append(c)
+        new_command.append(char)
+        new_command = ''.join(new_command)
+        return new_command
+
+    @classmethod
+    def validate_command(cls, command: str) -> bool:
+        """Validates the commands. Return if command is valid."""
         numeric = int(''.join(re.findall(r'\d+', command))) if (re.search(r'\d', command)) else 1
         alphabetical = ''.join(re.findall(r'[a-zA-Z]+', command))
 

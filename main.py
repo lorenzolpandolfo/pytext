@@ -88,7 +88,6 @@ class MainApp(ctk.CTk):
         self.line_counter_frame = LineCounterFrame(self)
         self.line_counter_frame.grid(row=0, column=1, sticky="nsew")
 
-
     def __create_widgets__(self):
         self.main_frame.create_textbox()
         self.main_frame.textbox.create_line_counter(self.line_counter_frame)
@@ -106,62 +105,13 @@ class MainApp(ctk.CTk):
 
     def __enable_binds__(self):
         self.bind("<Key>", lambda e: self.bind_dealing(e))
-    
+        self.bind("<Control-e>", lambda _: self.left_frame.switch_view())
+        self.bind("<Return>", lambda _: self.left_frame.open_file_or_directory())
+        self.bind("<Escape>", lambda _: Application.switch_mode('view'))
+
     def bind_dealing(self, event=None):
-        # TODO - separar essa grande função em funções menores
-        focus = str(self.focus_get())
-        left_textbox_visible = self.left_frame.textbox.winfo_ismapped()
-
-        # accessing a file or directory
-        if left_textbox_visible and "leftframe" in focus and event.keysym == "Return":
-            side_bar_selected_file_name = self.left_frame.textbox.get_current_line_content().strip()
-            if side_bar_selected_file_name[0] == "▼":
-                self.left_frame.textbox.updir()
-                return self.left_frame.textbox.open_directory(self.left_frame.textbox.path)
-            
-            elif side_bar_selected_file_name[0] == "/":
-                side_bar_selected_file_name = side_bar_selected_file_name[1:]
-
-            content = os.path.join(self.left_frame.textbox.path, side_bar_selected_file_name)
-
-            if os.path.isdir(content):
-                return self.left_frame.textbox.open_directory(content)
-            else:
-                # contar quantos diretorios tem antes e ir salvando a posicao do cursor pra retomar
-                if self.main_frame.textbox.open_file(content):
-                    self.main_frame.textbox.focus_set()
-
-        # running commands in the maintext
-        if "mainframe" in focus and Application.get_mode() == "view":
-            cur_command = self.bottom_frame.command.cget("text")
-            cur_command_chars = ''.join(re.findall(r'[a-zA-Z]+', cur_command))
-
-            if (cur_command and event.keysym == "Escape") or (len(cur_command_chars) >= 3):
-                self.bottom_frame.clear_command_output()
-                return
-
-            if event.char.isalpha() or event.char.isdigit():
-                self.bottom_frame.command.configure(text=cur_command + event.char)
-                cur_command = cur_command + event.char
-
-                ans_command = CommandManager.validate_command(cur_command)
-                if ans_command:
-                    self.bottom_frame.clear_command_output()
-
-        elif Application.get_mode() == "insert":
-            if event.keysym == "Escape":
-                return Application.switch_mode()
-
-        if (event.state & 0x4) and event.keysym == "f":
-            if left_textbox_visible:
-                if "leftframe" in focus:
-                    self.left_frame.hide_textbox()
-                    self.main_frame.textbox.focus_set()
-                else:
-                    self.left_frame.textbox.focus_set()
-            else:
-                self.left_frame.show_textbox()
-                self.left_frame.textbox.focus_set()
+        if CommandManager.command_dealing(event):
+            self.bottom_frame.clear_command_output()
 
 
 if __name__ == "__main__":

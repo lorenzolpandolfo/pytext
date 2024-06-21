@@ -257,3 +257,4 @@ class Lefttext(Generaltext):
 
     def updir(self):
         self.path = os.path.dirname(self.path)
+        self.open_directory(self.path)

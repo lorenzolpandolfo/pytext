@@ -2,6 +2,7 @@ from customtkinter import CTkFrame, CTkFont, CTkLabel, CTkScrollableFrame
 import os
 from modules.widgets.text import Lefttext, Maintext
 from modules.ImageManager import ImageManager
+from modules.Application import Application
 
 DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 500
 
@@ -39,18 +40,44 @@ class LeftFrame(CTkScrollableFrame):
         self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET)
         self.textbox.configure(bg_color=self.bg_color, fg_color=self.fg_color)
     
-    def hide_textbox(self):
-        if self.textbox.winfo_ismapped():
-            self.grid_forget()
-    
     def show_textbox(self):
-        if not self.textbox.winfo_ismapped():
-            self.grid(row=0, column=0, sticky="nsew")
-            self.textbox.grid(row=0, column=0, sticky="nsew")
-            file_abs_path = os.path.dirname(os.path.join(self.terminal_dir, self.file_name))
-            isdir = os.path.isdir(file_abs_path)
-            path = file_abs_path if isdir else self.terminal_dir
-            self.textbox.open_directory(path)
+        self.grid(row=0, column=0, sticky="nsew")
+        self.textbox.grid(row=0, column=0, sticky="nsew")
+        file_abs_path = os.path.dirname(os.path.join(self.terminal_dir, self.file_name))
+        isdir = os.path.isdir(file_abs_path)
+        path = file_abs_path if isdir else self.terminal_dir
+        self.textbox.open_directory(path)
+        self.textbox.focus_set()
+
+    def switch_view(self, e=None):
+        if self.winfo_ismapped():
+            if "leftframe" in str(self.focus_get()):
+                self.grid_forget()
+                Application.mainapp.main_frame.textbox.focus_set()
+            else:
+                self.textbox.focus_set()
+        else:
+            self.show_textbox()
+
+    def open_file_or_directory(self):
+        if self.winfo_ismapped() and "leftframe" in str(self.focus_get()):
+            side_bar_selected_file_name = self.textbox.get_current_line_content().strip()
+            if side_bar_selected_file_name[0] == "▼":
+                self.textbox.updir()
+                return
+
+            elif side_bar_selected_file_name[0] == "/":
+                side_bar_selected_file_name = side_bar_selected_file_name[1:]
+
+            content = os.path.join(self.textbox.path, side_bar_selected_file_name)
+
+            if os.path.isdir(content):
+                self.textbox.open_directory(content)
+                return
+            else:
+                # contar quantos diretorios tem antes e ir salvando a posicao do cursor pra retomar
+                if Application.mainapp.main_frame.textbox.open_file(content):
+                    Application.mainapp.main_frame.textbox.focus_set()
 
 
 class LineCounterFrame(CTkFrame):
@@ -70,6 +97,7 @@ class LineCounterFrame(CTkFrame):
         self.fg_color = self.theme["frames"]["line_counter"][f"fg{dark}"]
         self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
 
+
 class BottomFrame(CTkFrame):
     """Contains the outputs labels."""
     def __init__(self, master):
@@ -82,6 +110,7 @@ class BottomFrame(CTkFrame):
         self.sys_theme = master.sys_theme
         self.theme     = master.theme
         self.mode      = master.mode
+        self.gui_font  = master.gui_font
 
         self.__load_theme__()
         self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
@@ -115,10 +144,11 @@ class BottomFrame(CTkFrame):
         if "\n" in branch:
             branch = branch.replace("\n", "")
 
-        self.branch = CTkLabel(self, image=self.branch_image, text=branch, text_color=self.branch_color, justify="left", compound="left", font=self.master.gui_font, padx=10)
+        self.branch = CTkLabel(
+            self, image=self.branch_image, text=branch, text_color=self.branch_color,
+            justify="left", compound="left", font=self.gui_font, padx=10)
         self.branch.grid(row=2, column=2, sticky="e")
 
-    
     def destroy_branch_icon(self):
         print("Destruindo")
         try:
@@ -134,27 +164,24 @@ class MainFrame(CTkFrame):
     """It is the main frame that contains the Maintext instance."""
     def __init__(self, master, font:CTkFont):
         super().__init__(master)
+        self.textbox = None
         self.font = font
 
         self.sys_theme = master.sys_theme
         self.theme = master.theme
         self.mode = master.mode
 
-
         self.__grid_setup__()
         self.__load_theme__()
-
 
     def __load_theme__(self):
         dark = "_dark" if self.sys_theme == "dark" else ""
         self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
         self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
         
-
-    def create_textbox(self, row:int = 0, column:int = 0):
+    def create_textbox(self, row: int = 0, column: int = 0):
         self.textbox = Maintext(self, font=self.font)
         self.textbox.grid(row=row, column=column, sticky="nsew")
-        #self.textbox.configure(bg_color=self.bg_color, fg_color=self.bg_color)
         self.master.update()
         self.textbox.focus_set()
 

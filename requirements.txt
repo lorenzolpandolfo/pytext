@@ -1,5 +1,5 @@
 customtkinter~=5.2.2
 tkinterdnd2
-pillow~=9.0.1
+pillow~=10.0.1
 pygments~=2.17.2
 pyperclip~=1.8.2

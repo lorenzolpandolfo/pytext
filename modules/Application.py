@@ -16,8 +16,8 @@ class Application:
         return cls.mode
     
     @classmethod
-    def switch_mode(cls):
-        cls.mode = "view" if cls.mode == "insert" else "insert"
+    def switch_mode(cls, forced_set: str = ''):
+        cls.mode = forced_set if forced_set else "view" if cls.mode == "insert" else "insert"
         cls.mainapp.bottom_frame.mode.configure(text=cls.mode)
         state = "disabled" if cls.mode == "view" else "normal"
         cls.mainapp.main_frame.textbox.configure(state=state)
