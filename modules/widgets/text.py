@@ -156,6 +156,7 @@ class Maintext(Generaltext):
 
     def __bind_dealing__(self, event):
         self.highlight_selected_line()
+        self._line_counter.redraw()
         SHIFT_PRESSED = "ISO_Left_Tab"
 
         if event.keysym == SHIFT_PRESSED:
