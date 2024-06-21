@@ -165,7 +165,7 @@ class Maintext(Generaltext):
 
     def __bind_dealing__(self, event):
         self.highlight_selected_line()
-        self._line_counter.redraw()
+        # self._line_counter.redraw()
         SHIFT_PRESSED = "ISO_Left_Tab"
 
         if event.keysym == SHIFT_PRESSED:
@@ -208,7 +208,9 @@ class Maintext(Generaltext):
         self.configure(yscrollcommand=self.__y_scroll_command__)
 
     def __y_scroll_command__(self, *args):
-        self._line_counter.redraw()
+        Application.mainapp.update()
+        Application.mainapp.update_idletasks()
+        Application.mainapp.after_idle(self._line_counter.redraw)
 
 
 class Lefttext(Generaltext):
