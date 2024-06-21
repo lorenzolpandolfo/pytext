@@ -154,6 +154,7 @@ class BottomFrame(Frame):
     def create_branch_icon(self, branch: str):
         if "\n" in branch:
             branch = branch.replace("\n", "")
+            branch = f"*{branch}"
 
         self.branch = Label(
             self, image=self.branch_image, text=branch, bg=self.bg_color, foreground=self.branch_color,
