@@ -1,6 +1,6 @@
 import os
 from modules.FileManager import FileManager as fm
-from PIL import Image
+from PIL import Image, ImageTk
 from customtkinter import CTkImage
 from modules.Application import Application
 
@@ -9,13 +9,23 @@ class ImageManager:
     """Deals with Pytext's images loading."""
 
     @staticmethod
-    def get_image(title: str, size: tuple[int, int]) -> CTkImage:
-        """Returns a CTkImage instance with the image title and size arguments loaded."""
-        if ImageManager._check_if_image_exists_(title) or ImageManager._check_if_image_exists_(title, fallback=True):
-            forced_theme = Application.mainapp.config["forced_theme"]
+    def get_image(title: str, size: tuple[int, int]):
+        """Returns a Tk PhotoImage instance with the image title and size arguments loaded."""
 
-            l_img = Image.open(os.path.join(os.getcwd(), f"{title}.png"))
-            d_img = Image.open(os.path.join(os.getcwd(), f"{title}_dark.png"))
+        def check_if_image_exists(title, fallback=False):
+            filename = f"{title}.png"
+            if fallback:
+                filename = f"{title}_dark.png"
+            return os.path.exists(os.path.join(os.getcwd(), filename))
+
+        if check_if_image_exists(title) or check_if_image_exists(title, fallback=True):
+            forced_theme = Application.mainapp.user_config["forced_theme"]
+
+            l_img_path = os.path.join(os.getcwd(), f"{title}.png")
+            d_img_path = os.path.join(os.getcwd(), f"{title}_dark.png")
+
+            l_img = Image.open(l_img_path)
+            d_img = Image.open(d_img_path)
 
             if forced_theme:
                 if forced_theme == "light":
@@ -23,7 +33,7 @@ class ImageManager:
                 elif forced_theme == "dark":
                     l_img = d_img
 
-            return CTkImage(l_img, d_img, size)
+            return ImageTk.PhotoImage(l_img), ImageTk.PhotoImage(d_img)
 
     @staticmethod
     def _check_if_image_exists_(title: str, fallback: bool = False) -> bool:

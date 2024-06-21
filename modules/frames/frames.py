@@ -1,4 +1,6 @@
 from customtkinter import CTkFrame, CTkFont, CTkLabel, CTkScrollableFrame
+from tkinter import Frame, font, Label
+
 import os
 from modules.widgets.text import Lefttext, Maintext
 from modules.ImageManager import ImageManager
@@ -34,11 +36,11 @@ class LeftFrame(CTkScrollableFrame):
         dark = "_dark" if self.sys_theme == "dark" else ""
         self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
         self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
-        self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
+        self.configure(bg_color=self.bg_color)
 
     def create_textbox(self, row: int = 0, column: int = 0):
         self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET)
-        self.textbox.configure(bg_color=self.bg_color, fg_color=self.fg_color)
+        self.textbox.configure(bg_color=self.bg_color)
     
     def show_textbox(self):
         self.grid(row=0, column=0, sticky="nsew")
@@ -80,7 +82,7 @@ class LeftFrame(CTkScrollableFrame):
                     Application.mainapp.main_frame.textbox.focus_set()
 
 
-class LineCounterFrame(CTkFrame):
+class LineCounterFrame(Frame):
     def __init__(self, master):
         super().__init__(master)
 
@@ -95,10 +97,10 @@ class LineCounterFrame(CTkFrame):
         dark = "_dark" if self.sys_theme == "dark" else ""
         self.bg_color = self.theme["frames"]["line_counter"][f"bg{dark}"]
         self.fg_color = self.theme["frames"]["line_counter"][f"fg{dark}"]
-        self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
+        self.configure(bg=self.bg_color)
 
 
-class BottomFrame(CTkFrame):
+class BottomFrame(Frame):
     """Contains the outputs labels."""
     def __init__(self, master):
         super().__init__(master)
@@ -113,7 +115,7 @@ class BottomFrame(CTkFrame):
         self.gui_font  = master.gui_font
 
         self.__load_theme__()
-        self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
+        self.configure(bg=self.bg_color)
 
     def __load_theme__(self):
         dark = "_dark" if self.sys_theme == "dark" else ""
@@ -126,13 +128,13 @@ class BottomFrame(CTkFrame):
         self.branch_color   = self.theme["widgets"]["bottom"][f"branch{dark}"]
 
     def create_widgets(self, output: str):
-        self.mode = CTkLabel(self, text=self.mode, justify="center", text_color=self.mode_color, bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
+        self.mode = Label(self, text=self.mode, justify="center", bg=self.bg_color, font=self.master.gui_font)
         self.mode.grid(row=1, column=0, columnspan=2)
 
-        self.command = CTkLabel(self, text="", justify="left", text_color=self.command_color, bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
+        self.command = Label(self, text="", justify="left", bg=self.bg_color, font=self.master.gui_font)
         self.command.grid(row=2, column=1, sticky="e")
 
-        self.output = CTkLabel(self, text=output.replace("\\", "/"), text_color=self.output_color, bg_color=self.bg_color, fg_color=self.fg_color, padx=10, justify="left", font=self.master.gui_font)
+        self.output = Label(self, text=output.replace("\\", "/"), bg=self.bg_color, padx=10, justify="left", font=self.master.gui_font)
         self.output.grid(row=2, column=0)
 
         self.grid_columnconfigure(1, weight=1)
@@ -144,8 +146,8 @@ class BottomFrame(CTkFrame):
         if "\n" in branch:
             branch = branch.replace("\n", "")
 
-        self.branch = CTkLabel(
-            self, image=self.branch_image, text=branch, text_color=self.branch_color,
+        self.branch = Label(
+            self, image=self.branch_image, text=branch, fg=self.branch_color,
             justify="left", compound="left", font=self.gui_font, padx=10)
         self.branch.grid(row=2, column=2, sticky="e")
 
@@ -160,7 +162,7 @@ class BottomFrame(CTkFrame):
         self.command.configure(text='')
 
 
-class MainFrame(CTkFrame):
+class MainFrame(Frame):
     """It is the main frame that contains the Maintext instance."""
     def __init__(self, master, font:CTkFont):
         super().__init__(master)

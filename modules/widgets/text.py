@@ -20,7 +20,9 @@ class Generaltext(CTkTextbox):
 
         self.sys_theme = master.sys_theme
         self.theme = master.theme
-        self.tab_width = Application.mainapp.config["tab_width"]
+        # self.tab_width = Application.mainapp.user_config["tab_width"]
+        print(Application.mainapp.user_config)
+        self.tab_width = Application.mainapp.user_config["tab_width"]
 
     def enable_auto_highlight_line(self):
         self.bind("<Key>", lambda _: self.after_idle(self.highlight_selected_line))
@@ -183,7 +185,7 @@ class Maintext(Generaltext):
             return (bg_color, font_color)
         bg_color, font_color = load_line_counter_theme()
 
-        tilde_char = Application.mainapp.config["nonexistent_char"]
+        tilde_char = Application.mainapp.user_config["nonexistent_char"]
         self._line_counter = TkLineNumbers(
             master, self, justify="right", colors=(font_color, bg_color), tilde=tilde_char, bd=0
         )
