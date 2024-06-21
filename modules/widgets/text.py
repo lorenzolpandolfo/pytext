@@ -24,6 +24,15 @@ class Generaltext(Text):
         self.sys_theme = master.sys_theme
         self.theme = master.theme
         self.tab_width = Application.mainapp.user_config["tab_width"]
+        self.setup_text_widget()
+
+    def setup_text_widget(self):
+        dark = "_dark" if self.sys_theme == "dark" else ""
+        cursor_color = self.theme[f"cursor_color{dark}"]
+        self.configure(
+            bd=0, highlightthickness=0,
+            blockcursor=True, insertbackground=cursor_color, insertunfocussed="hollow")
+
 
     def enable_auto_highlight_line(self):
         self.bind("<Key>", lambda _: self.after_idle(self.highlight_selected_line))
@@ -208,7 +217,7 @@ class Lefttext(Generaltext):
         super().enable_auto_highlight_line()
 
         self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color, self.exp_file_color, self.exp_curdir_color = super().load_theme(self)
-        self.configure(bg=self.bg_color, state="disabled")
+        self.configure(bg=self.bg_color, state="disabled", border=False)
 
     def updir(self):
         self.path = os.path.dirname(self.path)

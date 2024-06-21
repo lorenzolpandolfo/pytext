@@ -5,7 +5,7 @@ from modules.widgets.text import Lefttext, Maintext
 from modules.ImageManager import ImageManager
 from modules.Application import Application
 
-DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 10
+DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
 
 
 class LeftFrame(Frame):
@@ -136,26 +136,26 @@ class BottomFrame(Frame):
         self.branch_color   = self.theme["widgets"]["bottom"][f"branch{dark}"]
 
     def create_widgets(self, output: str):
-        self.mode = Label(self, text=self.mode, justify="center", bg=self.bg_color, font=self.master.gui_font)
+        self.mode = Label(self, text=self.mode, justify="center", bg=self.bg_color, foreground=self.mode_color, font=self.master.gui_font)
         self.mode.grid(row=1, column=0, columnspan=2)
 
-        self.command = Label(self, text="", justify="left", bg=self.bg_color, font=self.master.gui_font)
+        self.command = Label(self, text="", justify="left", bg=self.bg_color, foreground=self.command_color, font=self.master.gui_font)
         self.command.grid(row=2, column=1, sticky="e")
 
-        self.output = Label(self, text=output.replace("\\", "/"), bg=self.bg_color, padx=10, justify="left", font=self.master.gui_font)
+        self.output = Label(self, text=output.replace("\\", "/"), bg=self.bg_color, foreground=self.output_color, padx=10, justify="left", font=self.master.gui_font)
         self.output.grid(row=2, column=0)
 
         self.grid_columnconfigure(1, weight=1)
 
     def load_icons(self):
         self.branch_image = ImageManager.get_image("branch", (20, 22))
-    
+
     def create_branch_icon(self, branch: str):
         if "\n" in branch:
             branch = branch.replace("\n", "")
 
         self.branch = Label(
-            self, image=self.branch_image, text=branch, fg=self.branch_color,
+            self, image=self.branch_image, text=branch, bg=self.bg_color, foreground=self.branch_color,
             justify="left", compound="left", font=self.gui_font, padx=10)
         self.branch.grid(row=2, column=2, sticky="e")
 
