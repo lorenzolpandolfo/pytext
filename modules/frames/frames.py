@@ -1,4 +1,3 @@
-from customtkinter import CTkFrame, CTkFont, CTkLabel, CTkScrollableFrame
 from tkinter import Frame, font, Label
 
 import os
@@ -6,13 +5,13 @@ from modules.widgets.text import Lefttext, Maintext
 from modules.ImageManager import ImageManager
 from modules.Application import Application
 
-DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 500
+DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 10
 
 
-class LeftFrame(CTkScrollableFrame):
+class LeftFrame(Frame):
     """ Contains the file explorer. """
-    def __init__(self, master, font:CTkFont):
-        super().__init__(master, orientation="horizontal")
+    def __init__(self, master, font:font):
+        super().__init__(master) #, orientation="horizontal")
 
         self.textbox = None
         self.__grid_setup__()
@@ -36,11 +35,11 @@ class LeftFrame(CTkScrollableFrame):
         dark = "_dark" if self.sys_theme == "dark" else ""
         self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
         self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
-        self.configure(bg_color=self.bg_color)
+        self.configure(bg=self.bg_color)
 
     def create_textbox(self, row: int = 0, column: int = 0):
         self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET)
-        self.textbox.configure(bg_color=self.bg_color)
+        self.textbox.configure(bg=self.bg_color)
     
     def show_textbox(self):
         self.grid(row=0, column=0, sticky="nsew")
@@ -164,7 +163,7 @@ class BottomFrame(Frame):
 
 class MainFrame(Frame):
     """It is the main frame that contains the Maintext instance."""
-    def __init__(self, master, font:CTkFont):
+    def __init__(self, master, font:font):
         super().__init__(master)
         self.textbox = None
         self.font = font

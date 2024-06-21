@@ -1,4 +1,4 @@
-from customtkinter import CTkTextbox
+from tkinter import Text
 import os
 
 from modules.FileManager    import FileManager
@@ -11,7 +11,7 @@ import pygments
 from pygments.lexers import get_lexer_by_name
 
 
-class Generaltext(CTkTextbox):
+class Generaltext(Text):
     """ Includes methods that Maintext and Lefttext use. """
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs, insertofftime=0)
@@ -20,8 +20,6 @@ class Generaltext(CTkTextbox):
 
         self.sys_theme = master.sys_theme
         self.theme = master.theme
-        # self.tab_width = Application.mainapp.user_config["tab_width"]
-        print(Application.mainapp.user_config)
         self.tab_width = Application.mainapp.user_config["tab_width"]
 
     def enable_auto_highlight_line(self):
@@ -141,7 +139,7 @@ class Maintext(Generaltext):
     def __load_theme__(self):
         (self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color,
             self.exp_file_color, self.exp_curdir_color) = super().load_theme(self)
-        self.configure(bg_color=self.bg_color, fg_color=self.bg_color, text_color=self.font_color, state="disabled")
+        self.configure(bg=self.bg_color, foreground=self.font_color, state="disabled")
 
     def _enable_binds_(self):
         self.bind("<Key>", lambda e: self.after_idle(lambda: self.__bind_dealing__(e)))
@@ -154,6 +152,7 @@ class Maintext(Generaltext):
         return "break"
 
     def __bind_dealing__(self, event):
+        self.highlight_selected_line()
         SHIFT_PRESSED = "ISO_Left_Tab"
 
         if event.keysym == SHIFT_PRESSED:
@@ -190,11 +189,10 @@ class Maintext(Generaltext):
             master, self, justify="right", colors=(font_color, bg_color), tilde=tilde_char, bd=0
         )
 
-        self._line_counter.grid(row=0, column=0, sticky="nsew", pady=(6 * (self._get_widget_scaling()) + 0.5,0))
+        self._line_counter.grid(row=0, column=0, sticky="nsew", pady=(0,0))
         self.__enable_auto_redraw__()
 
     def __enable_auto_redraw__(self):
-        self.bind("<Key>", lambda e: self.after_idle(self._line_counter.redraw), add=True)
         # self.bind("<KeyRelease>", lambda e: self.highlight_line())
         # self.bind("<Control-v>", lambda e: self.highlight_all())
         # self.bind("<Prior>", lambda e: self.highlight_all())
@@ -202,8 +200,7 @@ class Maintext(Generaltext):
         # this yscrollcommand also auto resizes pytext to the current resolution
         self.configure(yscrollcommand=self.__y_scroll_command__)
 
-    def __y_scroll_command__(self, *scroll_pos:tuple):
-        self._y_scrollbar.set(scroll_pos[0], scroll_pos[1])
+    def __y_scroll_command__(self, *args):
         self._line_counter.redraw()
 
     def highlight_line(self, lexer="python", line_num:str=""):
@@ -255,7 +252,7 @@ class Lefttext(Generaltext):
         super().enable_auto_highlight_line()
 
         self.bg_color, self.selected_line_color, self.font_color, self.exp_dir_color, self.exp_file_color, self.exp_curdir_color = super().load_theme(self)
-        self.configure(bg_color=self.bg_color, fg_color=self.bg_color, state="disabled")
+        self.configure(bg=self.bg_color, state="disabled")
 
     def updir(self):
         self.path = os.path.dirname(self.path)
