@@ -1,4 +1,4 @@
-from tkinter import Frame, font, Label
+from tkinter import Frame, font, Label, Scrollbar
 
 import os
 from modules.widgets.text import Lefttext, Maintext
@@ -11,7 +11,7 @@ DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 10
 class LeftFrame(Frame):
     """ Contains the file explorer. """
     def __init__(self, master, font:font):
-        super().__init__(master) #, orientation="horizontal")
+        super().__init__(master)
 
         self.textbox = None
         self.__grid_setup__()
@@ -26,6 +26,14 @@ class LeftFrame(Frame):
         self.mode = master.mode
 
         self.__load_theme__()
+        self.__scrollbar_setup__()
+
+    def __scrollbar_setup__(self):
+        self.scrollbar_x = Scrollbar(self, orient="horizontal", command=self.__scroll_x__)
+        self.scrollbar_x.grid(row=1, column=0, sticky="we")
+
+    def __scroll_x__(self, *args):
+        self.textbox.xview(*args)
 
     def __grid_setup__(self):
         self.grid_rowconfigure(0, weight=1)
@@ -38,8 +46,9 @@ class LeftFrame(Frame):
         self.configure(bg=self.bg_color)
 
     def create_textbox(self, row: int = 0, column: int = 0):
-        self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET)
+        self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none')
         self.textbox.configure(bg=self.bg_color)
+        self.textbox.config(xscrollcommand=self.scrollbar_x.set)
     
     def show_textbox(self):
         self.grid(row=0, column=0, sticky="nsew")

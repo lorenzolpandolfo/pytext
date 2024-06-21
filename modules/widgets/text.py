@@ -15,6 +15,9 @@ class Generaltext(Text):
     """ Includes methods that Maintext and Lefttext use. """
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs, insertofftime=0)
+        self.exp_curdir_color = None
+        self.exp_file_color = None
+        self.exp_dir_color = None
         self.selected_line_color = None
         self.path = None
 
@@ -181,69 +184,21 @@ class Maintext(Generaltext):
             dark = "_dark" if self.sys_theme == "dark" else ""
             bg_color = self.theme["widgets"]["line_counter"][f"bg{dark}"]
             font_color = self.theme["widgets"]["line_counter"][f"font{dark}"]
-            return (bg_color, font_color)
+            return bg_color, font_color
         bg_color, font_color = load_line_counter_theme()
 
         tilde_char = Application.mainapp.user_config["nonexistent_char"]
         self._line_counter = TkLineNumbers(
             master, self, justify="right", colors=(font_color, bg_color), tilde=tilde_char, bd=0
         )
-
         self._line_counter.grid(row=0, column=0, sticky="nsew", pady=(0,0))
         self.__enable_auto_redraw__()
 
     def __enable_auto_redraw__(self):
-        # self.bind("<KeyRelease>", lambda e: self.highlight_line())
-        # self.bind("<Control-v>", lambda e: self.highlight_all())
-        # self.bind("<Prior>", lambda e: self.highlight_all())
-
-        # this yscrollcommand also auto resizes pytext to the current resolution
         self.configure(yscrollcommand=self.__y_scroll_command__)
 
     def __y_scroll_command__(self, *args):
         self._line_counter.redraw()
-
-    def highlight_line(self, lexer="python", line_num:str=""):
-        line_num = int(self.index("insert").split(".")[0]) if line_num == "" else line_num
-
-        #for tag in self.tag_names(index=None):
-        #    if tag.startswith("Token"):
-        #        self.tag_remove(tag, "1.0", "end")
-        #        self.tag_delete(tag)
-        #        print(tag, " removida")
-
-        lexer = get_lexer_by_name(lexer)
-        content = self.get(f"{line_num}.0 linestart", f"{line_num}.0 lineend")
-        tokens = list(pygments.lex(content, lexer))
-
-        for tag in self.tag_names("insert"):
-            if tag != "sel":
-                # print(tag)
-                self.tag_remove(tag, "insert linestart", "insert lineend")
-
-        start_col = 0
-        for (token, text) in tokens:
-            token = str(token)
-
-            end_col = start_col + len(text)
-            if token not in ["Token.Text.Whitespace", "Token.Text"]:
-                self.tag_add(token, f"{line_num}.{start_col}", f"{line_num}.{end_col}")
-                #print(f"{line_num}.{start_col}", f"{line_num}.{end_col}")
-                if token.split(".")[1] in self._colors:
-                    self.tag_config(token, foreground=self._colors[token.split(".")[1]])
-            start_col = end_col
-
-        self.update()
-        all = self.get("1.0", "end")
-        num_lines = all.count("\n")
-
-        first_line = int(self.index("@0,0").split(".")[0])
-        last_line = int(
-            self.index(f"@0,{self.winfo_height()}").split(".")[0]
-        )
-
-        for i in range(first_line, last_line):
-            self.highlight_line("python", i)
 
 
 class Lefttext(Generaltext):
