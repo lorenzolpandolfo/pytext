@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Application:
-    mainapp : str
+    mainapp : None
     mode    : str = "view"
 
     @classmethod

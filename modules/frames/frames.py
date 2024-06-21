@@ -1,16 +1,17 @@
-from customtkinter import CTkFrame, CTkFont, CTkLabel, CTkScrollableFrame
+from tkinter import Frame, font, Label, Scrollbar
+
 import os
 from modules.widgets.text import Lefttext, Maintext
 from modules.ImageManager import ImageManager
 from modules.Application import Application
 
-DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 500
+DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
 
 
-class LeftFrame(CTkScrollableFrame):
+class LeftFrame(Frame):
     """ Contains the file explorer. """
-    def __init__(self, master, font:CTkFont):
-        super().__init__(master, orientation="horizontal")
+    def __init__(self, master, font:font):
+        super().__init__(master)
 
         self.textbox = None
         self.__grid_setup__()
@@ -25,6 +26,14 @@ class LeftFrame(CTkScrollableFrame):
         self.mode = master.mode
 
         self.__load_theme__()
+        self.__scrollbar_setup__()
+
+    def __scrollbar_setup__(self):
+        self.scrollbar_x = Scrollbar(self, orient="horizontal", command=self.__scroll_x__)
+        self.scrollbar_x.grid(row=1, column=0, sticky="we")
+
+    def __scroll_x__(self, *args):
+        self.textbox.xview(*args)
 
     def __grid_setup__(self):
         self.grid_rowconfigure(0, weight=1)
@@ -34,11 +43,12 @@ class LeftFrame(CTkScrollableFrame):
         dark = "_dark" if self.sys_theme == "dark" else ""
         self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
         self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
-        self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
+        self.configure(bg=self.bg_color)
 
     def create_textbox(self, row: int = 0, column: int = 0):
-        self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET)
-        self.textbox.configure(bg_color=self.bg_color, fg_color=self.fg_color)
+        self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none')
+        self.textbox.configure(bg=self.bg_color)
+        self.textbox.config(xscrollcommand=self.scrollbar_x.set)
     
     def show_textbox(self):
         self.grid(row=0, column=0, sticky="nsew")
@@ -80,7 +90,7 @@ class LeftFrame(CTkScrollableFrame):
                     Application.mainapp.main_frame.textbox.focus_set()
 
 
-class LineCounterFrame(CTkFrame):
+class LineCounterFrame(Frame):
     def __init__(self, master):
         super().__init__(master)
 
@@ -95,10 +105,10 @@ class LineCounterFrame(CTkFrame):
         dark = "_dark" if self.sys_theme == "dark" else ""
         self.bg_color = self.theme["frames"]["line_counter"][f"bg{dark}"]
         self.fg_color = self.theme["frames"]["line_counter"][f"fg{dark}"]
-        self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
+        self.configure(bg=self.bg_color)
 
 
-class BottomFrame(CTkFrame):
+class BottomFrame(Frame):
     """Contains the outputs labels."""
     def __init__(self, master):
         super().__init__(master)
@@ -113,7 +123,7 @@ class BottomFrame(CTkFrame):
         self.gui_font  = master.gui_font
 
         self.__load_theme__()
-        self.configure(bg_color=self.bg_color, fg_color=self.fg_color)
+        self.configure(bg=self.bg_color)
 
     def __load_theme__(self):
         dark = "_dark" if self.sys_theme == "dark" else ""
@@ -126,26 +136,28 @@ class BottomFrame(CTkFrame):
         self.branch_color   = self.theme["widgets"]["bottom"][f"branch{dark}"]
 
     def create_widgets(self, output: str):
-        self.mode = CTkLabel(self, text=self.mode, justify="center", text_color=self.mode_color, bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
+        self.mode = Label(self, text=self.mode, justify="center", bg=self.bg_color, foreground=self.mode_color, font=self.master.gui_font)
         self.mode.grid(row=1, column=0, columnspan=2)
 
-        self.command = CTkLabel(self, text="", justify="left", text_color=self.command_color, bg_color=self.bg_color, fg_color=self.fg_color, font=self.master.gui_font)
+        self.command = Label(self, text="", justify="left", bg=self.bg_color, foreground=self.command_color, font=self.master.gui_font)
         self.command.grid(row=2, column=1, sticky="e")
 
-        self.output = CTkLabel(self, text=output.replace("\\", "/"), text_color=self.output_color, bg_color=self.bg_color, fg_color=self.fg_color, padx=10, justify="left", font=self.master.gui_font)
+        self.output = Label(self, text=output.replace("\\", "/"), bg=self.bg_color, foreground=self.output_color, padx=10, justify="left", font=self.master.gui_font)
         self.output.grid(row=2, column=0)
 
         self.grid_columnconfigure(1, weight=1)
 
     def load_icons(self):
-        self.branch_image = ImageManager.get_image("branch", (20, 22))
-    
+        # self.branch_image = ImageManager.get_image("branch", (20, 22))
+        self.branch_image = None # ImageManager.get_image("branch", (20, 22))
+
     def create_branch_icon(self, branch: str):
         if "\n" in branch:
             branch = branch.replace("\n", "")
+            branch = f"*{branch}"
 
-        self.branch = CTkLabel(
-            self, image=self.branch_image, text=branch, text_color=self.branch_color,
+        self.branch = Label(
+            self, image=self.branch_image, text=branch, bg=self.bg_color, foreground=self.branch_color,
             justify="left", compound="left", font=self.gui_font, padx=10)
         self.branch.grid(row=2, column=2, sticky="e")
 
@@ -160,9 +172,9 @@ class BottomFrame(CTkFrame):
         self.command.configure(text='')
 
 
-class MainFrame(CTkFrame):
+class MainFrame(Frame):
     """It is the main frame that contains the Maintext instance."""
-    def __init__(self, master, font:CTkFont):
+    def __init__(self, master, font:font):
         super().__init__(master)
         self.textbox = None
         self.font = font

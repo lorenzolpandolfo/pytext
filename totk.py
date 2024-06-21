@@ -1,15 +1,13 @@
 import os
-
 import tkinter as tk
-from tkinter import font as tkfont
+from tkinter import font
 
+from modules.UserConfig import UserConfig
+from modules.FontManager import FontManager
+from modules.FileManager import FileManager
+from modules.ThemeManager import ThemeManager
 
-from modules.UserConfig     import UserConfig
-from modules.FontManager    import FontManager
-from modules.FileManager    import FileManager
-from modules.ThemeManager   import ThemeManager
-
-from modules.Application    import Application
+from modules.Application import Application
 from modules.CommandManager import CommandManager
 
 from modules.frames.frames import MainFrame, LeftFrame, BottomFrame, LineCounterFrame
@@ -19,12 +17,12 @@ class MainApp(tk.Tk):
     def __init__(self, terminal_dir: str, loaded_file_name: str):
         super().__init__()
 
-        self.terminal_dir   = terminal_dir
-        self.file_name      = loaded_file_name
-        self.mode           = "view"
+        self.terminal_dir = terminal_dir
+        self.file_name = loaded_file_name
+        self.mode = "view"
 
-        Application.mainapp     = self
-        CommandManager.mainapp  = self
+        Application.mainapp = self
+        CommandManager.mainapp = self
         Application.set_mode("view")
 
         self.__load_user_config__()
@@ -38,23 +36,22 @@ class MainApp(tk.Tk):
         self.__enable_binds__()
 
     def __load_user_config__(self):
-        self.user_config = UserConfig.get_user_config()
+        self.config = UserConfig.get_user_config()
 
     def __load_user_font__(self):
-        user_font = self.user_config["font"]
-        loader = FontManager.load_user_font(user_font)
+        font_config = self.config["font"]
+        loader = FontManager.load_user_font(font_config)
 
         if isinstance(loader, int):
-            print(f"Error: could not load font '{user_font['title']}'. Loading default font instead.")
-            self.font     = tkfont.Font(font="Consolas", size=26)
-            self.gui_font = tkfont.Font(font="Consolas", size=17)
+            print(f"Error: could not load font '{font_config['title']}'. Loading default font instead.")
+            self.font = font.Font(family="Consolas", size=26)
+            self.gui_font = font.Font(family="Consolas", size=17)
         else:
             self.font, self.gui_font = loader
 
     def __load_system_theme__(self):
-        forced_theme = self.user_config["forced_theme"]
-        # adicionar o estilo do sistema ali no else dark
-        self.sys_theme = forced_theme if forced_theme else "dark"
+        forced_theme = self.config["forced_theme"]
+        self.sys_theme = forced_theme if forced_theme else self.tk.call("ttk::style", "theme", "use")
 
     def __load_user_theme__(self):
         self.theme = ThemeManager.get_user_theme()
@@ -67,7 +64,7 @@ class MainApp(tk.Tk):
 
     def __create_window__(self):
         self.title("The Pytext Editor Refactored")
-        self.geometry(self.user_config["window_size"])
+        self.geometry(self.config["window_size"])
         self.resizable(True, True)
 
     def __configure_grids__(self):
