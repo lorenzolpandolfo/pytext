@@ -148,7 +148,8 @@ class BottomFrame(Frame):
         self.grid_columnconfigure(1, weight=1)
 
     def load_icons(self):
-        self.branch_image = ImageManager.get_image("branch", (20, 22))
+        # self.branch_image = ImageManager.get_image("branch", (20, 22))
+        self.branch_image = None # ImageManager.get_image("branch", (20, 22))
 
     def create_branch_icon(self, branch: str):
         if "\n" in branch:
