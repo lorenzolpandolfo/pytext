@@ -11,6 +11,7 @@ from modules.ThemeManager   import ThemeManager
 
 from modules.Application    import Application
 from modules.CommandManager import CommandManager
+from modules.ScriptRunner   import ScriptRunner
 
 from modules.frames.frames import MainFrame, LeftFrame, BottomFrame, LineCounterFrame
 
@@ -110,6 +111,7 @@ class MainApp(tk.Tk):
         self.bind("<Control-e>", lambda _: self.left_frame.switch_view())
         self.bind("<Return>", lambda _: self.left_frame.open_file_or_directory())
         self.bind("<Escape>", lambda _: Application.switch_mode('view'))
+        self.bind("<Control-F5>", ScriptRunner.run_script)
 
     def bind_dealing(self, event=None):
         if CommandManager.command_dealing(event):
