@@ -18,7 +18,7 @@ class FileManager:
                 return False
         else:
             return False
-        
+
     @staticmethod
     def open_directory(dir_path: str) -> tuple | bool:
         """Returns a tuple with raw and formatted strings of all files and directories inside the directory argument."""
@@ -44,7 +44,7 @@ class FileManager:
         if os.path.isdir(full_path_directory):
             return os.path.exists(os.path.join(full_path_directory, ".git"))
         return False
-    
+
     @staticmethod
     def get_git_branch(git_path: str) -> str | bool:
         full_path_directory = os.path.dirname(git_path)
@@ -67,6 +67,12 @@ class FileManager:
                 os.chdir(arg)
 
     @staticmethod
-    def open_json_file(file_title:str):
-        with open(file_title, "r", encoding="utf8") as file:
-            return json.load(file)
+    def open_json_file(file_title: str):
+        if ".json" not in file_title:
+            file_title = f"{file_title}.json"
+        try:
+            with open(file_title, "r", encoding="utf8") as file:
+                return json.load(file)
+
+        except FileNotFoundError:
+            return False

@@ -1,11 +1,12 @@
 from tkinter import Text
 import os
 
-from modules.FileManager    import FileManager
-from modules.tklinenums     import TkLineNumbers
-from modules.SyntaxColors   import SyntaxColors
-from modules.Application    import Application
-from modules.CommandManager import CommandManager
+from modules.FileManager     import FileManager
+from modules.tklinenums      import TkLineNumbers
+from modules.SyntaxColors    import SyntaxColors
+from modules.Application     import Application
+from modules.CommandManager  import CommandManager
+from modules.LanguageManager import LanguageManager
 
 import pygments
 from pygments.lexers import get_lexer_by_name
@@ -109,6 +110,8 @@ class Generaltext(Text):
         content = FileManager.open_file(full_path)
         self.write_file_content(content)
 
+        _, file_ext = os.path.splitext(full_path)
+        LanguageManager.load_language(file_ext)
         Application.set_current_file(full_path)
         return content
 

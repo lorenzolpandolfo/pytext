@@ -3,6 +3,7 @@ import tkinter
 from dataclasses import dataclass
 from modules.Application import Application
 from modules.FileManager import FileManager as fm
+from modules.LanguageManager import LanguageManager
 import re
 
 
@@ -124,10 +125,9 @@ class CommandManager:
             return False
 
         fm.move_to_directory("languages")
-        comments = fm.open_json_file("comments.json")
-        cur_file = Application.mainapp.file_name
-        _, file_ext = os.path.splitext(cur_file)
-        comment_symbol = comments[file_ext]
+        comment_symbol = LanguageManager.get_info("comment")
+        if not comment_symbol:
+            return "break"
 
         selected_lines = CommandManager.get_selected_lines(textbox)
         if not selected_lines:
