@@ -1,5 +1,5 @@
 # Pytext
-Pytext is a open source text editor made in Python and it is inspired by the Vim editor. It has its own keybindings and uses Customtkinter to its interface. 
+Pytext is a open source text editor made in Python and it is inspired by the Vim editor. It has its own keybindings and uses tkinter to its interface.
 The project is in development and may not work correctly in MacOS. Feel free to open an issue to report bugs or share new ideas.
 
 ## Installation (Windows)
