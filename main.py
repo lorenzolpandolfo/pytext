@@ -2,7 +2,7 @@ import os
 
 import tkinter as tk
 from tkinter import font as tkfont
-
+import darkdetect
 
 from modules.UserConfig     import UserConfig
 from modules.FontManager    import FontManager
@@ -55,7 +55,7 @@ class MainApp(tk.Tk):
     def __load_system_theme__(self):
         forced_theme = self.user_config["forced_theme"]
         # adicionar o estilo do sistema ali no else dark
-        self.sys_theme = forced_theme if forced_theme else "dark"
+        self.sys_theme = forced_theme if forced_theme else str(darkdetect.theme()).lower()
 
     def __load_user_theme__(self):
         self.theme = ThemeManager.get_user_theme()
