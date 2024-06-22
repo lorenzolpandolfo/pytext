@@ -41,8 +41,12 @@ class ScriptRunner:
     @staticmethod
     def run_linux(cmd: str):
         # X display server case
+#         if os.environ.get("DISPLAY") is not None:
+#             subprocess.run(['x-terminal-emulator', '-e', cmd])
+
         if os.environ.get("DISPLAY") is not None:
-            subprocess.run(['x-terminal-emulator', '-e', cmd])
+            final_cmd = f'bash -c "{cmd}; read -n 1"'
+            subprocess.run(['x-terminal-emulator', '-e', final_cmd])
 
         # Wayland server case
         elif os.environ.get("WAYLAND_DISPLAY") is not None:
