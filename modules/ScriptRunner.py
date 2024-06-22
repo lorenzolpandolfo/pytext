@@ -41,9 +41,6 @@ class ScriptRunner:
     @staticmethod
     def run_linux(cmd: str):
         # X display server case
-#         if os.environ.get("DISPLAY") is not None:
-#             subprocess.run(['x-terminal-emulator', '-e', cmd])
-
         if os.environ.get("DISPLAY") is not None:
             final_cmd = f'bash -c "{cmd}; read -n 1"'
             subprocess.run(['x-terminal-emulator', '-e', final_cmd])
@@ -57,6 +54,5 @@ class ScriptRunner:
 
     @staticmethod
     def run_windows(cmd: str):
-        print("Rodando no Windows")
-        print(cmd)
-        subprocess.run(cmd, check=True, creationflags=subprocess.CREATE_NEW_CONSOLE)
+        final_cmd = f'cmd /c "{cmd} & set /p dummy= "'
+        subprocess.run(final_cmd, check=True, creationflags=subprocess.CREATE_NEW_CONSOLE)
