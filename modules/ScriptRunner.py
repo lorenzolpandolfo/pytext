@@ -55,4 +55,7 @@ class ScriptRunner:
     @staticmethod
     def run_windows(cmd: str):
         final_cmd = f'cmd /c "{cmd} & set /p dummy= "'
-        subprocess.run(final_cmd, check=True, creationflags=subprocess.CREATE_NEW_CONSOLE)
+        try:
+            subprocess.run(final_cmd, check=True, creationflags=subprocess.CREATE_NEW_CONSOLE)
+        except subprocess.CalledProcessError:
+            return
