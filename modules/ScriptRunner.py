@@ -53,4 +53,6 @@ class ScriptRunner:
 
     @staticmethod
     def run_windows(cmd: str):
-        subprocess.run(cmd)
+        print("Rodando no Windows")
+        print(cmd)
+        subprocess.run(cmd, check=True, creationflags=subprocess.CREATE_NEW_CONSOLE)
