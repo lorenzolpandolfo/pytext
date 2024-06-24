@@ -70,24 +70,26 @@ class LeftFrame(Frame):
             self.show_textbox()
 
     def open_file_or_directory(self):
-        if self.winfo_ismapped() and "leftframe" in str(self.focus_get()):
-            side_bar_selected_file_name = self.textbox.get_current_line_content().strip()
-            if side_bar_selected_file_name[0] == "▼":
-                self.textbox.updir()
-                return
+        if not self.winfo_ismapped() and "leftframe" not in str(self.focus_get()):
+            return False
 
-            elif side_bar_selected_file_name[0] == "/":
-                side_bar_selected_file_name = side_bar_selected_file_name[1:]
+        side_bar_selected_file_name = self.textbox.get_current_line_content().strip()
+        if side_bar_selected_file_name[0] == "▼":
+            self.textbox.updir()
+            return
 
-            content = os.path.join(self.textbox.path, side_bar_selected_file_name)
+        elif side_bar_selected_file_name[0] == "/":
+            side_bar_selected_file_name = side_bar_selected_file_name[1:]
 
-            if os.path.isdir(content):
-                self.textbox.open_directory(content)
-                return
-            else:
-                # contar quantos diretorios tem antes e ir salvando a posicao do cursor pra retomar
-                if Application.mainapp.main_frame.textbox.open_file(content):
-                    Application.mainapp.main_frame.textbox.focus_set()
+        content = os.path.join(self.textbox.path, side_bar_selected_file_name)
+
+        if os.path.isdir(content):
+            self.textbox.open_directory(content)
+            return
+        else:
+            # contar quantos diretorios tem antes e ir salvando a posicao do cursor pra retomar
+            if Application.mainapp.main_frame.textbox.open_file(content):
+                Application.mainapp.main_frame.textbox.focus_set()
 
 
 class LineCounterFrame(Frame):

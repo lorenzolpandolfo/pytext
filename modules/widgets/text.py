@@ -5,7 +5,7 @@ from modules.FileManager     import FileManager
 from modules.tklinenums      import TkLineNumbers
 from modules.SyntaxColors    import SyntaxColors
 from modules.Application     import Application
-from modules.CommandManager  import CommandManager
+from modules.TextUtils       import TextUtils
 from modules.LanguageManager import LanguageManager
 
 import pygments
@@ -157,40 +157,14 @@ class Maintext(Generaltext):
         self.configure(bg=self.bg_color, foreground=self.font_color, state="disabled")
 
     def _enable_binds_(self):
-        self.bind("<Key>", lambda e: self.after_idle(lambda: self.__bind_dealing__(e)))
-        self.bind("<Tab>", self.__add_tab__)
-        self.bind("<Shift-Tab>", self.__untab__)
-        self.bind("<Control-d>", lambda _: self.__comment_lines__())
+        self.bind("<Key>",          lambda e: self.after_idle(self.__bind_dealing__))
+        self.bind("<Tab>",          lambda e: TextUtils.__add_tab__(self))
+        self.bind("<ISO_Left_Tab>", lambda e: TextUtils.__untab__(self))
+        self.bind("<Control-d>",    lambda e: TextUtils.__comment_lines__(self))
 
-    def __comment_lines__(self):
-        CommandManager.comment_lines(self)
-        return "break"
-
-    def __bind_dealing__(self, event):
+    def __bind_dealing__(self):
         self.highlight_selected_line()
         self.update_line_counter()
-        SHIFT_PRESSED = "ISO_Left_Tab"
-
-        if event.keysym == SHIFT_PRESSED:
-            self.__untab__()
-
-    def __add_tab__(self, e):
-        index = self.index("insert")
-        self.insert(index, " "*self.tab_width)
-        self.highlight_selected_line()
-        return "break"
-
-    def __untab__(self):
-        index = self.index("insert linestart")
-        line_start = self.get(index, f"{index} + {self.tab_width}c")
-
-        if line_start.startswith(" " * self.tab_width):
-            self.delete(index, f"{index} + {self.tab_width}c")
-        elif line_start.startswith("\t"):
-            self.delete(index)
-
-        self.highlight_selected_line()
-        return "break"
 
     def create_line_counter(self, master):
         def load_line_counter_theme() -> tuple:
