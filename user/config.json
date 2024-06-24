@@ -1,8 +1,8 @@
 {
         "auto_insert_delimiters"  : true,
         "nonexistent_char"        : "",
-        "forced_theme"            : "light",
-        "tab_width"               : 8,
+        "forced_theme"            : "dark",
+        "tab_width"               : 4,
         "window_size"             : "1000x649",
         
         "font" :

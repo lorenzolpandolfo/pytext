@@ -134,6 +134,7 @@ class Maintext(Generaltext):
         self.sys_theme = master.sys_theme
         self.theme = master.theme
         self.__load_theme__()
+        super().enable_auto_highlight_line()
         self._enable_binds_()
 
     def __load_theme__(self):
@@ -141,10 +142,11 @@ class Maintext(Generaltext):
         self.configure(bg=self.bg_color, foreground=self.font_color, state="disabled")
 
     def _enable_binds_(self):
-        self.bind("<Key>",          lambda e: self.after_idle(self.__key_dealing__))
-        self.bind("<Tab>",          lambda e: TextUtils.__add_tab__(self))
-        self.bind("<ISO_Left_Tab>", lambda e: TextUtils.__untab__(self))
-        self.bind("<Control-d>",    lambda e: TextUtils.__comment_lines__(self))
+        self.bind("<Key>", lambda e: self.after_idle(self.__key_dealing__))
+        self.bind("<Tab>", lambda e: TextUtils.add_tab(self))
+        self.bind("<ISO_Left_Tab>", lambda e: TextUtils.untab(self))
+        self.bind("<Control-d>", lambda e: TextUtils.comment_lines(self))
+        self.bind("<Control-Return>", lambda e: TextUtils.add_newline_below(self))
 
     def __key_dealing__(self):
         self.highlight_selected_line()
