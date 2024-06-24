@@ -8,24 +8,46 @@ from modules.Application import Application
 DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
 
 
-class LeftFrame(Frame):
-    """ Contains the file explorer. """
-    def __init__(self, master, font:font):
-        super().__init__(master)
+class PytextFrame(Frame):
+    def __init__(self, master, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
+        self.bg_color      = ''
+        self.fg_color      = ''
+        self.mode_color    = ''
+        self.command_color = ''
+        self.output_color  = ''
+        self.branch_color  = ''
+        self.sys_theme      = master.sys_theme
+        self.theme          = master.theme
+        self.dark = "_dark" if self.sys_theme == "dark" else ""
 
+    def load_frame_theme(self, frame):
+        self.bg_color       = self.theme["frames"][frame][f"bg{self.dark}"]
+        self.fg_color       = self.theme["frames"][frame][f"fg{self.dark}"]
+
+    def load_bottom_widget_theme(self):
+        self.mode_color     = self.theme["widgets"]["bottom"][f"mode{self.dark}"]
+        self.command_color  = self.theme["widgets"]["bottom"][f"command{self.dark}"]
+        self.output_color   = self.theme["widgets"]["bottom"][f"output{self.dark}"]
+        self.branch_color   = self.theme["widgets"]["bottom"][f"branch{self.dark}"]
+
+
+class LeftFrame(PytextFrame):
+    """ Contains the file explorer. """
+    def __init__(self, master, obj_font: font):
+        super().__init__(master)
         self.textbox = None
-        self.__grid_setup__()
-        self.font = font
+        self.font = obj_font
         self.sys_theme = master.sys_theme
         self.theme = master.theme
-
         self.terminal_dir = master.terminal_dir
         self.file_name = master.file_name
         self.sys_theme = master.sys_theme
         self.theme = master.theme
         self.mode = master.mode
 
-        self.__load_theme__()
+        self.__grid_setup__()
+        super().load_frame_theme("left")
         self.__scrollbar_setup__()
 
     def __scrollbar_setup__(self):
@@ -38,12 +60,6 @@ class LeftFrame(Frame):
     def __grid_setup__(self):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-
-    def __load_theme__(self):
-        dark = "_dark" if self.sys_theme == "dark" else ""
-        self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
-        self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
-        self.configure(bg=self.bg_color)
 
     def create_textbox(self, row: int = 0, column: int = 0):
         self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none')
@@ -92,7 +108,7 @@ class LeftFrame(Frame):
                 Application.mainapp.main_frame.textbox.focus_set()
 
 
-class LineCounterFrame(Frame):
+class LineCounterFrame(PytextFrame):
     def __init__(self, master):
         super().__init__(master)
 
@@ -101,22 +117,15 @@ class LineCounterFrame(Frame):
 
         self.sys_theme = master.sys_theme
         self.theme = master.theme
-        self.__load_theme__()
-
-    def __load_theme__(self):
-        dark = "_dark" if self.sys_theme == "dark" else ""
-        self.bg_color = self.theme["frames"]["line_counter"][f"bg{dark}"]
-        self.fg_color = self.theme["frames"]["line_counter"][f"fg{dark}"]
-        self.configure(bg=self.bg_color)
+        super().load_frame_theme("line_counter")
 
 
-class BottomFrame(Frame):
+class BottomFrame(PytextFrame):
     """Contains the outputs labels."""
     def __init__(self, master):
         super().__init__(master)
         self.output       = None
         self.command      = None
-        self.branch_image = None
         self.branch       = None
 
         self.sys_theme = master.sys_theme
@@ -124,62 +133,44 @@ class BottomFrame(Frame):
         self.mode      = master.mode
         self.gui_font  = master.gui_font
 
-        self.__load_theme__()
+        super().load_frame_theme("bottom")
+        super().load_bottom_widget_theme()
         self.configure(bg=self.bg_color)
 
-    def __load_theme__(self):
-        dark = "_dark" if self.sys_theme == "dark" else ""
-        self.bg_color       = self.theme["frames"]["bottom"][f"bg{dark}"]
-        self.fg_color       = self.theme["frames"]["bottom"][f"fg{dark}"]
-
-        self.mode_color     = self.theme["widgets"]["bottom"][f"mode{dark}"]
-        self.command_color  = self.theme["widgets"]["bottom"][f"command{dark}"]
-        self.output_color   = self.theme["widgets"]["bottom"][f"output{dark}"]
-        self.branch_color   = self.theme["widgets"]["bottom"][f"branch{dark}"]
-
     def create_widgets(self, output: str):
-        self.mode = Label(self, text=self.mode, justify="center", bg=self.bg_color, foreground=self.mode_color, font=self.master.gui_font)
+        self.mode = Label(
+            self, text=self.mode, justify="center",
+            bg=self.bg_color, foreground=self.mode_color,
+            font=self.master.gui_font
+        )
         self.mode.grid(row=1, column=0, columnspan=2)
 
-        self.command = Label(self, text="", justify="left", bg=self.bg_color, foreground=self.command_color, font=self.master.gui_font)
+        self.command = Label(
+            self, text="", justify="left",
+            bg=self.bg_color, foreground=self.command_color,
+            font=self.master.gui_font
+        )
         self.command.grid(row=2, column=1, sticky="e")
 
-        self.output = Label(self, text=output.replace("\\", "/"), bg=self.bg_color, foreground=self.output_color, padx=10, justify="left", font=self.master.gui_font)
+        self.output = Label(
+            self, text=output.replace("\\", "/"), justify="left",
+            bg=self.bg_color, foreground=self.output_color,
+            padx=10,
+            font=self.master.gui_font
+        )
         self.output.grid(row=2, column=0)
-
         self.grid_columnconfigure(1, weight=1)
-
-    def load_icons(self):
-        # self.branch_image = ImageManager.get_image("branch", (20, 22))
-        self.branch_image = None # ImageManager.get_image("branch", (20, 22))
-
-    def create_branch_icon(self, branch: str):
-        if "\n" in branch:
-            branch = branch.replace("\n", "")
-            branch = f"*{branch}"
-
-        self.branch = Label(
-            self, image=self.branch_image, text=branch, bg=self.bg_color, foreground=self.branch_color,
-            justify="left", compound="left", font=self.gui_font, padx=10)
-        self.branch.grid(row=2, column=2, sticky="e")
-
-    def destroy_branch_icon(self):
-        print("Destruindo")
-        try:
-            self.branch.destroy()
-        except AttributeError:
-            pass
 
     def clear_command_output(self):
         self.command.configure(text='')
 
 
-class MainFrame(Frame):
+class MainFrame(PytextFrame):
     """It is the main frame that contains the Maintext instance."""
-    def __init__(self, master, font:font):
+    def __init__(self, master, obj_font: font):
         super().__init__(master)
         self.textbox = None
-        self.font = font
+        self.font = obj_font
 
         self.sys_theme = master.sys_theme
         self.theme = master.theme
@@ -188,16 +179,16 @@ class MainFrame(Frame):
         self.__grid_setup__()
         self.__load_theme__()
 
-    def __load_theme__(self):
-        dark = "_dark" if self.sys_theme == "dark" else ""
-        self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
-        self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
-        
     def create_textbox(self, row: int = 0, column: int = 0):
         self.textbox = Maintext(self, font=self.font)
         self.textbox.grid(row=row, column=column, sticky="nsew")
         self.master.update()
         self.textbox.focus_set()
+
+    def __load_theme__(self):
+        dark = "_dark" if self.sys_theme == "dark" else ""
+        self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
+        self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
 
     def __grid_setup__(self):
         self.grid_rowconfigure(0, weight=1)

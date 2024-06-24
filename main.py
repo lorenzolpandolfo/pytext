@@ -8,7 +8,7 @@ from modules.UserConfig     import UserConfig
 from modules.FontManager    import FontManager
 from modules.FileManager    import FileManager
 from modules.ThemeManager   import ThemeManager
-
+from modules.TextUtils      import TextUtils
 from modules.Application    import Application
 from modules.CommandManager import CommandManager
 from modules.ScriptRunner   import ScriptRunner
@@ -98,22 +98,21 @@ class MainApp(tk.Tk):
         self.left_frame.create_textbox()
 
         self.bottom_frame.create_widgets(output=(self.file_name if self.file_name else "Welcome to Pytext refactored"))
-        self.bottom_frame.load_icons()
 
     def __load_argv_file__(self):
         full_path = os.path.join(self.terminal_dir, self.file_name)
         self.main_frame.textbox.open_file(full_path)
-        if FileManager.check_if_repository(full_path):
-            self.bottom_frame.create_branch_icon(FileManager.get_git_branch(full_path))
+        # if FileManager.check_if_repository(full_path):
+        #     self.bottom_frame.create_branch_icon(FileManager.get_git_branch(full_path))
 
     def __enable_binds__(self):
-        self.bind("<Key>", lambda e: self.bind_dealing(e))
-        self.bind("<Control-e>", lambda _: self.left_frame.switch_view())
-        self.bind("<Return>", lambda _: self.left_frame.open_file_or_directory())
-        self.bind("<Escape>", lambda _: Application.switch_mode('view'))
+        self.bind("<Escape>",     lambda _: Application.switch_mode('view'))
+        self.bind("<Control-e>",  self.left_frame.switch_view)
+        self.bind("<Key>",        self.key_manager)
+        self.bind("<Return>",     TextUtils.return_manager)
         self.bind("<Control-F5>", ScriptRunner.run_script)
 
-    def bind_dealing(self, event=None):
+    def key_manager(self, event=None):
         if CommandManager.command_dealing(event):
             self.bottom_frame.clear_command_output()
 
