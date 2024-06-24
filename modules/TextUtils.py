@@ -1,6 +1,8 @@
 from modules.Application import Application
 from modules.CommandManager import CommandManager
 
+DELIMITERS = ['{', ':']
+
 
 class TextUtils:
     @staticmethod
@@ -9,11 +11,24 @@ class TextUtils:
             return
 
     @staticmethod
-    def check_if_delimiter(t):
+    def _check_if_delimiter(t):
+        line = t.index("insert").split('.')[0]
+        content = (t.get("insert linestart", f"{line}.end"))
+        if not content:
+            return False
+        last_char = content[-1]
+        return last_char in DELIMITERS
+
+    @staticmethod
+    def add_newline(t):
+        if TextUtils._check_if_delimiter(t):
+            return TextUtils.add_newline_with_tab(t, 1)
+        t.update_line_counter()
+        t.after_idle(t.highlight_selected_line)
         return
 
     @staticmethod
-    def add_newline_below(t):
+    def add_newline_with_tab(t, manual_tabs: int = 0):
         i = t.index("insert")
         i_x = i.split('.')[0]
         i_below = f"{int(i_x) + 1}.0"
@@ -23,13 +38,16 @@ class TextUtils:
         t.insert(i_below, "\n")
         t.mark_set('insert', i_below)
 
-        TextUtils.add_context_tab(t, tab_count)
+        TextUtils.__add_context_tab__(t, tab_count, manual_tabs)
         t.highlight_selected_line()
         t.update_line_counter()
         return "break"
 
     @staticmethod
-    def add_context_tab(t, tab_count):
+    def __add_context_tab__(t, tab_count, manual_tabs: int = 0):
+        for i in range(0, manual_tabs):
+            TextUtils.add_tab(t)
+
         for i, tab in enumerate(tab_count):
             if tab != '':
                 return "break"
