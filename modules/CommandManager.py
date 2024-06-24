@@ -7,11 +7,7 @@ from modules.LanguageManager import LanguageManager
 import re
 
 
-@dataclass
 class CommandManager:
-    mainapp: str
-    Application: Application
-
     @classmethod
     def command_dealing(cls, event):
         focus = str(Application.mainapp.focus_get())
@@ -47,17 +43,17 @@ class CommandManager:
                 Application.switch_mode()
 
             case "W":
-                return cls.move_cursor("up", cls.mainapp.main_frame.textbox, numeric)
+                return cls.move_cursor("up", Application.mainapp.main_frame.textbox, numeric)
             case "S":
-                return cls.move_cursor("down", cls.mainapp.main_frame.textbox, numeric)
+                return cls.move_cursor("down", Application.mainapp.main_frame.textbox, numeric)
             case "D":
-                return cls.move_cursor("right", cls.mainapp.main_frame.textbox, numeric)
+                return cls.move_cursor("right", Application.mainapp.main_frame.textbox, numeric)
             case "A":
-                return cls.move_cursor("left", cls.mainapp.main_frame.textbox, numeric)
+                return cls.move_cursor("left", Application.mainapp.main_frame.textbox, numeric)
             case "F":
-                return cls.move_cursor("up", cls.mainapp.main_frame.textbox, "0")
+                return cls.move_cursor("up", Application.mainapp.main_frame.textbox, "0")
             case "V":
-                return cls.move_cursor("down", cls.mainapp.main_frame.textbox, "end")
+                return cls.move_cursor("down", Application.mainapp.main_frame.textbox, "end")
             case "dd":
                 return cls.delete_line_content(del_range=numeric)
             case "sq" | "wq":
@@ -74,7 +70,7 @@ class CommandManager:
 
     @classmethod
     def delete_line_content(cls, del_range: int):
-        textbox = cls.mainapp.main_frame.textbox 
+        textbox = Application.mainapp.main_frame.textbox 
         current_line = textbox.index("insert").split('.')[0]
 
         textbox.configure(state="normal")
