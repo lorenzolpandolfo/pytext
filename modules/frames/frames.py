@@ -86,7 +86,7 @@ class LeftFrame(PytextFrame):
             self.show_textbox()
 
     def open_file_or_directory(self):
-        if not self.winfo_ismapped() and "leftframe" not in str(self.focus_get()):
+        if "leftframe" not in str(self.focus_get()):
             return False
 
         side_bar_selected_file_name = self.textbox.get_current_line_content().strip()
