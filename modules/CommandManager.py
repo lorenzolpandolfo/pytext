@@ -114,39 +114,3 @@ class CommandManager:
         with open(cur_file_path, "w", encoding="utf8") as f:
             f.write(content)
         return True
-
-    @classmethod
-    def comment_lines(cls, textbox):
-        if Application.mode != "insert":
-            return False
-
-        fm.move_to_directory("languages")
-        comment_symbol = LanguageManager.get_info("comment")
-        if not comment_symbol:
-            return "break"
-
-        selected_lines = CommandManager.get_selected_lines(textbox)
-        if not selected_lines:
-            selected_lines = [textbox.index("insert").split('.')[0]]
-
-        for line in selected_lines:
-            start_index = f"{line}.0"
-            current_line_text = textbox.get(start_index, f"{line}.end")
-
-            if current_line_text.startswith(comment_symbol):
-                textbox.delete(start_index, f"{line}.{len(comment_symbol) + 1}")
-            else:
-                textbox.insert(start_index, f"{comment_symbol} ")
-        return True
-
-    @classmethod
-    def get_selected_lines(cls, textbox):
-        try:
-            start = textbox.index("sel.first")
-            end = textbox.index("sel.last")
-            start_line = int(start.split('.')[0])
-            end_line = int(end.split('.')[0])
-            selected_lines = list(range(start_line, end_line + 1))
-            return selected_lines
-        except tkinter.TclError:
-            return []

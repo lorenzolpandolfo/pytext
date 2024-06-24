@@ -1,5 +1,9 @@
+import tkinter
+
 from modules.Application import Application
 from modules.CommandManager import CommandManager
+from modules.LanguageManager import LanguageManager
+from modules.FileManager import FileManager as fm
 
 DELIMITERS = ['{', ':']
 
@@ -14,7 +18,7 @@ class TextUtils:
             return
 
     @staticmethod
-    def _check_if_delimiter(t):
+    def _has_delimiter(t):
         """Checks if the last char in current line is a delimiter"""
         line = t.index("insert").split('.')[0]
         content = (t.get("insert linestart", f"{line}.end"))
@@ -26,14 +30,17 @@ class TextUtils:
     @staticmethod
     def add_newline(t):
         """Runs every Return in maintext widget. Adds a newline checking delimiters, tab count, etc"""
-        if TextUtils._check_if_delimiter(t):
+        if TextUtils._has_delimiter(t):
             return TextUtils.add_newline_with_tab(t, 1)
 
         return TextUtils._add_newline(t)
 
     @staticmethod
     def _add_newline(t):
-        """Add a newline with tabs"""
+        """
+        Add a newline with tabs. Can break line in half
+        event: Return
+        """
         i = t.index("insert")
         i_x = i.split('.')[0]
         i_y = i.split('.')[1]
@@ -50,7 +57,10 @@ class TextUtils:
 
     @staticmethod
     def add_newline_with_tab(t, manual_tabs: int = 0):
-        """Add a new line with above tab identation. Does not break the current line in half"""
+        """
+        Add a new line with above tab identation. Does not break the current line in half
+        event: Control-Return
+        """
         i = t.index("insert")
         i_x = i.split('.')[0]
         i_below = f"{int(i_x) + 1}.0"
@@ -86,28 +96,80 @@ class TextUtils:
     @staticmethod
     def add_tab(t):
         """Simple tab addition. Runs every Tab event"""
-        i = t.index("insert")
-        t.insert(i, " " * t.tab_width)
+        selected_lines = TextUtils.get_selected_lines(t)
+        if not selected_lines:
+            selected_lines = [t.index("insert")]
+
+        for i in selected_lines:
+            i = f"{i}.0" if len(selected_lines) > 1 else i
+            t.insert(i, " " * t.tab_width)
+
         t.highlight_selected_line()
         return "break"
 
     @staticmethod
     def untab(t):
         """Untab the current line. Runs every Shift-Tab event"""
-        i = t.index("insert linestart")
-        line_start = t.get(i, f"{i} + {t.tab_width}c")
+        selected_lines = TextUtils.get_selected_lines(t)
+        if not selected_lines:
+            print(t.index('insert linestart'))
+            selected_lines = [t.index('insert linestart')]
 
-        if line_start.startswith(" " * t.tab_width):
-            t.delete(i, f"{i} + {t.tab_width}c")
-        elif line_start.startswith("\t"):
-            t.delete(i)
+        for line in selected_lines:
+            if len(selected_lines) > 1:
+                line = f"{line}.0"
+            line_start = t.get(line, f"{line} + {t.tab_width}c")
+
+            if line_start.startswith(" " * t.tab_width):
+                t.delete(line, f"{line} + {t.tab_width}c")
+            elif line_start.startswith("\t"):
+                t.delete(line)
 
         t.highlight_selected_line()
         return "break"
 
     @staticmethod
     def comment_lines(t):
-        """Add a comment symbol in line start. Runs every Control-D event"""
-        CommandManager.comment_lines(t)
+        TextUtils._comment_lines_(t)
         t.highlight_selected_line()
         return "break"
+
+    @staticmethod
+    def _comment_lines_(t):
+        """
+        Add a comment symbol in line start
+        event: Control-d
+        """
+        if Application.mode != "insert":
+            return False
+
+        fm.move_to_directory("languages")
+        comment_symbol = LanguageManager.get_info("comment")
+        if not comment_symbol:
+            return "break"
+
+        selected_lines = TextUtils.get_selected_lines(t)
+        if not selected_lines:
+            selected_lines = [t.index("insert").split('.')[0]]
+
+        for line in selected_lines:
+            i = f"{line}.0"
+            current_line_text = t.get(i, f"{line}.end")
+
+            if current_line_text.startswith(comment_symbol):
+                t.delete(i, f"{line}.{len(comment_symbol) + 1}")
+            else:
+                t.insert(i, f"{comment_symbol} ")
+        return True
+
+    @staticmethod
+    def get_selected_lines(t):
+        try:
+            start = t.index("sel.first")
+            end   = t.index("sel.last")
+            start_line = int(start.split('.')[0])
+            end_line = int(end.split('.')[0])
+            selected_lines = list(range(start_line, end_line + 1))
+            return selected_lines
+        except tkinter.TclError:
+            return []
