@@ -3,6 +3,8 @@ from modules.CommandManager import CommandManager
 
 DELIMITERS = ['{', ':']
 
+# adicionar a possiblidade de selecionar uma área e remover/adicionar tabs
+
 
 class TextUtils:
     @staticmethod
@@ -26,9 +28,25 @@ class TextUtils:
         """Runs every Return in maintext widget. Adds a newline checking delimiters, tab count, etc"""
         if TextUtils._check_if_delimiter(t):
             return TextUtils.add_newline_with_tab(t, 1)
+
+        return TextUtils._add_newline(t)
+
+    @staticmethod
+    def _add_newline(t):
+        """Add a newline with tabs"""
+        i = t.index("insert")
+        i_x = i.split('.')[0]
+        i_y = i.split('.')[1]
+        i_below = f"{int(i_x) + 1}.{i_y}"
+
+        tab_count = TextUtils.get_tab_count(t)
+        t.insert(i_below, "\n")
+        t.mark_set('insert', i_below)
+
+        TextUtils.__add_context_tab__(t, tab_count)
+        t.highlight_selected_line()
         t.update_line_counter()
-        t.after_idle(t.highlight_selected_line)
-        return
+        return "break"
 
     @staticmethod
     def add_newline_with_tab(t, manual_tabs: int = 0):
@@ -37,8 +55,7 @@ class TextUtils:
         i_x = i.split('.')[0]
         i_below = f"{int(i_x) + 1}.0"
 
-        content = t.get("insert linestart", "insert lineend")
-        tab_count = content.split(" "*t.tab_width)
+        tab_count = TextUtils.get_tab_count(t)
         t.insert(i_below, "\n")
         t.mark_set('insert', i_below)
 
@@ -46,6 +63,12 @@ class TextUtils:
         t.highlight_selected_line()
         t.update_line_counter()
         return "break"
+
+    @staticmethod
+    def get_tab_count(t):
+        content = t.get("insert linestart", "insert lineend")
+        tab_count = content.split(" "*t.tab_width)
+        return tab_count
 
     @staticmethod
     def __add_context_tab__(t, tab_count, manual_tabs: int = 0):
