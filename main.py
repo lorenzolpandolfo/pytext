@@ -7,6 +7,7 @@ import darkdetect
 from modules.UserConfig     import UserConfig
 from modules.FontManager    import FontManager
 from modules.FileManager    import FileManager
+from modules.ImageManager   import ImageManager
 from modules.ThemeManager   import ThemeManager
 from modules.TextUtils      import TextUtils
 from modules.Application    import Application
@@ -70,6 +71,8 @@ class MainApp(tk.Tk):
         self.title("The Pytext Editor Refactored")
         self.geometry(self.user_config["window_size"])
         self.resizable(True, True)
+        icon = ImageManager.get_icon()
+        self.iconphoto(False, icon)
 
     def __configure_grids__(self):
         self.grid_rowconfigure(0, weight=1)

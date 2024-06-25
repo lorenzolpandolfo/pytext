@@ -1,4 +1,5 @@
 import os
+import tkinter as tk
 from tkinter import PhotoImage
 from modules.FileManager import FileManager as fm
 from PIL import Image, ImageTk
@@ -36,3 +37,9 @@ class ImageManager:
         title = f"{title}.png"
         all_images = os.listdir(os.getcwd())
         return title in all_images if title.endswith(".png") else False
+
+    @staticmethod
+    def get_icon(title: str = "icon.png") -> tk.PhotoImage:
+        fm.move_to_directory("images")
+        path = os.path.join(os.getcwd(), title)
+        return tk.PhotoImage(file=path)
