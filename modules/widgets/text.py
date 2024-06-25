@@ -1,3 +1,4 @@
+import tkinter
 from tkinter import Text
 import os
 
@@ -116,6 +117,7 @@ class Generaltext(Text):
         _, file_ext = os.path.splitext(full_path)
         LanguageManager.load_language(file_ext)
         Application.set_current_file(full_path)
+        self.edit_reset()
         return content
 
     def open_directory(self, dir_path: str, auto_write: bool = True):
@@ -167,9 +169,23 @@ class Maintext(Generaltext):
         self.bind("<Control-v>", self.paste)
         self.bind("<Alt-Shift-Up>", lambda e: self.move_line(e, "up"))
         self.bind("<Alt-Shift-Down>", lambda e: self.move_line(e, "down"))
-        self.bind("<Control-z>", lambda e: self.edit_undo)
-        self.bind("<Control-y>", lambda e: self.edit_redo)
-    
+        self.bind("<Control-z>", lambda e: self.undo())
+        self.bind("<Control-y>", lambda e: self.redo())
+
+    def undo(self):
+        try:
+            self.edit_undo()
+        except tkinter.TclError:
+            pass
+        return 'break'
+
+    def redo(self):
+        try:
+            self.edit_redo()
+        except tkinter.TclError:
+            pass
+        return 'break'
+
     def move_line(self, e, direction: str):
         i = self.index("insert")
         line = i.split('.')[0]
@@ -183,6 +199,7 @@ class Maintext(Generaltext):
         return 'break'
 
     def copy(self, e=None):
+        self.edit_separator()
         self.clipboard_clear()
         selected_area = len(TextUtils.get_selected_lines(self)) > 0
         if selected_area:
@@ -199,6 +216,7 @@ class Maintext(Generaltext):
         self.delete("insert linestart", "insert lineend+1c")
 
     def paste(self, e=None):
+        self.edit_separator()
         content = f"{self.clipboard_get()}\n"
         self.insert('insert', content)
         return 'break'
