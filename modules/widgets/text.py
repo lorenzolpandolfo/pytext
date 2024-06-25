@@ -162,6 +162,39 @@ class Maintext(Generaltext):
         self.bind("<Control-d>", lambda e: TextUtils.comment_lines(self))
         self.bind("<Control-Return>", lambda e: TextUtils.add_newline_with_tab(self))
         self.bind("<Return>", lambda e: TextUtils.add_newline(self))
+        self.bind("<Control-c>", self.copy)
+        self.bind("<Control-v>", self.paste)
+        self.bind("<Alt-Shift-Up>", lambda e: self.move_line(e, "up"))
+        self.bind("<Alt-Shift-Down>", lambda e: self.move_line(e, "down"))
+
+    def move_line(self, e, direction: str):
+        i = self.index("insert")
+        line = i.split('.')[0]
+        content = self.get("insert linestart", "insert lineend")
+        if direction == "up":
+            if line == '1':
+                return 'break'
+            self.insert(f"{line}.0", f"{content}\n")
+        elif direction == "down":
+            self.insert(f"{int(line) + 1}.0", f"{content}\n")
+        return 'break'
+
+    def copy(self, e=None):
+        self.clipboard_clear()
+        selected_area = len(TextUtils.get_selected_lines(self)) > 0
+        if selected_area:
+            content = self.get('sel.first', 'sel.last')
+            self.clipboard_append(content)
+            return 'break'
+
+        content = self.get('insert linestart', 'insert lineend')
+        self.clipboard_append(content)
+        return 'break'
+
+    def paste(self, e=None):
+        content = f"{self.clipboard_get()}\n"
+        self.insert('insert', content)
+        return 'break'
 
     def __key_dealing__(self):
         self.highlight_selected_line()
