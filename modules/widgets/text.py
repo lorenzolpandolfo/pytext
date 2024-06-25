@@ -33,8 +33,8 @@ class Generaltext(Text):
             bd=0, highlightthickness=0, blockcursor=True,
             insertbackground=cursor_color, insertunfocussed="hollow")
 
-    def enable_auto_highlight_line(self):
-        self.bind("<Key>",      lambda _: self.after_idle(self.highlight_selected_line))
+    def enable_binds(self):
+        self.bind("<Key>", lambda _: self.after_idle(self.highlight_selected_line))
         self.bind("<Button-1>", self.click_deal)
         self.bind("<Double-Button-1>", self.double_click_deal)
 
@@ -148,7 +148,7 @@ class Maintext(Generaltext):
         self.sys_theme = master.sys_theme
         self.theme = master.theme
         self.__load_theme__()
-        super().enable_auto_highlight_line()
+        super().enable_binds()
         self._enable_binds_()
 
     def __load_theme__(self):
@@ -193,7 +193,7 @@ class Maintext(Generaltext):
 class Lefttext(Generaltext):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-        super().enable_auto_highlight_line()
+        super().enable_binds()
         self.can_open_files = True
         super().load_theme("left_textbox")
         self.configure(bg=self.bg_color, state="disabled", border=False)
