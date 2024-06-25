@@ -142,7 +142,7 @@ class Generaltext(Text):
 class Maintext(Generaltext):
     """Represents the main textbox of Pytext."""
     def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+        super().__init__(master, undo=True, *args, **kwargs)
         self._line_counter = None
 
         self.sys_theme = master.sys_theme
@@ -163,10 +163,13 @@ class Maintext(Generaltext):
         self.bind("<Control-Return>", lambda e: TextUtils.add_newline_with_tab(self))
         self.bind("<Return>", lambda e: TextUtils.add_newline(self))
         self.bind("<Control-c>", self.copy)
+        self.bind("<Control-x>", self.cut)
         self.bind("<Control-v>", self.paste)
         self.bind("<Alt-Shift-Up>", lambda e: self.move_line(e, "up"))
         self.bind("<Alt-Shift-Down>", lambda e: self.move_line(e, "down"))
-
+        self.bind("<Control-z>", lambda e: self.edit_undo)
+        self.bind("<Control-y>", lambda e: self.edit_redo)
+    
     def move_line(self, e, direction: str):
         i = self.index("insert")
         line = i.split('.')[0]
@@ -190,6 +193,10 @@ class Maintext(Generaltext):
         content = self.get('insert linestart', 'insert lineend')
         self.clipboard_append(content)
         return 'break'
+
+    def cut(self, e=None):
+        self.copy()
+        self.delete("insert linestart", "insert lineend+1c")
 
     def paste(self, e=None):
         content = f"{self.clipboard_get()}\n"
