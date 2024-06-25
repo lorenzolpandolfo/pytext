@@ -12,13 +12,14 @@ class Generaltext(Text):
     """ Includes methods that Maintext and Lefttext use. """
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs, insertofftime=0)
-        self.font_color             : str = ''
-        self.bg_color               : str = ''
-        self.exp_curdir_color       : str = ''
-        self.exp_file_color         : str = ''
-        self.exp_dir_color          : str = ''
-        self.selected_line_color    : str = ''
-        self.path                   : str = ''
+        self.can_open_files         = False
+        self.font_color             = ''
+        self.bg_color               = ''
+        self.exp_curdir_color       = ''
+        self.exp_file_color         = ''
+        self.exp_dir_color          = ''
+        self.selected_line_color    = ''
+        self.path                   = ''
 
         self.sys_theme = master.sys_theme
         self.theme = master.theme
@@ -34,13 +35,25 @@ class Generaltext(Text):
 
     def enable_auto_highlight_line(self):
         self.bind("<Key>",      lambda _: self.after_idle(self.highlight_selected_line))
-        self.bind("<Button-1>", lambda _: self.after_idle(self.highlight_selected_line))
+        self.bind("<Button-1>", self.click_deal)
+        self.bind("<Double-Button-1>", self.double_click_deal)
 
     def highlight_selected_line(self):
         line_start = int(self.index("insert").split(".")[0])
         self.tag_remove("current_line_color", "1.0", "end")
         self.tag_add("current_line_color", f"{line_start}.0", f"{line_start + 1}.0")
         self.tag_config("current_line_color", background=self.selected_line_color)
+
+    def click_deal(self, e):
+        click_i = self.index(f"@{e.x},{e.y}")
+        self.after(1, lambda: self.mark_set('insert', click_i))
+        self.after(1, self.highlight_selected_line)
+        return True
+
+    def double_click_deal(self, e=None):
+        if self.can_open_files:
+            Application.mainapp.left_frame.open_file_or_directory()
+            return 'break'
 
     def load_theme(self, widget):
         dark = "_dark" if self.sys_theme == "dark" else ""
@@ -115,6 +128,7 @@ class Generaltext(Text):
                     content,
                     colors=(self.exp_dir_color, self.exp_file_color, self.exp_curdir_color)
                 )
+            self.after(1, lambda: self.tag_remove('sel', '1.0', 'end'))
 
     def focus_set(self):
         super().focus_set()
@@ -180,8 +194,11 @@ class Lefttext(Generaltext):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         super().enable_auto_highlight_line()
+        self.can_open_files = True
         super().load_theme("left_textbox")
         self.configure(bg=self.bg_color, state="disabled", border=False)
+
+        self.bind("<B1-Motion>", 'break')
 
     def updir(self):
         self.path = os.path.dirname(self.path)
