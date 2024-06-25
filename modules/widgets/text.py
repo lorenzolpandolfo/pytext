@@ -167,8 +167,10 @@ class Maintext(Generaltext):
         self.bind("<Control-c>", self.copy)
         self.bind("<Control-x>", self.cut)
         self.bind("<Control-v>", self.paste)
-        self.bind("<Alt-Shift-Up>", lambda e: self.move_line(e, "up"))
-        self.bind("<Alt-Shift-Down>", lambda e: self.move_line(e, "down"))
+        self.bind("<Alt-Shift-Up>", lambda e: self.clone_line(e, "up"))
+        self.bind("<Alt-Shift-Down>", lambda e: self.clone_line(e, "down"))
+        self.bind("<Alt-Up>", lambda e: self.move_line(e, "up"))
+        self.bind("<Alt-Down>", lambda e: self.move_line(e, "down"))
         self.bind("<Control-z>", lambda e: self.undo())
         self.bind("<Control-y>", lambda e: self.redo())
 
@@ -189,6 +191,25 @@ class Maintext(Generaltext):
     def move_line(self, e, direction: str):
         i = self.index("insert")
         line = i.split('.')[0]
+        content = ''
+
+        if direction == "up":
+            if line == '1':
+                return 'break'
+            TextUtils.swipe_lines(self, int(line) - 1, line)
+            self.mark_set("insert", f"{int(line) - 1}.0")
+
+        elif direction == "down":
+            TextUtils.swipe_lines(self, int(line) + 1, line)
+            self.mark_set("insert", f"{int(line) + 1}.0")
+
+        self.after_idle(self.update_line_counter)
+        self.after_idle(self.highlight_selected_line)
+        return 'break'
+
+    def clone_line(self, e, direction: str):
+        i = self.index("insert")
+        line = i.split('.')[0]
         content = self.get("insert linestart", "insert lineend")
         if direction == "up":
             if line == '1':
@@ -196,6 +217,7 @@ class Maintext(Generaltext):
             self.insert(f"{line}.0", f"{content}\n")
         elif direction == "down":
             self.insert(f"{int(line) + 1}.0", f"{content}\n")
+        self.after_idle(self.update_line_counter)
         return 'break'
 
     def copy(self, e=None):

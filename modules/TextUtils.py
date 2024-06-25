@@ -168,3 +168,30 @@ class TextUtils:
             return selected_lines
         except tkinter.TclError:
             return []
+
+    @staticmethod
+    def swipe_lines(t: tkinter.Text, l1: str | int, l2: str | int):
+        """Move content from line1 to line2. l is the line number, with no columns."""
+        c1 = t.get(f"{l1}.0", f"{l1}.end")
+        c2 = t.get(f"{l2}.0", f"{l2}.end")
+
+        t.delete(f"{l1}.0", f"{l1}.end")
+        t.insert(f"{l1}.0", c2)
+        t.delete(f"{l2}.0", f"{l2}.end")
+        t.insert(f"{l2}.0", c1)
+
+        # def move_line(self, e, direction: str):
+        #     i = self.index("insert")
+        #     line = i.split('.')[0]
+        #     content = ''
+        #
+        #     if direction == "up":
+        #         if line == '1':
+        #             return 'break'
+        #         content = self.get(f"{int(line) - 1}.0", f"{int(line) - 1}.end")
+        #         self.insert(f"{line}.0", content)
+        #
+        #     elif direction == "down":
+        #         self.insert(f"{int(line) + 1}.0", f"{content}\n")
+        #     self.after_idle(self.update_line_counter)
+        #     return 'break'
