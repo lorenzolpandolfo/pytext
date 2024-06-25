@@ -1,9 +1,6 @@
 import os
-import tkinter
-from dataclasses import dataclass
+import tkinter as tk
 from modules.Application import Application
-from modules.FileManager import FileManager as fm
-from modules.LanguageManager import LanguageManager
 import re
 
 
@@ -70,22 +67,22 @@ class CommandManager:
 
     @classmethod
     def delete_line_content(cls, del_range: int):
-        textbox = Application.mainapp.main_frame.textbox 
-        current_line = textbox.index("insert").split('.')[0]
+        t = Application.mainapp.main_frame.textbox
+        current_line = t.index("insert").split('.')[0]
 
-        textbox.configure(state="normal")
+        t.configure(state="normal")
         
         start = f"{current_line}.0"
         end = f"{int(current_line) + del_range}.0" if del_range != 0 else (float(start) + 1)
 
-        textbox.delete(start, end)
-        textbox.configure(state="disabled")
+        t.delete(start, end)
+        t.configure(state="disabled")
         return True
     
     @classmethod
-    def move_cursor(cls, to: str, textbox, mov_range: int | str):
-        cur_line   = int(textbox.index("insert").split('.')[0])
-        cur_column = int(textbox.index("insert").split('.')[1])
+    def move_cursor(cls, to: str, t: tk.Text, mov_range: int | str):
+        cur_line   = int(t.index("insert").split('.')[0])
+        cur_column = int(t.index("insert").split('.')[1])
         new_cursor_pos = f"{cur_line}.{cur_column}"
 
         match to:
@@ -100,8 +97,8 @@ class CommandManager:
             case "right":
                 new_cursor_pos = f"{cur_line}.{cur_column + mov_range}"
 
-        textbox.mark_set("insert", new_cursor_pos)
-        textbox.see(new_cursor_pos)
+        t.mark_set("insert", new_cursor_pos)
+        t.see(new_cursor_pos)
         return True
 
     @classmethod

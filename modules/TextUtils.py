@@ -1,7 +1,6 @@
 import tkinter
 
 from modules.Application import Application
-from modules.CommandManager import CommandManager
 from modules.LanguageManager import LanguageManager
 from modules.FileManager import FileManager as fm
 
