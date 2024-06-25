@@ -42,12 +42,12 @@ class TextUtils:
         event: Return
         """
         i = t.index("insert")
-        i_x = i.split('.')[0]
-        i_y = i.split('.')[1]
-        i_below = f"{int(i_x) + 1}.{i_y}"
+        i_line   = i.split('.')[0]
+        i_below = f"{int(i_line) + 1}.0"
 
         tab_count = TextUtils.get_tab_count(t)
-        t.insert(i_below, "\n")
+        t.insert(i_below, f"{t.get('insert', 'insert lineend')}\n")
+        t.delete('insert', "insert lineend")
         t.mark_set('insert', i_below)
 
         TextUtils.__add_context_tab__(t, tab_count)
@@ -112,7 +112,6 @@ class TextUtils:
         """Untab the current line. Runs every Shift-Tab event"""
         selected_lines = TextUtils.get_selected_lines(t)
         if not selected_lines:
-            print(t.index('insert linestart'))
             selected_lines = [t.index('insert linestart')]
 
         for line in selected_lines:
