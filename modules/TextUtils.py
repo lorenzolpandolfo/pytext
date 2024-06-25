@@ -29,14 +29,6 @@ class TextUtils:
 
     @staticmethod
     def add_newline(t):
-        """Runs every Return in maintext widget. Adds a newline checking delimiters, tab count, etc"""
-        if TextUtils._has_delimiter(t):
-            return TextUtils.add_newline_with_tab(t, 1)
-
-        return TextUtils._add_newline(t)
-
-    @staticmethod
-    def _add_newline(t):
         """
         Add a newline with tabs. Can break line in half
         event: Return
@@ -56,11 +48,16 @@ class TextUtils:
         return "break"
 
     @staticmethod
-    def add_newline_with_tab(t, manual_tabs: int = 0):
+    def add_newline_with_tab(t):
         """
         Add a new line with above tab identation. Does not break the current line in half
         event: Control-Return
         """
+        manual_tabs = 0
+
+        if TextUtils._has_delimiter(t):
+            manual_tabs = 1
+
         i = t.index("insert")
         i_x = i.split('.')[0]
         i_below = f"{int(i_x) + 1}.0"
