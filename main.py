@@ -2,34 +2,35 @@ import os
 
 import tkinter as tk
 from tkinter import font as tkfont
-from tkinter import ttk
+from ttkbootstrap import Style
 import darkdetect
 
-from modules.UserConfig     import UserConfig
-from modules.FontManager    import FontManager
-from modules.ImageManager   import ImageManager
-from modules.ThemeManager   import ThemeManager
-from modules.TextUtils      import TextUtils
-from modules.Application    import Application
+from modules.UserConfig import UserConfig
+from modules.FontManager import FontManager
+from modules.ImageManager import ImageManager
+from modules.ThemeManager import ThemeManager
+from modules.TextUtils import TextUtils
+from modules.Application import Application
 from modules.CommandManager import CommandManager
-from modules.ScriptRunner   import ScriptRunner
+from modules.ScriptRunner import ScriptRunner
 
 from modules.frames.frames import MainFrame, LeftFrame, BottomFrame
-
 
 
 class MainApp(tk.Tk):
     def __init__(self, terminal_dir: str, loaded_file_name: str):
         super().__init__()
 
-        self.terminal_dir   = terminal_dir
-        self.file_name      = loaded_file_name
-        self.mode           = "view"
+        self.terminal_dir = terminal_dir
+        self.file_name = loaded_file_name
+        self.mode = "view"
+        self.style = Style(theme='cyborg')
 
-        Application.mainapp     = self
-        CommandManager.mainapp  = self
+        Application.mainapp = self
+        CommandManager.mainapp = self
         Application.set_mode("view")
 
+        self.__load_ttk_colors__()
         self.__load_user_config__()
         self.__load_system_theme__()
         self.__load_user_font__()
@@ -40,6 +41,17 @@ class MainApp(tk.Tk):
             self.__load_argv_file__()
         self.__enable_binds__()
 
+    def __load_ttk_colors__(self):
+        self.style.configure("TNotebook", background="#2b2d30", bordercolor=False)
+        self.style.configure("TNotebook.Tab", background="#2b2d30", foreground="white", bordercolor="#1e1f22")
+        self.style.map("TNotebook.Tab",
+                       bordercolor="#1e1f22",
+                       background=[("active", "#43454a"), ("disabled", "#2b2d30")],
+                       foreground=[("active", "white"), ("disabled", "white")])
+
+        self.style.configure("TFrame", background="#2b2d30")
+        self.style.configure("TLabel", background="#2b2d30", foreground="white")
+
     def __load_user_config__(self):
         self.user_config = UserConfig.get_user_config()
 
@@ -49,7 +61,7 @@ class MainApp(tk.Tk):
 
         if isinstance(loader, int):
             print(f"Error: could not load font '{user_font['title']}'. Loading default font instead.")
-            self.font     = tkfont.Font(font="Consolas", size=26)
+            self.font = tkfont.Font(font="Consolas", size=26)
             self.gui_font = tkfont.Font(font="Consolas", size=17)
         else:
             self.font, self.gui_font = loader
@@ -107,10 +119,10 @@ class MainApp(tk.Tk):
         #     self.bottom_frame.create_branch_icon(FileManager.get_git_branch(full_path))
 
     def __enable_binds__(self):
-        self.bind("<Escape>",     lambda _: Application.switch_mode('view'))
-        self.bind("<Control-e>",  self.left_frame.switch_view)
-        self.bind("<Key>",        self.key_manager)
-        self.bind("<Return>",     TextUtils.return_manager)
+        self.bind("<Escape>", lambda _: Application.switch_mode('view'))
+        self.bind("<Control-e>", self.left_frame.switch_view)
+        self.bind("<Key>", self.key_manager)
+        self.bind("<Return>", TextUtils.return_manager)
         self.bind("<Control-F5>", ScriptRunner.run_script)
 
     def key_manager(self, event=None):
@@ -120,6 +132,7 @@ class MainApp(tk.Tk):
 
 if __name__ == "__main__":
     import sys
+
     file_name = sys.argv[1] if len(sys.argv) > 1 else ""
     file_name = file_name[2:] if file_name[:2] == ".\\" else file_name
     is_argv_file = os.path.isfile(os.path.join(os.getcwd(), file_name))

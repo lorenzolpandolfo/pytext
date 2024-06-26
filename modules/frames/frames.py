@@ -1,4 +1,6 @@
-from tkinter import Frame, font, Label, Scrollbar, ttk
+import tkinter
+from tkinter import font, ttk
+from ttkbootstrap import Scrollbar, Label, Notebook
 import os
 from modules.widgets.text import Lefttext, Maintext
 from modules.Application import Application
@@ -9,35 +11,31 @@ DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
 class PytextFrame(ttk.Frame):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-        self.bg_color      = ''
-        self.fg_color      = ''
-        self.mode_color    = ''
+        self.bg_color = ''
+        self.fg_color = ''
+        self.mode_color = ''
         self.command_color = ''
-        self.output_color  = ''
-        self.branch_color  = ''
-        self.sys_theme      = master.sys_theme
-        self.theme          = master.theme
+        self.output_color = ''
+        self.branch_color = ''
+        self.sys_theme = master.sys_theme
+        self.theme = master.theme
         self.dark = "_dark" if self.sys_theme == "dark" else ""
 
-        style = ttk.Style(master)
-        style.configure("Custom.TFrame", background="red")
-        style.configure(style="Custom.TFrame")
-
-        self.configure(style="Custom.TFrame")
 
     def load_frame_theme(self, frame):
-        self.bg_color       = self.theme["frames"][frame][f"bg{self.dark}"]
-        self.fg_color       = self.theme["frames"][frame][f"fg{self.dark}"]
+        self.bg_color = self.theme["frames"][frame][f"bg{self.dark}"]
+        self.fg_color = self.theme["frames"][frame][f"fg{self.dark}"]
 
     def load_bottom_widget_theme(self):
-        self.mode_color     = self.theme["widgets"]["bottom"][f"mode{self.dark}"]
-        self.command_color  = self.theme["widgets"]["bottom"][f"command{self.dark}"]
-        self.output_color   = self.theme["widgets"]["bottom"][f"output{self.dark}"]
-        self.branch_color   = self.theme["widgets"]["bottom"][f"branch{self.dark}"]
+        self.mode_color = self.theme["widgets"]["bottom"][f"mode{self.dark}"]
+        self.command_color = self.theme["widgets"]["bottom"][f"command{self.dark}"]
+        self.output_color = self.theme["widgets"]["bottom"][f"output{self.dark}"]
+        self.branch_color = self.theme["widgets"]["bottom"][f"branch{self.dark}"]
 
 
 class LeftFrame(PytextFrame):
     """ Contains the file explorer. """
+
     def __init__(self, master, obj_font: font):
         super().__init__(master)
         self.textbox = None
@@ -55,7 +53,7 @@ class LeftFrame(PytextFrame):
         self.__scrollbar_setup__()
 
     def __scrollbar_setup__(self):
-        self.scrollbar_x = Scrollbar(self, orient="horizontal", command=self.__scroll_x__)
+        self.scrollbar_x = Scrollbar(self, orient="horizontal", command=self.__scroll_x__)#, bootstyle="round")
         self.scrollbar_x.grid(row=1, column=0, sticky="we")
 
     def __scroll_x__(self, *args):
@@ -69,7 +67,7 @@ class LeftFrame(PytextFrame):
         self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none')
         # self.textbox.configure(bg=self.bg_color)
         self.textbox.config(xscrollcommand=self.scrollbar_x.set)
-    
+
     def show_textbox(self):
         self.grid(row=0, column=0, sticky="nsew")
         self.textbox.grid(row=0, column=0, sticky="nsew")
@@ -127,16 +125,17 @@ class LeftFrame(PytextFrame):
 
 class BottomFrame(PytextFrame):
     """Contains the outputs labels."""
+
     def __init__(self, master):
         super().__init__(master)
-        self.output       = None
-        self.command      = None
-        self.branch       = None
+        self.output = None
+        self.command = None
+        self.branch = None
 
         self.sys_theme = master.sys_theme
-        self.theme     = master.theme
-        self.mode      = master.mode
-        self.gui_font  = master.gui_font
+        self.theme = master.theme
+        self.mode = master.mode
+        self.gui_font = master.gui_font
 
         # super().load_frame_theme("bottom")
         super().load_bottom_widget_theme()
@@ -160,7 +159,6 @@ class BottomFrame(PytextFrame):
         self.output = Label(
             self, text=output.replace("\\", "/"), justify="left",
             # bg=self.bg_color, foreground=self.output_color,
-            padx=10,
             font=self.master.gui_font
         )
         self.output.grid(row=2, column=0)
@@ -172,6 +170,7 @@ class BottomFrame(PytextFrame):
 
 class MainFrame(PytextFrame):
     """It is the main frame that contains the Maintext instance."""
+
     def __init__(self, master, obj_font: font):
         super().__init__(master)
         self.tabs = None
@@ -192,14 +191,11 @@ class MainFrame(PytextFrame):
         self.textbox.focus_set()
 
     def create_tabs(self):
-        # style.configure("TNotebook.Tab", background="#2b2d30", foreground="white")
-        # style.map("TNotebook.Tab",
-        #           background=[("active", "#1e1f22"), ("disabled", "#2b2d30")],
-        #           foreground=[("active", "white"), ("disabled", "gray")])
-        # self.tabs = ttk.Notebook(self)
-        # self.tabs.grid(row=0, column=2, sticky="ew")
-        # frame = ttk.Frame(self.tabs)
-        # self.tabs.add(frame, text="teste")
+        self.tabs = Notebook(self)
+        self.tabs.configure()
+        self.tabs.grid(row=0, column=2, sticky="ew")
+        frame = ttk.Frame(self.tabs)
+        self.tabs.add(frame, text="teste")
         return
 
     def __load_theme__(self):
@@ -211,4 +207,3 @@ class MainFrame(PytextFrame):
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
-
