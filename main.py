@@ -80,17 +80,17 @@ class MainApp(tk.Tk):
         #
         # self.grid_columnconfigure(0, weight=0)
         # self.grid_columnconfigure(1, weight=0)
-        # self.grid_columnconfigure(2, weight=1)
+        self.grid_columnconfigure(2, weight=1)
         return
 
     def __create_frames__(self):
-        self.configure(bg="pink")
+        self.configure(bg="#2b2d30")
         self.bottom_frame = BottomFrame(self)
         self.bottom_frame.grid(row=1, column=0, sticky="we", columnspan=3, rowspan=3)
 
         self.main_frame = MainFrame(self, self.font)
         self.main_frame.grid(row=0, column=2, sticky="nsew")
-        self.main_frame.configure(bg="green")
+        self.main_frame.configure(bg="#2b2d30")
 
         self.left_frame = LeftFrame(self, self.font)
 

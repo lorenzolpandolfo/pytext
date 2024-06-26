@@ -182,19 +182,16 @@ class MainFrame(PytextFrame):
         self.__load_theme__()
 
     def create_textbox(self, row: int = 1, column: int = 2):
-        print("criando tabs")
         self.tabs = ttk.Notebook(self, width=10)
         self.tabs.grid(row=0, column=2, sticky="ew")
         frame = ttk.Frame(self.tabs)
         self.tabs.add(frame, text="teste")
-        print("criando textbox maintext")
+
         self.textbox = Maintext(self, font=self.font)
         self.textbox.grid(row=row, column=column, sticky="nsew")
         self.master.update()
         self.textbox.focus_set()
 
-        self.grid_rowconfigure(0, weight=0)
-        self.grid_rowconfigure(1, weight=1)
 
 
 
@@ -210,8 +207,9 @@ class MainFrame(PytextFrame):
         self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
 
     def __grid_setup__(self):
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
 
 
 class TopFrame(PytextFrame):
