@@ -2,11 +2,11 @@ import os
 
 import tkinter as tk
 from tkinter import font as tkfont
+from tkinter import ttk
 import darkdetect
 
 from modules.UserConfig     import UserConfig
 from modules.FontManager    import FontManager
-from modules.FileManager    import FileManager
 from modules.ImageManager   import ImageManager
 from modules.ThemeManager   import ThemeManager
 from modules.TextUtils      import TextUtils
@@ -14,7 +14,7 @@ from modules.Application    import Application
 from modules.CommandManager import CommandManager
 from modules.ScriptRunner   import ScriptRunner
 
-from modules.frames.frames import MainFrame, LeftFrame, BottomFrame, LineCounterFrame
+from modules.frames.frames import MainFrame, LeftFrame, BottomFrame, TopFrame
 
 
 class MainApp(tk.Tk):
@@ -76,27 +76,30 @@ class MainApp(tk.Tk):
 
     def __configure_grids__(self):
         self.grid_rowconfigure(0, weight=1)
-        self.grid_rowconfigure(1, weight=0)
-
-        self.grid_columnconfigure(0, weight=0)
-        self.grid_columnconfigure(1, weight=0)
-        self.grid_columnconfigure(2, weight=2)
+        # self.grid_rowconfigure(1, weight=0)
+        #
+        # self.grid_columnconfigure(0, weight=0)
+        # self.grid_columnconfigure(1, weight=0)
+        # self.grid_columnconfigure(2, weight=1)
+        return
 
     def __create_frames__(self):
+        self.configure(bg="pink")
         self.bottom_frame = BottomFrame(self)
         self.bottom_frame.grid(row=1, column=0, sticky="we", columnspan=3, rowspan=3)
 
         self.main_frame = MainFrame(self, self.font)
         self.main_frame.grid(row=0, column=2, sticky="nsew")
+        self.main_frame.configure(bg="green")
 
         self.left_frame = LeftFrame(self, self.font)
 
-        self.line_counter_frame = LineCounterFrame(self)
-        self.line_counter_frame.grid(row=0, column=1, sticky="nsew")
+        # self.line_counter_frame = LineCounterFrame(self)
+        # self.line_counter_frame.grid(row=0, column=1, sticky="nsew")
 
     def __create_widgets__(self):
         self.main_frame.create_textbox()
-        self.main_frame.textbox.create_line_counter(self.line_counter_frame)
+        self.main_frame.textbox.create_line_counter(self.main_frame)
 
         self.left_frame.create_textbox()
 

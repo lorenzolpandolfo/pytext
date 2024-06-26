@@ -1,4 +1,4 @@
-from tkinter import Frame, font, Label, Scrollbar
+from tkinter import Frame, font, Label, Scrollbar, ttk
 
 import os
 from modules.widgets.text import Lefttext, Maintext
@@ -52,7 +52,7 @@ class LeftFrame(PytextFrame):
 
     def __scrollbar_setup__(self):
         self.scrollbar_x = Scrollbar(self, orient="horizontal", command=self.__scroll_x__)
-        self.scrollbar_x.grid(row=1, column=0, sticky="we")
+        self.scrollbar_x.grid(row=0, column=0, sticky="we")
 
     def __scroll_x__(self, *args):
         self.textbox.xview(*args)
@@ -108,16 +108,17 @@ class LeftFrame(PytextFrame):
                 Application.mainapp.main_frame.textbox.focus_set()
 
 
-class LineCounterFrame(PytextFrame):
-    def __init__(self, master):
-        super().__init__(master)
-
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=0)
-
-        self.sys_theme = master.sys_theme
-        self.theme = master.theme
-        super().load_frame_theme("line_counter")
+# class LineCounterFrame(PytextFrame):
+#     def __init__(self, master):
+#         super().__init__(master)
+#
+#         self.grid_rowconfigure(0, weight=1)
+#         self.grid_columnconfigure(0, weight=0)
+#
+#         self.sys_theme = master.sys_theme
+#         self.theme = master.theme
+#         super().load_frame_theme("line_counter")
+#         self.configure(bg="red")
 
 
 class BottomFrame(PytextFrame):
@@ -169,6 +170,7 @@ class MainFrame(PytextFrame):
     """It is the main frame that contains the Maintext instance."""
     def __init__(self, master, obj_font: font):
         super().__init__(master)
+        self.tabs = None
         self.textbox = None
         self.font = obj_font
 
@@ -179,11 +181,28 @@ class MainFrame(PytextFrame):
         self.__grid_setup__()
         self.__load_theme__()
 
-    def create_textbox(self, row: int = 0, column: int = 0):
+    def create_textbox(self, row: int = 1, column: int = 2):
+        print("criando tabs")
+        self.tabs = ttk.Notebook(self, width=10)
+        self.tabs.grid(row=0, column=2, sticky="ew")
+        frame = ttk.Frame(self.tabs)
+        self.tabs.add(frame, text="teste")
+        print("criando textbox maintext")
         self.textbox = Maintext(self, font=self.font)
         self.textbox.grid(row=row, column=column, sticky="nsew")
         self.master.update()
         self.textbox.focus_set()
+
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
+
+
+
+
+            # text_widget = tk.Text(frame)
+            # text_widget.pack(expand=1, fill="both")
+            #
+            # self.file_contents[title] = text_widget
 
     def __load_theme__(self):
         dark = "_dark" if self.sys_theme == "dark" else ""
@@ -193,3 +212,13 @@ class MainFrame(PytextFrame):
     def __grid_setup__(self):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+
+
+class TopFrame(PytextFrame):
+    def __init__(self, master):
+        super().__init__(master)
+
+        self.tabs = ttk.Notebook(self, width=10)
+        self.tabs.grid(row=0, column=0, sticky="we")
+        frame = ttk.Frame(self.tabs)
+        self.tabs.add(frame, text="teste")
