@@ -144,7 +144,7 @@ class Generaltext(Text):
 class Maintext(Generaltext):
     """Represents the main textbox of Pytext."""
     def __init__(self, master, *args, **kwargs):
-        super().__init__(master, undo=True, *args, **kwargs)
+        super().__init__(master, undo=True, autoseparators=False, *args, **kwargs)
         self._line_counter = None
 
         self.sys_theme = master.sys_theme
@@ -177,6 +177,8 @@ class Maintext(Generaltext):
     def undo(self):
         try:
             self.edit_undo()
+            self.after_idle(self.update_line_counter)
+            self.highlight_selected_line()
         except tkinter.TclError:
             pass
         return 'break'
@@ -184,6 +186,8 @@ class Maintext(Generaltext):
     def redo(self):
         try:
             self.edit_redo()
+            self.after_idle(self.update_line_counter)
+            self.highlight_selected_line()
         except tkinter.TclError:
             pass
         return 'break'
@@ -218,6 +222,7 @@ class Maintext(Generaltext):
         elif direction == "down":
             self.insert(f"{int(line) + 1}.0", f"{content}\n")
         self.after_idle(self.update_line_counter)
+        self.after_idle(self.highlight_selected_line)
         return 'break'
 
     def copy(self, e=None):

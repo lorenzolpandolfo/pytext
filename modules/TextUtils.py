@@ -172,6 +172,14 @@ class TextUtils:
     @staticmethod
     def swipe_lines(t: tkinter.Text, l1: str | int, l2: str | int):
         """Move content from line1 to line2. l is the line number, with no columns."""
+        selected_lines = TextUtils.get_selected_lines(t)
+        if selected_lines:
+            direction = "up" if (int(l1) < int(l2)) else "down"
+            return TextUtils.swipe_block(t, selected_lines, direction)
+
+        if int(l1) > int(t.index("end-1c").split('.')[0]):
+            return False
+
         c1 = t.get(f"{l1}.0", f"{l1}.end")
         c2 = t.get(f"{l2}.0", f"{l2}.end")
 
@@ -179,19 +187,40 @@ class TextUtils:
         t.insert(f"{l1}.0", c2)
         t.delete(f"{l2}.0", f"{l2}.end")
         t.insert(f"{l2}.0", c1)
+        t.edit_separator()
 
-        # def move_line(self, e, direction: str):
-        #     i = self.index("insert")
-        #     line = i.split('.')[0]
-        #     content = ''
-        #
-        #     if direction == "up":
-        #         if line == '1':
-        #             return 'break'
-        #         content = self.get(f"{int(line) - 1}.0", f"{int(line) - 1}.end")
-        #         self.insert(f"{line}.0", content)
-        #
-        #     elif direction == "down":
-        #         self.insert(f"{int(line) + 1}.0", f"{content}\n")
-        #     self.after_idle(self.update_line_counter)
-        #     return 'break'
+    @staticmethod
+    def swipe_block(t: tkinter.Text, b: tuple | list, direction: str):
+        if isinstance(b, list):
+            b = (b[0], b[-1])
+
+        c = t.get(f"{b[0]}.0", f"{b[1]}.end")
+
+        if direction == "up":
+            if b[0] == 1:
+                return False
+
+            target = f"{b[0] - 1}.0"
+            target_c = t.get(target, f"{b[0] - 1}.end")
+            t.delete(f"{b[0]}.0", f"{b[1]}.end")
+            t.delete(target, f"{b[0] - 1}.end")
+            t.insert(target, c)
+            t.insert(f"{b[1]}.0", target_c)
+            t.tag_remove("sel", "1.0", "end")
+            t.tag_add("sel", f"{b[0] - 1}.0", f"{b[1] - 1}.end")
+            t.edit_separator()
+
+        elif direction == "down":
+            t.edit_modified(False)
+            if b[1] == int(t.index("end-1c").split('.')[0]):
+                return False
+
+            target = f"{b[0] + 1}.0"
+            target_c = t.get(f"{b[1] + 1}.0", f"{b[1] + 1}.end")
+            t.delete(f"{b[0]}.0", f"{b[1]}.end")
+            t.delete(target, f"{b[0] + 1}.end")
+            t.insert(target, c)
+            t.insert(f"{b[0]}.0", target_c)
+            t.tag_remove("sel", "1.0", "end")
+            t.tag_add("sel", f"{b[0] + 1}.0", f"{b[1] + 1}.end")
+            t.edit_separator()
