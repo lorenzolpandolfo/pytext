@@ -3,7 +3,7 @@ from modules.FileManager import FileManager as fm
 
 class ThemeManager:
     @staticmethod
-    def get_user_theme() -> str:
+    def get_user_theme() -> dict:
         try:
             fm.move_to_directory("user")
             return fm.open_json_file("theme.json")

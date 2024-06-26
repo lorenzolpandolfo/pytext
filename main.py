@@ -2,18 +2,20 @@ import os
 import json
 
 import tkinter as tk
+
 from tkinter import font as tkfont
 
 import ttkbootstrap.themes.user
 from ttkbootstrap import Style
 
-import darkdetect
+from theme.pytext_theme import TEMA
 
-from theme.pytext_theme import USER_THEMES
+import darkdetect
 
 from modules.UserConfig import UserConfig
 from modules.FontManager import FontManager
 from modules.ImageManager import ImageManager
+from modules.FileManager import FileManager
 from modules.ThemeManager import ThemeManager
 from modules.TextUtils import TextUtils
 from modules.Application import Application
@@ -37,10 +39,10 @@ class MainApp(tk.Tk):
         Application.set_mode("view")
 
         self.__load_user_config__()
-        self.__load_ttk_colors__()
         self.__load_system_theme__()
         self.__load_user_font__()
         self.__load_user_theme__()
+        self.__load_ttk_colors__()
         self.__create_gui__()
 
         if self.file_name:
@@ -48,19 +50,29 @@ class MainApp(tk.Tk):
         self.__enable_binds__()
 
     def __load_ttk_colors__(self):
-        theme = "flatly" if self.user_config["forced_theme"] == "light" else "pytext"
-        ttkbootstrap.themes.user.USER_THEMES = USER_THEMES
-        self.style = Style(theme="pytext")
-        
-        self.style.configure("TNotebook", bordercolor=False)
+        theme = ""
+        forced_theme = self.user_config["forced_theme"]
+        bg = "#ffffff"
+        fg = "#212529"
+
+        if forced_theme == "light":
+            theme = "flatly"
+
+        elif forced_theme == "dark":
+            theme = "darkly"
+            bg = self.theme["frames"]["bottom"]["bg_dark"]
+            fg = "white"
+
+        self.style = Style(theme=theme)
+
+        self.style.configure("TNotebook", bordercolor=False, background=bg)
         self.style.configure("TNotebook.Tab", bordercolor="#1e1f22")
         self.style.map("TNotebook.Tab", bordercolor="#ffffff")
-        #                bordercolor="#1e1f22",
-        #                background=[("active", "#43454a"), ("disabled", "#2b2d30")],
-        #                foreground=[("active", "white"), ("disabled", "white")])
-        #
-        # self.style.configure("TFrame", background="#2b2d30")
-        # self.style.configure("TLabel", background="#2b2d30", foreground="white")
+        # background=[("active", "#43454a"), ("disabled", "#2b2d30")],
+        # foreground=[("active", "white"), ("disabled", "white")])
+
+        self.style.configure("TFrame", background=bg)
+        self.style.configure("TLabel", background=bg, foreground=fg)
         return
 
     def __load_user_config__(self):

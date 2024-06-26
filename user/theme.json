@@ -53,7 +53,7 @@
 
     "left_textbox":
     {
-      "bg"                 : "#f7f8fa",
+      "bg"                 : "#ffffff",
       "bg_dark"            : "#2b2d30",
 
       "selected_line"      : "#f3d2f3",
