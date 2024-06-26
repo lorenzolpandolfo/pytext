@@ -1,6 +1,4 @@
 from tkinter import Frame, font, Label, Scrollbar, ttk
-from ttkbootstrap import Notebook, Style
-
 import os
 from modules.widgets.text import Lefttext, Maintext
 from modules.Application import Application
@@ -21,7 +19,11 @@ class PytextFrame(ttk.Frame):
         self.theme          = master.theme
         self.dark = "_dark" if self.sys_theme == "dark" else ""
 
-        self.configure()
+        style = ttk.Style(master)
+        style.configure("Custom.TFrame", background="red")
+        style.configure(style="Custom.TFrame")
+
+        self.configure(style="Custom.TFrame")
 
     def load_frame_theme(self, frame):
         self.bg_color       = self.theme["frames"][frame][f"bg{self.dark}"]
@@ -70,7 +72,7 @@ class LeftFrame(PytextFrame):
     
     def show_textbox(self):
         self.grid(row=0, column=0, sticky="nsew")
-        # self.textbox.grid(row=0, column=0, sticky="nsew")
+        self.textbox.grid(row=0, column=0, sticky="nsew")
         file_abs_path = os.path.dirname(os.path.join(self.terminal_dir, self.file_name))
         isdir = os.path.isdir(file_abs_path)
         path = file_abs_path if isdir else self.terminal_dir
@@ -190,16 +192,15 @@ class MainFrame(PytextFrame):
         self.textbox.focus_set()
 
     def create_tabs(self):
-        style = Style()
-        style.configure("TFrame", background="blue", foreground="blue")
-        style.configure("TNotebook.Tab", background="#2b2d30", foreground="white")
-        style.map("TNotebook.Tab",
-                  background=[("active", "#1e1f22"), ("disabled", "#2b2d30")],
-                  foreground=[("active", "white"), ("disabled", "gray")])
-        self.tabs = Notebook(self)
-        self.tabs.grid(row=0, column=2, sticky="ew")
-        frame = ttk.Frame(self.tabs)
-        self.tabs.add(frame, text="teste")
+        # style.configure("TNotebook.Tab", background="#2b2d30", foreground="white")
+        # style.map("TNotebook.Tab",
+        #           background=[("active", "#1e1f22"), ("disabled", "#2b2d30")],
+        #           foreground=[("active", "white"), ("disabled", "gray")])
+        # self.tabs = ttk.Notebook(self)
+        # self.tabs.grid(row=0, column=2, sticky="ew")
+        # frame = ttk.Frame(self.tabs)
+        # self.tabs.add(frame, text="teste")
+        return
 
     def __load_theme__(self):
         dark = "_dark" if self.sys_theme == "dark" else ""

@@ -17,6 +17,7 @@ from modules.ScriptRunner   import ScriptRunner
 from modules.frames.frames import MainFrame, LeftFrame, BottomFrame
 
 
+
 class MainApp(tk.Tk):
     def __init__(self, terminal_dir: str, loaded_file_name: str):
         super().__init__()
