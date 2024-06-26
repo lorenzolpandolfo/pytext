@@ -1,5 +1,6 @@
 import os
 import platform
+import ctypes
 
 import tkinter as tk
 from tkinter import PhotoImage
@@ -42,11 +43,15 @@ class ImageManager:
         return title in all_images if title.endswith(".png") else False
 
     @staticmethod
-    def get_icon(title: str = "icon.png") -> tk.PhotoImage:
+    def setup_icon(app: tk.Tk):
         system = platform.system()
-        if system == "Windows":
-            title = title.replace(".png", ".ico")
-            
+
         fm.move_to_directory("images")
-        path = os.path.join(os.getcwd(), title)
-        return tk.PhotoImage(file=path)
+        path = os.path.join(os.getcwd(), "icon.png")
+        icon = tk.PhotoImage(file=path)
+
+        if system == "Windows":
+            myappid = 'lorenzopandolfo.pytext.texteditor.latest'
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+
+        app.iconphoto(False, icon)

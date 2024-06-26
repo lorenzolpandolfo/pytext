@@ -55,7 +55,6 @@ class MainApp(tk.Tk):
 
     def __load_system_theme__(self):
         forced_theme = self.user_config["forced_theme"]
-        # adicionar o estilo do sistema ali no else dark
         self.sys_theme = forced_theme if forced_theme else str(darkdetect.theme()).lower()
 
     def __load_user_theme__(self):
@@ -71,8 +70,7 @@ class MainApp(tk.Tk):
         self.title("The Pytext Editor Refactored")
         self.geometry(self.user_config["window_size"])
         self.resizable(True, True)
-        icon = ImageManager.get_icon()
-        self.iconphoto(False, icon)
+        ImageManager.setup_icon(self)
 
     def __configure_grids__(self):
         self.grid_rowconfigure(0, weight=1)
