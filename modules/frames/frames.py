@@ -1,14 +1,14 @@
 from tkinter import Frame, font, Label, Scrollbar, ttk
+from ttkbootstrap import Notebook, Style
 
 import os
 from modules.widgets.text import Lefttext, Maintext
-from modules.ImageManager import ImageManager
 from modules.Application import Application
 
 DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
 
 
-class PytextFrame(Frame):
+class PytextFrame(ttk.Frame):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
         self.bg_color      = ''
@@ -20,6 +20,8 @@ class PytextFrame(Frame):
         self.sys_theme      = master.sys_theme
         self.theme          = master.theme
         self.dark = "_dark" if self.sys_theme == "dark" else ""
+
+        self.configure()
 
     def load_frame_theme(self, frame):
         self.bg_color       = self.theme["frames"][frame][f"bg{self.dark}"]
@@ -47,12 +49,12 @@ class LeftFrame(PytextFrame):
         self.mode = master.mode
 
         self.__grid_setup__()
-        super().load_frame_theme("left")
+        # super().load_frame_theme("left")
         self.__scrollbar_setup__()
 
     def __scrollbar_setup__(self):
         self.scrollbar_x = Scrollbar(self, orient="horizontal", command=self.__scroll_x__)
-        self.scrollbar_x.grid(row=0, column=0, sticky="we")
+        self.scrollbar_x.grid(row=1, column=0, sticky="we")
 
     def __scroll_x__(self, *args):
         self.textbox.xview(*args)
@@ -63,12 +65,12 @@ class LeftFrame(PytextFrame):
 
     def create_textbox(self, row: int = 0, column: int = 0):
         self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none')
-        self.textbox.configure(bg=self.bg_color)
+        # self.textbox.configure(bg=self.bg_color)
         self.textbox.config(xscrollcommand=self.scrollbar_x.set)
     
     def show_textbox(self):
         self.grid(row=0, column=0, sticky="nsew")
-        self.textbox.grid(row=0, column=0, sticky="nsew")
+        # self.textbox.grid(row=0, column=0, sticky="nsew")
         file_abs_path = os.path.dirname(os.path.join(self.terminal_dir, self.file_name))
         isdir = os.path.isdir(file_abs_path)
         path = file_abs_path if isdir else self.terminal_dir
@@ -134,28 +136,28 @@ class BottomFrame(PytextFrame):
         self.mode      = master.mode
         self.gui_font  = master.gui_font
 
-        super().load_frame_theme("bottom")
+        # super().load_frame_theme("bottom")
         super().load_bottom_widget_theme()
-        self.configure(bg=self.bg_color)
+        # self.configure(bg=self.bg_color)
 
     def create_widgets(self, output: str):
         self.mode = Label(
             self, text=self.mode, justify="center",
-            bg=self.bg_color, foreground=self.mode_color,
+            # bg=self.bg_color, foreground=self.mode_color,
             font=self.master.gui_font
         )
         self.mode.grid(row=1, column=0, columnspan=2)
 
         self.command = Label(
             self, text="", justify="left",
-            bg=self.bg_color, foreground=self.command_color,
+            # bg=self.bg_color, foreground=self.command_color,
             font=self.master.gui_font
         )
         self.command.grid(row=2, column=1, sticky="e")
 
         self.output = Label(
             self, text=output.replace("\\", "/"), justify="left",
-            bg=self.bg_color, foreground=self.output_color,
+            # bg=self.bg_color, foreground=self.output_color,
             padx=10,
             font=self.master.gui_font
         )
@@ -182,24 +184,22 @@ class MainFrame(PytextFrame):
         self.__load_theme__()
 
     def create_textbox(self, row: int = 1, column: int = 2):
-        self.tabs = ttk.Notebook(self, width=10)
-        self.tabs.grid(row=0, column=2, sticky="ew")
-        frame = ttk.Frame(self.tabs)
-        self.tabs.add(frame, text="teste")
-
         self.textbox = Maintext(self, font=self.font)
         self.textbox.grid(row=row, column=column, sticky="nsew")
         self.master.update()
         self.textbox.focus_set()
 
-
-
-
-
-            # text_widget = tk.Text(frame)
-            # text_widget.pack(expand=1, fill="both")
-            #
-            # self.file_contents[title] = text_widget
+    def create_tabs(self):
+        style = Style()
+        style.configure("TFrame", background="blue", foreground="blue")
+        style.configure("TNotebook.Tab", background="#2b2d30", foreground="white")
+        style.map("TNotebook.Tab",
+                  background=[("active", "#1e1f22"), ("disabled", "#2b2d30")],
+                  foreground=[("active", "white"), ("disabled", "gray")])
+        self.tabs = Notebook(self)
+        self.tabs.grid(row=0, column=2, sticky="ew")
+        frame = ttk.Frame(self.tabs)
+        self.tabs.add(frame, text="teste")
 
     def __load_theme__(self):
         dark = "_dark" if self.sys_theme == "dark" else ""
@@ -211,12 +211,3 @@ class MainFrame(PytextFrame):
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
 
-
-class TopFrame(PytextFrame):
-    def __init__(self, master):
-        super().__init__(master)
-
-        self.tabs = ttk.Notebook(self, width=10)
-        self.tabs.grid(row=0, column=0, sticky="we")
-        frame = ttk.Frame(self.tabs)
-        self.tabs.add(frame, text="teste")

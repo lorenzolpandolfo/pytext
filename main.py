@@ -14,7 +14,7 @@ from modules.Application    import Application
 from modules.CommandManager import CommandManager
 from modules.ScriptRunner   import ScriptRunner
 
-from modules.frames.frames import MainFrame, LeftFrame, BottomFrame, TopFrame
+from modules.frames.frames import MainFrame, LeftFrame, BottomFrame
 
 
 class MainApp(tk.Tk):
@@ -76,12 +76,7 @@ class MainApp(tk.Tk):
 
     def __configure_grids__(self):
         self.grid_rowconfigure(0, weight=1)
-        # self.grid_rowconfigure(1, weight=0)
-        #
-        # self.grid_columnconfigure(0, weight=0)
-        # self.grid_columnconfigure(1, weight=0)
         self.grid_columnconfigure(2, weight=1)
-        return
 
     def __create_frames__(self):
         self.configure(bg="#2b2d30")
@@ -90,15 +85,14 @@ class MainApp(tk.Tk):
 
         self.main_frame = MainFrame(self, self.font)
         self.main_frame.grid(row=0, column=2, sticky="nsew")
-        self.main_frame.configure(bg="#2b2d30")
+        # self.main_frame.configure(bg="#2b2d30")
 
         self.left_frame = LeftFrame(self, self.font)
 
-        # self.line_counter_frame = LineCounterFrame(self)
-        # self.line_counter_frame.grid(row=0, column=1, sticky="nsew")
-
     def __create_widgets__(self):
+        self.main_frame.create_tabs()
         self.main_frame.create_textbox()
+
         self.main_frame.textbox.create_line_counter(self.main_frame)
 
         self.left_frame.create_textbox()
