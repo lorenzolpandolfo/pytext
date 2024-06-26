@@ -211,7 +211,6 @@ class TextUtils:
             t.edit_separator()
 
         elif direction == "down":
-            t.edit_modified(False)
             if b[1] == int(t.index("end-1c").split('.')[0]):
                 return False
 

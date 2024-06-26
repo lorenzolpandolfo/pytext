@@ -1,8 +1,11 @@
 import os
+import platform
+
 import tkinter as tk
 from tkinter import PhotoImage
-from modules.FileManager import FileManager as fm
 from PIL import Image, ImageTk
+
+from modules.FileManager import FileManager as fm
 from modules.Application import Application
 
 
@@ -40,6 +43,10 @@ class ImageManager:
 
     @staticmethod
     def get_icon(title: str = "icon.png") -> tk.PhotoImage:
+        system = platform.system()
+        if system == "Windows":
+            title = title.replace(".png", ".ico")
+            
         fm.move_to_directory("images")
         path = os.path.join(os.getcwd(), title)
         return tk.PhotoImage(file=path)
