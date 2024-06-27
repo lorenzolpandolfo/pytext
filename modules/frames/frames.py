@@ -17,10 +17,9 @@ class PytextFrame(ttk.Frame):
         self.command_color = ''
         self.output_color = ''
         self.branch_color = ''
-        self.sys_theme = master.sys_theme
-        self.theme = master.theme
+        self.sys_theme = Application.mainapp.sys_theme
+        self.theme = Application.mainapp.theme
         self.dark = "_dark" if self.sys_theme == "dark" else ""
-
 
     def load_frame_theme(self, frame):
         self.bg_color = self.theme["frames"][frame][f"bg{self.dark}"]
@@ -81,7 +80,7 @@ class LeftFrame(PytextFrame):
         if self.winfo_ismapped():
             if "leftframe" in str(self.focus_get()):
                 self.grid_forget()
-                Application.mainapp.main_frame.textbox.focus_set()
+                Application.selected_tab_frame.textbox.focus_set()
             else:
                 self.textbox.focus_set()
         else:
@@ -106,8 +105,8 @@ class LeftFrame(PytextFrame):
             return
         else:
             # contar quantos diretorios tem antes e ir salvando a posicao do cursor pra retomar
-            if Application.mainapp.main_frame.textbox.open_file(content):
-                Application.mainapp.main_frame.textbox.focus_set()
+            if Application.selected_tab_frame.textbox.open_file(content):
+                Application.selected_tab_frame.textbox.focus_set()
 
 
 # class LineCounterFrame(PytextFrame):
@@ -177,9 +176,9 @@ class MainFrame(PytextFrame):
         self.textbox = None
         self.font = obj_font
 
-        self.sys_theme = master.sys_theme
-        self.theme = master.theme
-        self.mode = master.mode
+        self.sys_theme = Application.mainapp.sys_theme
+        self.theme = Application.mainapp.theme
+        self.mode = Application.mainapp.mode
 
         self.__grid_setup__()
         self.__load_theme__()
@@ -190,14 +189,6 @@ class MainFrame(PytextFrame):
         self.master.update()
         self.textbox.focus_set()
 
-    def create_tabs(self):
-        self.tabs = Notebook(self)
-        self.tabs.configure()
-        self.tabs.grid(row=0, column=2, sticky="ew")
-        frame = ttk.Frame(self.tabs)
-        self.tabs.add(frame, text="teste")
-        return
-
     def __load_theme__(self):
         dark = "_dark" if self.sys_theme == "dark" else ""
         self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
@@ -207,3 +198,42 @@ class MainFrame(PytextFrame):
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
+
+
+class TopBarFrame(ttk.Frame):
+    def __init__(self, master):
+        super().__init__(master)
+        self.master = master
+        self.current_frame = None
+        self.all_frames = []
+
+        self.__setup__()
+
+        self.notebook.bind("<<NotebookTabChanged>>", lambda e: self.__on_tab_change__(e))
+        # self.add_frame()
+
+    def __on_tab_change__(self, e=None):
+        Application.switch_mode("view")
+        Application.selected_tab_frame = self.notebook.nametowidget(self.notebook.select())
+
+    def __setup__(self):
+        self.notebook = Notebook(self)
+        self.notebook.grid(row=0, column=0, sticky="ew")
+
+    def add_frame(self, tab_title: str, content: str):
+        """
+        Creates a new MainFrame to the Notebook bar.
+        In the MainFrame, creates the textbox and the line counter.
+        Inserts text into the textbox.
+        """
+
+        self.current_frame = MainFrame(self.notebook, self.master.font)
+        self.current_frame.grid(row=0, column=0)
+        Application.selected_tab_frame = self.current_frame
+
+        self.current_frame.create_textbox()
+        self.current_frame.textbox.create_line_counter(self.current_frame)
+        self.notebook.add(self.current_frame, text=tab_title)
+        self.all_frames.append(self.current_frame)
+
+        self.current_frame.textbox.write_file_content(content)

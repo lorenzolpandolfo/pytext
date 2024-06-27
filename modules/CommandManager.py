@@ -37,7 +37,7 @@ class CommandManager:
 
         match alphabetical:
             case "i":
-                Application.switch_mode()
+                Application.switch_mode("insert")
 
             case "W":
                 return cls.move_cursor("up", Application.mainapp.main_frame.textbox, numeric)

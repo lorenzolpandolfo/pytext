@@ -6,7 +6,8 @@ from modules.FileManager     import FileManager
 from modules.tklinenums      import TkLineNumbers
 from modules.Application     import Application
 from modules.TextUtils       import TextUtils
-from modules.LanguageManager import LanguageManager
+
+from modules.FileLoader import FileLoader
 
 
 class Generaltext(Text):
@@ -22,8 +23,8 @@ class Generaltext(Text):
         self.selected_line_color    = ''
         self.path                   = ''
 
-        self.sys_theme = master.sys_theme
-        self.theme = master.theme
+        self.sys_theme = Application.mainapp.sys_theme
+        self.theme = Application.mainapp.theme
         self.tab_width = Application.mainapp.user_config["tab_width"]
         self.setup_text_widget()
 
@@ -111,14 +112,13 @@ class Generaltext(Text):
 
     def open_file(self, full_path: str):
         """ Open a file through a directory and title. Then, write it. """
-        content = FileManager.open_file(full_path)
-        self.write_file_content(content)
-
-        _, file_ext = os.path.splitext(full_path)
-        LanguageManager.load_language(file_ext)
-        Application.set_current_file(full_path)
-        self.edit_reset()
-        return content
+        FileLoader.open_file(full_path)
+        # self.write_file_content(content)
+        # _, file_ext = os.path.splitext(full_path)
+        # LanguageManager.load_language(file_ext)
+        # Application.set_current_file(full_path)
+        # Application.mainapp.all_files_data.append()
+        # self.edit_reset()
 
     def open_directory(self, dir_path: str, auto_write: bool = True):
         content = FileManager.open_directory(dir_path)
@@ -147,8 +147,8 @@ class Maintext(Generaltext):
         super().__init__(master, undo=True, *args, **kwargs)
         self._line_counter = None
 
-        self.sys_theme = master.sys_theme
-        self.theme = master.theme
+        self.sys_theme = Application.mainapp.sys_theme
+        self.theme = Application.mainapp.theme
         self.__load_theme__()
         super().enable_binds()
         self._enable_binds_()

@@ -1,34 +1,30 @@
 import os
-import json
 
 import tkinter as tk
-
 from tkinter import font as tkfont
-
-import ttkbootstrap.themes.user
 from ttkbootstrap import Style
-
-from theme.pytext_theme import TEMA
 
 import darkdetect
 
 from modules.UserConfig import UserConfig
 from modules.FontManager import FontManager
 from modules.ImageManager import ImageManager
-from modules.FileManager import FileManager
 from modules.ThemeManager import ThemeManager
 from modules.TextUtils import TextUtils
 from modules.Application import Application
 from modules.CommandManager import CommandManager
 from modules.ScriptRunner import ScriptRunner
+from modules.FileLoader import FileLoader
 
-from modules.frames.frames import MainFrame, LeftFrame, BottomFrame
+from modules.frames.frames import MainFrame, LeftFrame, BottomFrame, TopBarFrame
 
 
 class MainApp(tk.Tk):
     def __init__(self, terminal_dir: str, loaded_file_name: str):
         super().__init__()
 
+        self.all_files_data = []
+        self.current_tab_frame = 0
         self.terminal_dir = terminal_dir
         self.file_name = loaded_file_name
         self.mode = "view"
@@ -121,23 +117,24 @@ class MainApp(tk.Tk):
 
         self.main_frame = MainFrame(self, self.font)
         self.main_frame.grid(row=0, column=2, sticky="nsew")
+
+        self.top_frame = TopBarFrame(self)
+        self.top_frame.grid(row=0, column=2, sticky="we")
         # self.main_frame.configure(bg="#2b2d30")
 
         self.left_frame = LeftFrame(self, self.font)
 
     def __create_widgets__(self):
-        self.main_frame.create_tabs()
-        self.main_frame.create_textbox()
-
-        self.main_frame.textbox.create_line_counter(self.main_frame)
-
         self.left_frame.create_textbox()
-
         self.bottom_frame.create_widgets(output=(self.file_name if self.file_name else "Welcome to Pytext refactored"))
 
     def __load_argv_file__(self):
         full_path = os.path.join(self.terminal_dir, self.file_name)
-        self.main_frame.textbox.open_file(full_path)
+        # self.main_frame.textbox.open_file(full_path)
+        # TabsUtils.add_new_tab(os.path.basename(full_path))
+        FileLoader.open_file(full_path)
+
+        # FileLoader.open_file(full_path)
         # if FileManager.check_if_repository(full_path):
         #     self.bottom_frame.create_branch_icon(FileManager.get_git_branch(full_path))
 

@@ -5,6 +5,7 @@ from dataclasses import dataclass
 @dataclass
 class Application:
     mainapp : None
+    selected_tab_frame : None
     mode    : str = "view"
 
     @classmethod
@@ -20,7 +21,9 @@ class Application:
         cls.mode = forced_set if forced_set else "view" if cls.mode == "insert" else "insert"
         cls.mainapp.bottom_frame.mode.configure(text=cls.mode)
         state = "disabled" if cls.mode == "view" else "normal"
-        cls.mainapp.main_frame.textbox.configure(state=state)
+
+        cls.selected_tab_frame.textbox.configure(state=state)
+        print(cls.selected_tab_frame.textbox)
         cls.mainapp.bottom_frame.command.configure(text="")
 
     @classmethod
