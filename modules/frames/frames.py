@@ -68,7 +68,7 @@ class LeftFrame(PytextFrame):
         self.textbox.config(xscrollcommand=self.scrollbar_x.set)
 
     def show_textbox(self):
-        self.grid(row=0, column=0, sticky="nsew")
+        self.grid(row=1, column=0, sticky="nsew")
         self.textbox.grid(row=0, column=0, sticky="nsew")
         file_abs_path = os.path.dirname(os.path.join(self.terminal_dir, self.file_name))
         isdir = os.path.isdir(file_abs_path)
@@ -185,7 +185,7 @@ class MainFrame(PytextFrame):
 
     def create_textbox(self, row: int = 1, column: int = 2):
         self.textbox = Maintext(self, font=self.font)
-        self.textbox.grid(row=row, column=column, sticky="nsew")
+        self.textbox.grid(row=0, column=1, sticky="nsew")
         self.master.update()
         self.textbox.focus_set()
 
@@ -198,6 +198,7 @@ class MainFrame(PytextFrame):
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
+        return
 
 
 class TopBarFrame(ttk.Frame):
@@ -206,7 +207,6 @@ class TopBarFrame(ttk.Frame):
         self.master = master
         self.current_frame = None
         self.all_frames = []
-
         self.__setup__()
 
         self.notebook.bind("<<NotebookTabChanged>>", lambda e: self.__on_tab_change__(e))
@@ -228,7 +228,7 @@ class TopBarFrame(ttk.Frame):
         """
 
         self.current_frame = MainFrame(self.notebook, self.master.font)
-        self.current_frame.grid(row=0, column=0)
+        # self.current_frame.grid(row=0, column=0)
         Application.selected_tab_frame = self.current_frame
 
         self.current_frame.create_textbox()

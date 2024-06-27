@@ -233,7 +233,7 @@ class Maintext(Generaltext):
         self._line_counter = TkLineNumbers(
             master, self, justify="right", colors=(lc_font_color, lc_bg_color), tilde=tilde_char, bd=0
         )
-        self._line_counter.grid(row=1, column=1, sticky="ns", pady=(0, 0))
+        self._line_counter.grid(row=0, column=0, sticky="ns", pady=(0, 0))
         self.__enable_auto_redraw__()
 
     def __enable_auto_redraw__(self):

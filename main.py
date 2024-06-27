@@ -107,19 +107,22 @@ class MainApp(tk.Tk):
         self.iconphoto(False, icon)
 
     def __configure_grids__(self):
-        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=0)
+        self.grid_rowconfigure(2, weight=0)
+        self.grid_rowconfigure(3, weight=0)
         self.grid_columnconfigure(2, weight=1)
 
     def __create_frames__(self):
-        self.configure(bg="#2b2d30")
-        self.bottom_frame = BottomFrame(self)
-        self.bottom_frame.grid(row=1, column=0, sticky="we", columnspan=3, rowspan=3)
-
-        self.main_frame = MainFrame(self, self.font)
-        self.main_frame.grid(row=0, column=2, sticky="nsew")
-
+        self.configure(bg="red")
         self.top_frame = TopBarFrame(self)
-        self.top_frame.grid(row=0, column=2, sticky="we")
+        self.top_frame.grid(row=0, column=0, sticky="we", columnspan=3)
+
+        self.bottom_frame = BottomFrame(self)
+        # self.bottom_frame.grid(row=2, column=0, sticky="we", columnspan=3, rowspan=3)
+
+        # self.main_frame = MainFrame(self, self.font)
+        # self.main_frame.grid(row=1, column=2, sticky="nsew")
         # self.main_frame.configure(bg="#2b2d30")
 
         self.left_frame = LeftFrame(self, self.font)
