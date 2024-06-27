@@ -65,10 +65,10 @@ class MainApp(tk.Tk):
 
         self.style = Style(theme=theme)
 
-        # desativar/ativar muda a borda
-        # self.style.configure("TNotebook", bordercolor=False, background=bg)
+        # desativar/ativar muda a borda (bordercolor = "red")
+        self.style.configure("TNotebook", background=bg)
         self.style.configure("TNotebook.Tab", font=("Ubuntu Mono", 12), bordercolor="white",
-                             background=not_selected_tab_color)
+                             background=bg)
         self.style.map("TNotebook.Tab",
                        background=[("selected", selected_tab_color), ("active", selected_tab_color)],
                        foreground=[("selected", fg), ("active", fg)])
