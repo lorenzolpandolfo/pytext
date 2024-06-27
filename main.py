@@ -16,7 +16,7 @@ from modules.CommandManager import CommandManager
 from modules.ScriptRunner import ScriptRunner
 from modules.FileLoader import FileLoader
 
-from modules.frames.frames import TextFrame, LeftFrame, BottomFrame, MainFrame
+from modules.frames.frames import LeftFrame, BottomFrame, MainFrame
 
 
 class MainApp(tk.Tk):
@@ -47,8 +47,13 @@ class MainApp(tk.Tk):
 
     def __load_ttk_colors__(self):
         theme = ""
+
         forced_theme = self.user_config["forced_theme"]
-        bg = "#ffffff"
+
+        dark = "_dark" if forced_theme == "dark" else ""
+        selected_tab_color      = self.theme[f"selected_tab{dark}"]
+        not_selected_tab_color  = self.theme["widgets"]["main_textbox"][f"bg{dark}"]
+        bg                      = self.theme["frames"]["main"][f"bg{dark}"]
         fg = "#212529"
 
         if forced_theme == "light":
@@ -56,16 +61,17 @@ class MainApp(tk.Tk):
 
         elif forced_theme == "dark":
             theme = "darkly"
-            bg = self.theme["frames"]["bottom"]["bg_dark"]
             fg = "white"
 
         self.style = Style(theme=theme)
 
-        self.style.configure("TNotebook", bordercolor=False, background=bg)
-        self.style.configure("TNotebook.Tab", bordercolor="#1e1f22")
-        self.style.map("TNotebook.Tab", bordercolor="#ffffff")
-        # background=[("active", "#43454a"), ("disabled", "#2b2d30")],
-        # foreground=[("active", "white"), ("disabled", "white")])
+        # desativar/ativar muda a borda
+        # self.style.configure("TNotebook", bordercolor=False, background=bg)
+        self.style.configure("TNotebook.Tab", font=("Ubuntu Mono", 12), bordercolor="white",
+                             background=not_selected_tab_color)
+        self.style.map("TNotebook.Tab",
+                       background=[("selected", selected_tab_color), ("active", selected_tab_color)],
+                       foreground=[("selected", fg), ("active", fg)])
 
         self.style.configure("TFrame", background=bg)
         self.style.configure("TLabel", background=bg, foreground=fg)
@@ -119,7 +125,7 @@ class MainApp(tk.Tk):
     def __create_frames__(self):
         # A maintext agora está contida no TopBarFrame porque ele tem o Notebook que cria o Maintext
         # topbarframe deve estar ao lado do leftframe
-        self.configure(bg="red")
+        # self.configure(bg="red")
         self.top_frame = MainFrame(self)
         self.top_frame.grid(row=0, column=1, sticky="nsew")
 

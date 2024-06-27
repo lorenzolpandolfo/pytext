@@ -60,8 +60,8 @@ class LeftFrame(PytextFrame):
         self.textbox.xview(*args)
 
     def __grid_setup__(self):
-        # self.grid_rowconfigure(0, weight=1)
-        # self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
         return
 
     def create_textbox(self, row: int = 0, column: int = 0):

@@ -2,6 +2,9 @@
   "cursor_color": "#B247B2",
   "cursor_color_dark": "#4a4b4e",
 
+  "selected_tab": "#f3d2f3",
+  "selected_tab_dark": "#26282e",
+
   "frames":
   {
     "main":
