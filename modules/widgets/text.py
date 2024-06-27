@@ -226,7 +226,6 @@ class Maintext(Generaltext):
         self.update_line_counter()
 
     def create_line_counter(self, frame):
-        print("criando line counter em ", frame)
         dark = "_dark" if self.sys_theme == "dark" else ""
         lc_bg_color = self.theme["widgets"]["line_counter"][f"bg{dark}"]
         lc_font_color = self.theme["widgets"]["line_counter"][f"font{dark}"]

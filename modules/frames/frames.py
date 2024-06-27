@@ -191,9 +191,6 @@ class TextFrame(PytextFrame):
         self.configure(style="Debug.TFrame")
 
     def create_textbox(self, row: int = 1, column: int = 2):
-        print("Master do TextFrame é ", self.master)
-        print("criando o texto no frame: ", self)
-
         self.textbox = Maintext(self, font=self.font)
         self.textbox.grid(row=1, column=1, sticky="nsew")
         self.master.update()
@@ -225,8 +222,9 @@ class MainFrame(ttk.Frame):
         self.notebook.bind("<<NotebookTabChanged>>", lambda e: self.__on_tab_change__(e))
 
     def __on_tab_change__(self, e=None):
-        Application.switch_mode("view")
+        Application.set_mode("view")
         Application.selected_tab_frame = self.notebook.nametowidget(self.notebook.select())
+        # Application.selected_maintext = self.nametowidget(self.notebook.select().textbox)
 
     def __setup__(self):
         self.grid_rowconfigure(0, weight=1)
