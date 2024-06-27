@@ -245,6 +245,8 @@ class MainFrame(ttk.Frame):
         Application.selected_tab_frame = self.current_frame
 
         self.notebook.add(self.current_frame, text=tab_title, sticky="nsew")
+        Application.mainapp.update()
+        Application.mainapp.update_idletasks()
         self.current_frame.create_textbox()
         self.current_frame.textbox.create_line_counter(self.current_frame)
         self.all_frames.append(self.current_frame)
