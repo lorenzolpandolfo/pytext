@@ -16,7 +16,7 @@ from modules.CommandManager import CommandManager
 from modules.ScriptRunner import ScriptRunner
 from modules.FileLoader import FileLoader
 
-from modules.frames.frames import MainFrame, LeftFrame, BottomFrame, TopBarFrame
+from modules.frames.frames import TextFrame, LeftFrame, BottomFrame, MainFrame
 
 
 class MainApp(tk.Tk):
@@ -107,19 +107,24 @@ class MainApp(tk.Tk):
         self.iconphoto(False, icon)
 
     def __configure_grids__(self):
-        self.grid_rowconfigure(0, weight=0)
-        self.grid_rowconfigure(1, weight=0)
-        self.grid_rowconfigure(2, weight=0)
-        self.grid_rowconfigure(3, weight=0)
-        self.grid_columnconfigure(2, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        # self.grid_rowconfigure(1, weight=1)
+        # self.grid_rowconfigure(2, weight=1)
+        # self.grid_rowconfigure(3, weight=0)
+        self.grid_columnconfigure(1, weight=1)
+        # self.grid_columnconfigure(2, weight=1)
+        # self.grid_columnconfigure(3, weight=1)
+        return
 
     def __create_frames__(self):
+        # A maintext agora está contida no TopBarFrame porque ele tem o Notebook que cria o Maintext
+        # topbarframe deve estar ao lado do leftframe
         self.configure(bg="red")
-        self.top_frame = TopBarFrame(self)
-        self.top_frame.grid(row=0, column=0, sticky="we", columnspan=3)
+        self.top_frame = MainFrame(self)
+        self.top_frame.grid(row=0, column=1, sticky="nsew")
 
         self.bottom_frame = BottomFrame(self)
-        # self.bottom_frame.grid(row=2, column=0, sticky="we", columnspan=3, rowspan=3)
+        self.bottom_frame.grid(row=2, column=0, sticky="we", columnspan=3)
 
         # self.main_frame = MainFrame(self, self.font)
         # self.main_frame.grid(row=1, column=2, sticky="nsew")

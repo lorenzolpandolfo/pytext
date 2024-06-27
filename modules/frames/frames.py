@@ -1,9 +1,10 @@
 import tkinter
 from tkinter import font, ttk
-from ttkbootstrap import Scrollbar, Label, Notebook
+from ttkbootstrap import Scrollbar, Label, Notebook, Style
 import os
 from modules.widgets.text import Lefttext, Maintext
 from modules.Application import Application
+
 
 DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
 
@@ -59,8 +60,9 @@ class LeftFrame(PytextFrame):
         self.textbox.xview(*args)
 
     def __grid_setup__(self):
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
+        # self.grid_rowconfigure(0, weight=1)
+        # self.grid_columnconfigure(0, weight=1)
+        return
 
     def create_textbox(self, row: int = 0, column: int = 0):
         self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none')
@@ -68,7 +70,7 @@ class LeftFrame(PytextFrame):
         self.textbox.config(xscrollcommand=self.scrollbar_x.set)
 
     def show_textbox(self):
-        self.grid(row=1, column=0, sticky="nsew")
+        self.grid(row=0, column=0, sticky="nsew")
         self.textbox.grid(row=0, column=0, sticky="nsew")
         file_abs_path = os.path.dirname(os.path.join(self.terminal_dir, self.file_name))
         isdir = os.path.isdir(file_abs_path)
@@ -167,11 +169,12 @@ class BottomFrame(PytextFrame):
         self.command.configure(text='')
 
 
-class MainFrame(PytextFrame):
+class TextFrame(PytextFrame):
     """It is the main frame that contains the Maintext instance."""
 
     def __init__(self, master, obj_font: font):
         super().__init__(master)
+        self.master = master
         self.tabs = None
         self.textbox = None
         self.font = obj_font
@@ -183,9 +186,16 @@ class MainFrame(PytextFrame):
         self.__grid_setup__()
         self.__load_theme__()
 
+        style = Style()
+        style.configure("Debug.TFrame", background="green")
+        self.configure(style="Debug.TFrame")
+
     def create_textbox(self, row: int = 1, column: int = 2):
+        print("Master do TextFrame é ", self.master)
+        print("criando o texto no frame: ", self)
+
         self.textbox = Maintext(self, font=self.font)
-        self.textbox.grid(row=0, column=1, sticky="nsew")
+        self.textbox.grid(row=1, column=1, sticky="nsew")
         self.master.update()
         self.textbox.focus_set()
 
@@ -195,30 +205,34 @@ class MainFrame(PytextFrame):
         self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
 
     def __grid_setup__(self):
-        self.grid_rowconfigure(0, weight=0)
+        # self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
-        self.grid_columnconfigure(2, weight=1)
+        self.grid_columnconfigure(1, weight=1)
         return
 
 
-class TopBarFrame(ttk.Frame):
-    def __init__(self, master):
-        super().__init__(master)
+class MainFrame(ttk.Frame):
+    def __init__(self, master, *a, **kw):
+        super().__init__(master, *a, **kw)
         self.master = master
         self.current_frame = None
         self.all_frames = []
         self.__setup__()
+        self.style = Style()
+        self.style.configure("Red.TFrame", background="blue")
+        self.configure(style="Red.TFrame")
 
         self.notebook.bind("<<NotebookTabChanged>>", lambda e: self.__on_tab_change__(e))
-        # self.add_frame()
 
     def __on_tab_change__(self, e=None):
         Application.switch_mode("view")
         Application.selected_tab_frame = self.notebook.nametowidget(self.notebook.select())
 
     def __setup__(self):
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
         self.notebook = Notebook(self)
-        self.notebook.grid(row=0, column=0, sticky="ew")
+        self.notebook.grid(row=0, column=0, sticky="nsew")
 
     def add_frame(self, tab_title: str, content: str):
         """
@@ -227,13 +241,12 @@ class TopBarFrame(ttk.Frame):
         Inserts text into the textbox.
         """
 
-        self.current_frame = MainFrame(self.notebook, self.master.font)
-        # self.current_frame.grid(row=0, column=0)
+        self.current_frame = TextFrame(self.notebook, self.master.font)
         Application.selected_tab_frame = self.current_frame
 
+        self.notebook.add(self.current_frame, text=tab_title, sticky="nsew")
         self.current_frame.create_textbox()
         self.current_frame.textbox.create_line_counter(self.current_frame)
-        self.notebook.add(self.current_frame, text=tab_title)
         self.all_frames.append(self.current_frame)
 
         self.current_frame.textbox.write_file_content(content)

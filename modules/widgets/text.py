@@ -225,15 +225,16 @@ class Maintext(Generaltext):
         self.highlight_selected_line()
         self.update_line_counter()
 
-    def create_line_counter(self, master):
+    def create_line_counter(self, frame):
+        print("criando line counter em ", frame)
         dark = "_dark" if self.sys_theme == "dark" else ""
         lc_bg_color = self.theme["widgets"]["line_counter"][f"bg{dark}"]
         lc_font_color = self.theme["widgets"]["line_counter"][f"font{dark}"]
         tilde_char = Application.mainapp.user_config["nonexistent_char"]
         self._line_counter = TkLineNumbers(
-            master, self, justify="right", colors=(lc_font_color, lc_bg_color), tilde=tilde_char, bd=0
+            frame, self, justify="right", colors=(lc_font_color, lc_bg_color), tilde=tilde_char, bd=0
         )
-        self._line_counter.grid(row=0, column=0, sticky="ns", pady=(0, 0))
+        self._line_counter.grid(row=1, column=0, sticky="ns", pady=(0, 0))
         self.__enable_auto_redraw__()
 
     def __enable_auto_redraw__(self):
