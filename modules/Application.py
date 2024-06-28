@@ -30,3 +30,12 @@ class Application:
         cls.mainapp.file_name = path
         cls.current_file_path = path
         cls.mainapp.bottom_frame.output.configure(text=path)
+
+    @classmethod
+    def remove_frame(cls, file_path: str):
+        for frame_id, data in Application.all_open_files.items():
+            if str(data["file_path"]) == str(file_path):
+                print(frame_id, " deletado ", data["file_path"])
+                cls.mainapp.top_frame.notebook.forget(data["frame"])
+                del Application.all_open_files[frame_id]
+                return

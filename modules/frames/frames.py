@@ -210,6 +210,8 @@ class TextFrame(PytextFrame):
 
 
 class MainFrame(ttk.Frame):
+    notebook = None
+
     def __init__(self, master, *a, **kw):
         super().__init__(master, *a, **kw)
         self.master = master
@@ -274,3 +276,5 @@ class MainFrame(ttk.Frame):
             if str(data["file_path"]) == str(file_path):
                 return frame_id, data
         return False
+
+

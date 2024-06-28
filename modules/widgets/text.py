@@ -171,6 +171,7 @@ class Maintext(Generaltext):
         self.bind("<Alt-Shift-Down>", lambda e: self.move_line(e, "down"))
         self.bind("<Control-z>", lambda e: self.undo())
         self.bind("<Control-y>", lambda e: self.redo())
+        self.bind("<Control-w>", lambda e: Application.remove_frame(Application.current_file_path))
 
     def undo(self):
         try:
