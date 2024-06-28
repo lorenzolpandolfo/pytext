@@ -232,6 +232,7 @@ class MainFrame(ttk.Frame):
         for tab_id, data in Application.all_open_files.items():
             if str(data["frame"]) == str(self.notebook.select()):
                 Application.set_current_file(data["file_path"])
+                self.notebook.select(data["frame"])
 
     def __setup__(self):
         self.grid_rowconfigure(0, weight=1)

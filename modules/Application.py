@@ -23,8 +23,11 @@ class Application:
         cls.mainapp.bottom_frame.mode.configure(text=cls.mode)
         state = "disabled" if cls.mode == "view" else "normal"
         widget = cls.mainapp.nametowidget(cls.selected_tab_frame)
-        widget.textbox.configure(state=state)
         cls.mainapp.bottom_frame.command.configure(text="")
+        # checar se isso é ok:
+        if not widget.textbox:
+            return
+        widget.textbox.configure(state=state)
 
     @classmethod
     def set_current_file(cls, path):
