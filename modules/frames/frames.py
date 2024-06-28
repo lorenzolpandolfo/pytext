@@ -1,3 +1,4 @@
+from typing import Tuple, Any
 from uuid import uuid4
 from tkinter import font, ttk
 from ttkbootstrap import Scrollbar, Label, Notebook, Style
@@ -243,6 +244,10 @@ class MainFrame(ttk.Frame):
         In the MainFrame, creates the textbox and the line counter.
         Inserts text into the textbox.
         """
+        existent_frame_id = MainFrame.frame_exist(file_path)
+        if existent_frame_id:
+            self.notebook.select(self.notebook.index(existent_frame_id[1]['frame']))
+            return
 
         self.current_frame = TextFrame(self.notebook, self.master.font)
         Application.selected_tab_frame = self.current_frame
@@ -260,5 +265,12 @@ class MainFrame(ttk.Frame):
             "frame": self.current_frame,
             "file_path": file_path
         }
-
         self.current_frame.textbox.write_file_content(content)
+        self.notebook.select(self.current_frame)
+
+    @staticmethod
+    def frame_exist(file_path: str) -> tuple[Any, Any] | bool:
+        for frame_id, data in Application.all_open_files.items():
+            if str(data["file_path"]) == str(file_path):
+                return frame_id, data
+        return False
