@@ -6,7 +6,8 @@ from modules.FileManager     import FileManager
 from modules.tklinenums      import TkLineNumbers
 from modules.Application     import Application
 from modules.TextUtils       import TextUtils
-from modules.LanguageManager import LanguageManager
+
+from modules.FileLoader import FileLoader
 
 
 class Generaltext(Text):
@@ -22,8 +23,8 @@ class Generaltext(Text):
         self.selected_line_color    = ''
         self.path                   = ''
 
-        self.sys_theme = master.sys_theme
-        self.theme = master.theme
+        self.sys_theme = Application.mainapp.sys_theme
+        self.theme = Application.mainapp.theme
         self.tab_width = Application.mainapp.user_config["tab_width"]
         self.setup_text_widget()
 
@@ -109,17 +110,6 @@ class Generaltext(Text):
         
         self.configure(state="disabled")
 
-    def open_file(self, full_path: str):
-        """ Open a file through a directory and title. Then, write it. """
-        content = FileManager.open_file(full_path)
-        self.write_file_content(content)
-
-        _, file_ext = os.path.splitext(full_path)
-        LanguageManager.load_language(file_ext)
-        Application.set_current_file(full_path)
-        self.edit_reset()
-        return content
-
     def open_directory(self, dir_path: str, auto_write: bool = True):
         content = FileManager.open_directory(dir_path)
         if content:
@@ -147,8 +137,8 @@ class Maintext(Generaltext):
         super().__init__(master, undo=True, autoseparators=False, *args, **kwargs)
         self._line_counter = None
 
-        self.sys_theme = master.sys_theme
-        self.theme = master.theme
+        self.sys_theme = Application.mainapp.sys_theme
+        self.theme = Application.mainapp.theme
         self.__load_theme__()
         super().enable_binds()
         self._enable_binds_()
@@ -173,6 +163,7 @@ class Maintext(Generaltext):
         self.bind("<Alt-Down>", lambda e: self.move_line(e, "down"))
         self.bind("<Control-z>", lambda e: self.undo())
         self.bind("<Control-y>", lambda e: self.redo())
+        self.bind("<Control-w>", lambda e: Application.remove_frame())
 
     def undo(self):
         try:
@@ -252,15 +243,15 @@ class Maintext(Generaltext):
         self.highlight_selected_line()
         self.update_line_counter()
 
-    def create_line_counter(self, master):
+    def create_line_counter(self, frame):
         dark = "_dark" if self.sys_theme == "dark" else ""
         lc_bg_color = self.theme["widgets"]["line_counter"][f"bg{dark}"]
         lc_font_color = self.theme["widgets"]["line_counter"][f"font{dark}"]
         tilde_char = Application.mainapp.user_config["nonexistent_char"]
         self._line_counter = TkLineNumbers(
-            master, self, justify="right", colors=(lc_font_color, lc_bg_color), tilde=tilde_char, bd=0
+            frame, self, justify="right", colors=(lc_font_color, lc_bg_color), tilde=tilde_char, bd=0
         )
-        self._line_counter.grid(row=0, column=0, sticky="nsew", pady=(0, 0))
+        self._line_counter.grid(row=1, column=0, sticky="ns", pady=(0, 0))
         self.__enable_auto_redraw__()
 
     def __enable_auto_redraw__(self):

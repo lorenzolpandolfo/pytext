@@ -37,20 +37,20 @@ class CommandManager:
 
         match alphabetical:
             case "i":
-                Application.switch_mode()
+                Application.switch_mode("insert")
 
             case "W":
-                return cls.move_cursor("up", Application.mainapp.main_frame.textbox, numeric)
+                return cls.move_cursor("up", Application.selected_tab_frame.textbox, numeric)
             case "S":
-                return cls.move_cursor("down", Application.mainapp.main_frame.textbox, numeric)
+                return cls.move_cursor("down", Application.selected_tab_frame.textbox, numeric)
             case "D":
-                return cls.move_cursor("right", Application.mainapp.main_frame.textbox, numeric)
+                return cls.move_cursor("right", Application.selected_tab_frame.textbox, numeric)
             case "A":
-                return cls.move_cursor("left", Application.mainapp.main_frame.textbox, numeric)
+                return cls.move_cursor("left", Application.selected_tab_frame.textbox, numeric)
             case "F":
-                return cls.move_cursor("up", Application.mainapp.main_frame.textbox, "0")
+                return cls.move_cursor("up", Application.selected_tab_frame.textbox, "0")
             case "V":
-                return cls.move_cursor("down", Application.mainapp.main_frame.textbox, "end")
+                return cls.move_cursor("down", Application.selected_tab_frame.textbox, "end")
             case "dd":
                 return cls.delete_line_content(del_range=numeric)
             case "sq" | "wq":
@@ -67,7 +67,7 @@ class CommandManager:
 
     @classmethod
     def delete_line_content(cls, del_range: int):
-        t = Application.mainapp.main_frame.textbox
+        t = Application.selected_tab_frame.textbox
         current_line = t.index("insert").split('.')[0]
 
         t.configure(state="normal")
@@ -107,7 +107,7 @@ class CommandManager:
         if not cur_file_path:
             cur_file_path = os.path.join(Application.mainapp.terminal_dir, "untitled.txt")
 
-        content = Application.mainapp.main_frame.textbox.get("1.0", "end-1c")
+        content = Application.selected_tab_frame.textbox.get("1.0", "end-1c")
         with open(cur_file_path, "w", encoding="utf8") as f:
             f.write(content)
         return True
