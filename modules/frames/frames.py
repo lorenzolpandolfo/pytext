@@ -224,7 +224,7 @@ class MainFrame(ttk.Frame):
         self.notebook.bind("<<NotebookTabChanged>>", lambda e: self.__on_tab_change__(e))
 
     def __on_tab_change__(self, e=None):
-        Application.set_mode("view")
+        Application.switch_mode("view")
         Application.mainapp.update()
         Application.mainapp.update_idletasks()
         Application.selected_tab_frame = self.notebook.nametowidget(self.notebook.select())
