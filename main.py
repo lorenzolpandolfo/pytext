@@ -140,7 +140,7 @@ class MainApp(tk.Tk):
 
     def __create_widgets__(self):
         self.left_frame.create_textbox()
-        self.bottom_frame.create_widgets(output=(self.file_name if self.file_name else "Welcome to Pytext refactored"))
+        self.bottom_frame.create_widgets(output=("Loading..." if self.file_name else "Welcome to Pytext!"))
 
     def __load_argv_file__(self):
         full_path = os.path.join(self.terminal_dir, self.file_name)

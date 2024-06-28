@@ -1,4 +1,4 @@
-import tkinter
+from uuid import uuid4
 from tkinter import font, ttk
 from ttkbootstrap import Scrollbar, Label, Notebook, Style
 import os
@@ -53,7 +53,7 @@ class LeftFrame(PytextFrame):
         self.__scrollbar_setup__()
 
     def __scrollbar_setup__(self):
-        self.scrollbar_x = Scrollbar(self, orient="horizontal", command=self.__scroll_x__)#, bootstyle="round")
+        self.scrollbar_x = Scrollbar(self, orient="horizontal", command=self.__scroll_x__)
         self.scrollbar_x.grid(row=1, column=0, sticky="we")
 
     def __scroll_x__(self, *args):
@@ -186,9 +186,9 @@ class TextFrame(PytextFrame):
         self.__grid_setup__()
         self.__load_theme__()
 
-        style = Style()
-        style.configure("Debug.TFrame", background="green")
-        self.configure(style="Debug.TFrame")
+        # style = Style()
+        # style.configure("Debug.TFrame", background="green")
+        # self.configure(style="Debug.TFrame")
 
     def create_textbox(self, row: int = 1, column: int = 2):
         self.textbox = Maintext(self, font=self.font)
@@ -215,16 +215,21 @@ class MainFrame(ttk.Frame):
         self.current_frame = None
         self.all_frames = []
         self.__setup__()
-        self.style = Style()
-        self.style.configure("Red.TFrame", background="blue")
-        self.configure(style="Red.TFrame")
+        # self.style = Style()
+        # self.style.configure("Red.TFrame", background="blue")
+        # self.configure(style="Red.TFrame")
 
         self.notebook.bind("<<NotebookTabChanged>>", lambda e: self.__on_tab_change__(e))
 
     def __on_tab_change__(self, e=None):
         Application.set_mode("view")
+        Application.mainapp.update()
+        Application.mainapp.update_idletasks()
         Application.selected_tab_frame = self.notebook.nametowidget(self.notebook.select())
-        # Application.selected_maintext = self.nametowidget(self.notebook.select().textbox)
+
+        for tab_id, data in Application.all_open_files.items():
+            if str(data["frame"]) == str(self.notebook.select()):
+                Application.set_current_file(data["file_path"])
 
     def __setup__(self):
         self.grid_rowconfigure(0, weight=1)
@@ -232,7 +237,7 @@ class MainFrame(ttk.Frame):
         self.notebook = Notebook(self)
         self.notebook.grid(row=0, column=0, sticky="nsew")
 
-    def add_frame(self, tab_title: str, content: str):
+    def add_frame(self, tab_title: str, content: str, file_path: str):
         """
         Creates a new MainFrame to the Notebook bar.
         In the MainFrame, creates the textbox and the line counter.
@@ -245,8 +250,15 @@ class MainFrame(ttk.Frame):
         self.notebook.add(self.current_frame, text=tab_title, sticky="nsew")
         Application.mainapp.update()
         Application.mainapp.update_idletasks()
+
         self.current_frame.create_textbox()
         self.current_frame.textbox.create_line_counter(self.current_frame)
-        self.all_frames.append(self.current_frame)
+
+        tab_id = str(uuid4())
+        Application.all_open_files[tab_id] = {
+            "title": tab_title,
+            "frame": self.current_frame,
+            "file_path": file_path
+        }
 
         self.current_frame.textbox.write_file_content(content)

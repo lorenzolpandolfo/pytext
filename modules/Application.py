@@ -1,16 +1,16 @@
-import os.path
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
 class Application:
-    mainapp : None
-    selected_tab_frame : None
-    selected_maintext : None
-    mode    : str = "view"
+    mainapp: None
+    selected_tab_frame: None
+    current_file_path: str = ""
+    mode: str = "view"
+    all_open_files = {}
 
     @classmethod
-    def set_mode(cls, arg:str):
+    def set_mode(cls, arg: str):
         cls.mode = arg
     
     @classmethod
@@ -19,15 +19,14 @@ class Application:
     
     @classmethod
     def switch_mode(cls, forced_set: str = ''):
-        print("switch: ", forced_set)
         cls.mode = forced_set if forced_set else "view" if cls.mode == "insert" else "insert"
         cls.mainapp.bottom_frame.mode.configure(text=cls.mode)
         state = "disabled" if cls.mode == "view" else "normal"
-        print(cls.selected_tab_frame.textbox)
         cls.selected_tab_frame.textbox.configure(state=state)
         cls.mainapp.bottom_frame.command.configure(text="")
 
     @classmethod
     def set_current_file(cls, path):
         cls.mainapp.file_name = path
+        cls.current_file_path = path
         cls.mainapp.bottom_frame.output.configure(text=path)

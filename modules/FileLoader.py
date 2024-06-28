@@ -14,13 +14,14 @@ class FileLoader:
             try:
                 with open(file_path, "r", encoding="utf8") as file:
                     content = file.read()
+                    Application.current_file_path = file_path
                     title = os.path.basename(file_path)
-                    Application.mainapp.top_frame.add_frame(title, content)
+                    Application.mainapp.top_frame.add_frame(title, content, file_path)
 
-                    # _, file_ext = os.path.splitext(file_path)
-                    # LanguageManager.load_language(file_ext)
-                    # Application.set_current_file(file_path)
-                    # t.edit_reset()
+                    _, file_ext = os.path.splitext(file_path)
+                    LanguageManager.load_language(file_ext)
+                    Application.set_current_file(file_path)
+
             except UnicodeDecodeError:
                 print(f"[X] Unicode decode error with file {file_path}")
                 return False
