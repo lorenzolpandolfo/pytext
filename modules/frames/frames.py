@@ -5,6 +5,7 @@ from ttkbootstrap import Scrollbar, Label, Notebook, Style
 import os
 from modules.widgets.text import Lefttext, Maintext
 from modules.Application import Application
+from modules.FileLoader import FileLoader
 
 
 DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
@@ -108,9 +109,7 @@ class LeftFrame(PytextFrame):
             return
         else:
             # contar quantos diretorios tem antes e ir salvando a posicao do cursor pra retomar
-            if Application.selected_tab_frame.textbox.open_file(content):
-                Application.selected_tab_frame.textbox.focus_set()
-
+            FileLoader.open_file(content)
 
 # class LineCounterFrame(PytextFrame):
 #     def __init__(self, master):

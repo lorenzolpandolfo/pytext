@@ -110,16 +110,6 @@ class Generaltext(Text):
         
         self.configure(state="disabled")
 
-    def open_file(self, full_path: str):
-        """ Open a file through a directory and title. Then, write it. """
-        FileLoader.open_file(full_path)
-        # self.write_file_content(content)
-        # _, file_ext = os.path.splitext(full_path)
-        # LanguageManager.load_language(file_ext)
-        # Application.set_current_file(full_path)
-        # Application.mainapp.all_files_data.append()
-        # self.edit_reset()
-
     def open_directory(self, dir_path: str, auto_write: bool = True):
         content = FileManager.open_directory(dir_path)
         if content:
@@ -171,7 +161,7 @@ class Maintext(Generaltext):
         self.bind("<Alt-Shift-Down>", lambda e: self.move_line(e, "down"))
         self.bind("<Control-z>", lambda e: self.undo())
         self.bind("<Control-y>", lambda e: self.redo())
-        self.bind("<Control-w>", lambda e: Application.remove_frame(Application.current_file_path))
+        self.bind("<Control-w>", lambda e: Application.remove_frame())
 
     def undo(self):
         try:
