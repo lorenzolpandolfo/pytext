@@ -46,6 +46,7 @@ class Application:
 
                 if cls.has_any_tab_open():
                     cls.selected_tab_frame = False
+                cls.mainapp.top_frame.notebook.event_generate("<<TabClosed>>")
                 return
 
     @classmethod

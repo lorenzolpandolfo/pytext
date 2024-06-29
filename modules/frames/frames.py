@@ -223,7 +223,8 @@ class MainFrame(ttk.Frame):
         # self.configure(style="Red.TFrame")
 
         self.notebook.bind("<<NotebookTabChanged>>", lambda e: self.__on_tab_change__(e))
-        # self.bind("<Control-Tab>", lambda e: print(e))
+        self.notebook.bind("<<TabClosed>>", lambda e: print("tab closed"))
+        self.notebook.bind("<<TabOpened>>", lambda e: print("tab opened!"))
 
     def __on_tab_change__(self, e=None):
         if not Application.has_any_tab_open():
@@ -237,14 +238,11 @@ class MainFrame(ttk.Frame):
             if str(data["frame"]) == str(self.notebook.select()):
                 Application.set_current_file(data["file_path"])
                 self.notebook.select(data["frame"])
+                print(data["title"])
+
         Application.switch_mode("view")
         Application.selected_tab_frame.textbox.focus_set()
-
-    def __setup__(self):
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-        self.notebook = Notebook(self)
-        self.notebook.grid(row=0, column=0, sticky="nsew")
+        self.notebook.event_generate("<<TabOpened>>")
 
     def add_frame(self, tab_title: str, content: str, file_path: str):
         """
@@ -255,7 +253,6 @@ class MainFrame(ttk.Frame):
         existent_frame_id = MainFrame.frame_exist(file_path)
         if existent_frame_id:
             self.notebook.select(self.notebook.index(existent_frame_id[1]["frame"]))
-
             return
 
         self.current_frame = TextFrame(self.notebook, self.master.font)
@@ -276,6 +273,12 @@ class MainFrame(ttk.Frame):
         self.current_frame.textbox.write_file_content(content)
         self.notebook.select(self.current_frame)
         Application.selected_tab_frame = self.current_frame
+
+    def __setup__(self):
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+        self.notebook = Notebook(self)
+        self.notebook.grid(row=0, column=0, sticky="nsew")
 
     @staticmethod
     def frame_exist(file_path: str) -> tuple[Any, Any] | bool:
