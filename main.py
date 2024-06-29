@@ -138,7 +138,7 @@ class MainApp(tk.Tk):
 
     def __create_widgets__(self):
         self.left_frame.create_textbox()
-        self.bottom_frame.create_widgets(output=("Loading..." if self.file_name else "Welcome to Pytext!"))
+        self.bottom_frame.create_widgets()
 
     def __load_argv_file__(self):
         full_path = os.path.join(self.terminal_dir, self.file_name)
@@ -156,6 +156,7 @@ class MainApp(tk.Tk):
         self.bind("<Key>", self.key_manager)
         self.bind("<Return>", TextUtils.return_manager)
         self.bind("<Control-F5>", ScriptRunner.run_script)
+        self.bind("<Control-w>", lambda e: Application.remove_frame())
 
     def key_manager(self, event=None):
         if CommandManager.command_dealing(event):

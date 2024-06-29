@@ -84,7 +84,8 @@ class LeftFrame(PytextFrame):
         if self.winfo_ismapped():
             if "leftframe" in str(self.focus_get()):
                 self.grid_forget()
-                Application.selected_tab_frame.textbox.focus_set()
+                if Application.has_any_tab_open():
+                    Application.selected_tab_frame.textbox.focus_set()
             else:
                 self.textbox.focus_set()
         else:
@@ -142,7 +143,7 @@ class BottomFrame(PytextFrame):
         super().load_bottom_widget_theme()
         # self.configure(bg=self.bg_color)
 
-    def create_widgets(self, output: str):
+    def create_widgets(self):
         self.mode = Label(
             self, text=self.mode, justify="center",
             # bg=self.bg_color, foreground=self.mode_color,
@@ -158,7 +159,7 @@ class BottomFrame(PytextFrame):
         self.command.grid(row=2, column=1, sticky="e")
 
         self.output = Label(
-            self, text=output.replace("\\", "/"), justify="left",
+            self, justify="left",
             # bg=self.bg_color, foreground=self.output_color,
             font=self.master.gui_font
         )
@@ -224,7 +225,8 @@ class MainFrame(ttk.Frame):
         self.notebook.bind("<<NotebookTabChanged>>", lambda e: self.__on_tab_change__(e))
 
     def __on_tab_change__(self, e=None):
-        Application.switch_mode("view")
+        if len(Application.all_open_files) == 0:
+            return
         Application.mainapp.update()
         Application.mainapp.update_idletasks()
         Application.selected_tab_frame = self.notebook.nametowidget(self.notebook.select())
@@ -233,6 +235,8 @@ class MainFrame(ttk.Frame):
             if str(data["frame"]) == str(self.notebook.select()):
                 Application.set_current_file(data["file_path"])
                 self.notebook.select(data["frame"])
+        Application.switch_mode("view")
+        Application.selected_tab_frame.textbox.focus_set()
 
     def __setup__(self):
         self.grid_rowconfigure(0, weight=1)
@@ -248,11 +252,11 @@ class MainFrame(ttk.Frame):
         """
         existent_frame_id = MainFrame.frame_exist(file_path)
         if existent_frame_id:
-            self.notebook.select(self.notebook.index(existent_frame_id[1]['frame']))
+            self.notebook.select(self.notebook.index(existent_frame_id[1]["frame"]))
+
             return
 
         self.current_frame = TextFrame(self.notebook, self.master.font)
-        Application.selected_tab_frame = self.current_frame
 
         self.notebook.add(self.current_frame, text=tab_title, sticky="nsew")
         Application.mainapp.update()
@@ -269,6 +273,7 @@ class MainFrame(ttk.Frame):
         }
         self.current_frame.textbox.write_file_content(content)
         self.notebook.select(self.current_frame)
+        Application.selected_tab_frame = self.current_frame
 
     @staticmethod
     def frame_exist(file_path: str) -> tuple[Any, Any] | bool:

@@ -79,6 +79,7 @@ class Generaltext(Text):
 
         if Application.get_mode() == "insert":
             Application.switch_mode()
+
         else:
             self.configure(state="disabled")
 
@@ -124,7 +125,7 @@ class Generaltext(Text):
 
     def focus_set(self):
         super().focus_set()
-        self.highlight_selected_line()
+        self.after_idle(self.highlight_selected_line)
 
     def get_current_line_content(self):
         line_start = int(self.index("insert").split(".")[0])
@@ -163,7 +164,6 @@ class Maintext(Generaltext):
         self.bind("<Alt-Down>", lambda e: self.move_line(e, "down"))
         self.bind("<Control-z>", lambda e: self.undo())
         self.bind("<Control-y>", lambda e: self.redo())
-        self.bind("<Control-w>", lambda e: Application.remove_frame())
 
     def undo(self):
         try:
