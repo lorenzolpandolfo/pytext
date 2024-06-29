@@ -143,7 +143,7 @@ class BottomFrame(PytextFrame):
         super().load_bottom_widget_theme()
         # self.configure(bg=self.bg_color)
 
-    def create_widgets(self):
+    def create_widgets(self, file_title: str):
         self.mode = Label(
             self, text=self.mode, justify="center",
             # bg=self.bg_color, foreground=self.mode_color,
@@ -161,6 +161,7 @@ class BottomFrame(PytextFrame):
         self.output = Label(
             self, justify="left",
             # bg=self.bg_color, foreground=self.output_color,
+            text=file_title,
             font=self.master.gui_font
         )
         self.output.grid(row=2, column=0)
@@ -263,7 +264,6 @@ class MainFrame(ttk.Frame):
 
         self.current_frame.create_textbox()
         self.current_frame.textbox.create_line_counter(self.current_frame)
-
         tab_id = str(uuid4())
         Application.all_open_files[tab_id] = {
             "title": tab_title,

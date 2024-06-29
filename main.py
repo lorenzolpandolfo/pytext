@@ -138,7 +138,7 @@ class MainApp(tk.Tk):
 
     def __create_widgets__(self):
         self.left_frame.create_textbox()
-        self.bottom_frame.create_widgets()
+        self.bottom_frame.create_widgets(f'"{self.file_name}" (new)' if self.file_name else "Welcome to Pytext Editor!")
 
     def __load_argv_file__(self):
         full_path = os.path.join(self.terminal_dir, self.file_name)

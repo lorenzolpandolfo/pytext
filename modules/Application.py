@@ -1,3 +1,4 @@
+import os.path
 from dataclasses import dataclass
 from typing import Any
 
@@ -31,9 +32,13 @@ class Application:
 
     @classmethod
     def set_current_file(cls, path):
+        visual_path = path
         cls.mainapp.file_name = path
         cls.current_file_path = path
-        cls.mainapp.bottom_frame.output.configure(text=path)
+
+        if not os.path.isfile(path):
+            visual_path = f"{path} (new)"
+        cls.mainapp.bottom_frame.output.configure(text=visual_path)
 
     @classmethod
     def remove_frame(cls, file_path: str = ""):

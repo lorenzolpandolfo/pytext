@@ -26,4 +26,9 @@ class FileLoader:
                 print(f"[X] Unicode decode error with file {file_path}")
                 return False
         else:
-            return False
+            title = os.path.basename(file_path)
+            Application.mainapp.top_frame.add_frame(title, '', file_path)
+            _, file_ext = os.path.splitext(file_path)
+            LanguageManager.load_language(file_ext)
+            Application.set_current_file(file_path)
+
