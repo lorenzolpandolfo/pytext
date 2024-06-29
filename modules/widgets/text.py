@@ -164,6 +164,7 @@ class Maintext(Generaltext):
         self.bind("<Alt-Down>", lambda e: self.move_line(e, "down"))
         self.bind("<Control-z>", lambda e: self.undo())
         self.bind("<Control-y>", lambda e: self.redo())
+        self.bind("<Control-Tab>", Application.change_to_next_tab)
 
     def undo(self):
         try:

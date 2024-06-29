@@ -223,9 +223,11 @@ class MainFrame(ttk.Frame):
         # self.configure(style="Red.TFrame")
 
         self.notebook.bind("<<NotebookTabChanged>>", lambda e: self.__on_tab_change__(e))
+        # self.bind("<Control-Tab>", lambda e: print(e))
 
     def __on_tab_change__(self, e=None):
-        if len(Application.all_open_files) == 0:
+        if not Application.has_any_tab_open():
+            Application.switch_mode("view", False)
             return
         Application.mainapp.update()
         Application.mainapp.update_idletasks()
