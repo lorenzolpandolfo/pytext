@@ -1,6 +1,7 @@
 import tkinter
 from tkinter import Text
 import os
+import platform
 
 from modules.FileManager     import FileManager
 from modules.tklinenums      import TkLineNumbers
@@ -149,9 +150,12 @@ class Maintext(Generaltext):
         self.configure(bg=self.bg_color, foreground=self.font_color, state="disabled")
 
     def _enable_binds_(self):
+        
+        shift_tab = "<Shift-Tab>" if platform.system() == "Windows" else "<ISO_Left_Tab>" 
         self.bind("<Key>", lambda e: self.after_idle(self.__key_dealing__))
         self.bind("<Tab>", lambda e: TextUtils.add_tab(self))
-        self.bind("<ISO_Left_Tab>", lambda e: TextUtils.untab(self))
+        self.bind(f"{shift_tab}", lambda e: TextUtils.untab(self))
+        self.bind("<Shift-Tab>", lambda e: TextUtils.untab(self))
         self.bind("<Control-d>", lambda e: TextUtils.comment_lines(self))
         self.bind("<Control-Return>", lambda e: TextUtils.add_newline_with_tab(self))
         self.bind("<Return>", lambda e: TextUtils.add_newline(self))
