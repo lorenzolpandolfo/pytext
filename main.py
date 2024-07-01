@@ -46,9 +46,10 @@ class MainApp(tk.Tk):
         self.__enable_binds__()
 
     def __load_ttk_colors__(self):
-        theme = ""
-
         forced_theme = self.user_config["forced_theme"]
+        
+        if not forced_theme:
+            forced_theme = str(darkdetect.theme()).lower()
 
         dark = "_dark" if forced_theme == "dark" else ""
         selected_tab_color      = self.theme[f"selected_tab{dark}"]
@@ -59,7 +60,7 @@ class MainApp(tk.Tk):
         if forced_theme == "light":
             theme = "flatly"
 
-        elif forced_theme == "dark":
+        else:
             theme = "darkly"
             fg = "white"
 
