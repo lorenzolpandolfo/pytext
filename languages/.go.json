@@ -1,0 +1,4 @@
+{
+    "comment": "//",
+    "run": "go run CURRENT_FILE"
+}
