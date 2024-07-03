@@ -5,17 +5,21 @@ from modules.Application import Application
 
 
 class Renamer:
+
+    @staticmethod
+    def _rename(file_path, t, window):
+        f_exp = Application.mainapp.left_frame.textbox
+
+        Renamer._rename_file(
+            file_path, t.get("1.0", "end-1c")
+        )
+        f_exp.open_directory(os.path.dirname(file_path))
+        window.destroy()
+        return "break"
+
     @staticmethod
     def create_rename_window():
         f_exp = Application.mainapp.left_frame.textbox
-
-        def rename():
-            Renamer._rename_file(
-                sel_file_path, textarea.get("1.0", "end-1c")
-            )
-            f_exp.open_directory(os.path.dirname(sel_file_path))
-            new_window.destroy()
-            return "break"
 
         new_window = tk.Toplevel(Application.mainapp)
         new_window.title("Rename file")
@@ -39,9 +43,9 @@ class Renamer:
         textarea = tk.Text(frame, height=1, width=10)
         textarea.insert("insert", sel_file_name)
 
-        button = tk.Button(frame, text="Confirm", command=lambda: rename())
+        button = tk.Button(frame, text="Confirm", command=lambda: Renamer._rename(sel_file_path, textarea, new_window))
 
-        textarea.bind("<Return>", lambda _: rename())
+        textarea.bind("<Return>", lambda _: Renamer._rename(sel_file_path, textarea, new_window))
         new_window.bind("<Escape>", lambda _: new_window.destroy())
 
         textarea.focus_set()
@@ -53,10 +57,17 @@ class Renamer:
 
     @staticmethod
     def _rename_file(file_to_rename_path: str, new_file_title: str):
-        _, ext = os.path.splitext(new_file_title)
-        if ext == '':
-            _, old_ext = os.path.splitext(file_to_rename_path)
-            new_file_title += old_ext
+        if not file_to_rename_path or not new_file_title:
+            return False
+
+        if not os.path.isfile(file_to_rename_path):
+            return False
+
+        # check if new file name has extension. Else, add the older extension
+        _, new_file_ext = os.path.splitext(new_file_title)
+        if new_file_ext == '':
+            _, old_file_ext = os.path.splitext(file_to_rename_path)
+            new_file_title += old_file_ext
 
         new_file_path = os.path.join(os.path.dirname(file_to_rename_path), new_file_title)
         os.rename(file_to_rename_path, new_file_path)
