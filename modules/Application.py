@@ -2,6 +2,7 @@ import os.path
 from dataclasses import dataclass
 from typing import Any
 
+import tkinter as tk
 from ttkbootstrap import Notebook
 
 
@@ -41,7 +42,7 @@ class Application:
         cls.mainapp.bottom_frame.output.configure(text=visual_path)
 
     @classmethod
-    def remove_frame(cls, file_path: str = ""):
+    def delete_tab(cls, file_path: str = ""):
         if not file_path:
             file_path = cls.current_file_path
         for frame_id, data in cls.all_open_files.items():
@@ -82,3 +83,4 @@ class Application:
             if str(data["frame"]) == str(frame) or str(data["file_path"]) == path:
                 return tab_id
         return False
+

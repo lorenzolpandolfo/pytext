@@ -8,7 +8,7 @@ from modules.tklinenums      import TkLineNumbers
 from modules.Application     import Application
 from modules.TextUtils       import TextUtils
 
-from modules.FileLoader import FileLoader
+from modules.Renamer import Renamer
 
 
 class Generaltext(Text):
@@ -280,6 +280,7 @@ class Lefttext(Generaltext):
         self.configure(bg=self.bg_color, state="disabled", border=False)
 
         self.bind("<B1-Motion>", 'break')
+        self.bind("<F2>", lambda _: Renamer.create_rename_window())
 
     def updir(self):
         self.path = os.path.dirname(self.path)

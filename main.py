@@ -31,7 +31,6 @@ class MainApp(tk.Tk):
         self.style = None
 
         Application.mainapp = self
-        CommandManager.mainapp = self
         Application.set_mode("view")
 
         self.__load_user_config__()
@@ -157,7 +156,8 @@ class MainApp(tk.Tk):
         self.bind("<Key>", self.key_manager)
         self.bind("<Return>", TextUtils.return_manager)
         self.bind("<Control-F5>", ScriptRunner.run_script)
-        self.bind("<Control-w>", lambda e: Application.remove_frame())
+        self.bind("<Control-w>", lambda e: Application.delete_tab())
+        self.bind("<Control-t>", lambda e: self.top_frame.add_frame("untitled", "", self.terminal_dir))
 
     def key_manager(self, event=None):
         if CommandManager.command_dealing(event):

@@ -251,6 +251,9 @@ class MainFrame(ttk.Frame):
         In the MainFrame, creates the textbox and the line counter.
         Inserts text into the textbox.
         """
+        if os.path.basename(file_path) != tab_title:
+            file_path = os.path.join(file_path, tab_title)
+
         existent_frame_id = MainFrame.frame_exist(file_path)
         if existent_frame_id:
             self.notebook.select(self.notebook.index(existent_frame_id[1]["frame"]))
