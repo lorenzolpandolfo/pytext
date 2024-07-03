@@ -4,14 +4,12 @@ from modules.Application import Application
 from modules.LanguageManager import LanguageManager
 from modules.FileManager import FileManager as fm
 
-DELIMITERS = ['{', ':']
-
-# adicionar a possiblidade de selecionar uma área e remover/adicionar tabs
+DELIMITERS = [':', '{', '}', '(', ')']
 
 
 class TextUtils:
     @staticmethod
-    def return_manager(e):
+    def return_manager(e=None):
         """Runs every Return in all project"""
         if Application.mainapp.left_frame.open_file_or_directory():
             return
@@ -36,15 +34,42 @@ class TextUtils:
         i_line   = i.split('.')[0]
         i_below = f"{int(i_line) + 1}.0"
 
+        i_last_line = t.index('end').split('.')[0]
+
+        # if user is using Return in the last line
+        if int(i_last_line) == int(i_line) + 1:
+            t.insert(f"{i_line}.end", "\n")
+
         tab_count = TextUtils.get_tab_count(t)
         t.insert(i_below, f"{t.get('insert', 'insert lineend')}\n")
         t.delete('insert', "insert lineend")
         t.mark_set('insert', i_below)
 
+        if not TextUtils.is_cursor_visible(t):
+            t.yview_scroll(1, "units")
+
         TextUtils.__add_context_tab__(t, tab_count)
         t.highlight_selected_line()
         t.update_line_counter()
         return "break"
+
+    @staticmethod
+    def is_cursor_visible(t):
+        cursor_index = t.index('insert')
+        visible_range = t.yview()
+        cursor_line = int(cursor_index.split('.')[0])
+
+        first_visible_line = int(float(visible_range[0]) * int(t.index('end').split('.')[0]))
+        last_visible_line = int(float(visible_range[1]) * int(t.index('end').split('.')[0]))
+
+        return first_visible_line <= cursor_line <= last_visible_line
+
+    @staticmethod
+    def get_visible_lines(t):
+        visible_range = t.yview()
+        first_visible_line = int(float(visible_range[0]) * int(t.index('end').split('.')[0]))
+        last_visible_line = int(float(visible_range[1]) * int(t.index('end').split('.')[0]))
+        return last_visible_line - first_visible_line + 1
 
     @staticmethod
     def add_newline_with_tab(t):
