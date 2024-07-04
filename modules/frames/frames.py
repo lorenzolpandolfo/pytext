@@ -10,9 +10,6 @@ from modules.FontManager import FontManager
 
 DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
 
-GUI_FONT  = None
-FILE_FONT = None
-
 
 class LeftFrame(ttk.Frame):
     """ Contains the file explorer. """
@@ -45,7 +42,6 @@ class LeftFrame(ttk.Frame):
         self.after_idle(lambda: self.grid(row=0, column=0, sticky="nsew"))
         self.after_idle(lambda: self.textbox.grid(row=0, column=0, sticky="nsew"))
         file_directory_path = Application.current_file_directory
-        print(file_directory_path)
         self.textbox.open_directory(file_directory_path)
         self.textbox.focus_set()
 
@@ -61,8 +57,6 @@ class LeftFrame(ttk.Frame):
             self.show_textbox()
 
     def open_file_or_directory(self):
-        print("aqui")
-
         if "leftframe" not in str(self.focus_get()):
             return False
 

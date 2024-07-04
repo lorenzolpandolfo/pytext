@@ -16,7 +16,7 @@ from modules.CommandManager import CommandManager
 from modules.ScriptRunner import ScriptRunner
 from modules.FileLoader import FileLoader
 
-from modules.frames.frames import LeftFrame, BottomFrame, MainFrame, GUI_FONT, FILE_FONT
+from modules.frames.frames import LeftFrame, BottomFrame, MainFrame
 
 
 class MainApp(tk.Tk):
@@ -64,7 +64,7 @@ class MainApp(tk.Tk):
 
         # desativar/ativar muda a borda (bordercolor = "red")
         self.style2.configure("TNotebook", background=bg)
-        self.style2.configure("TNotebook.Tab", font=("Ubuntu Mono", 12), bordercolor="white",
+        self.style2.configure("TNotebook.Tab", font=FontManager.FILE_FONT, bordercolor="white",
                               background=bg)
         self.style2.map("TNotebook.Tab",
                         background=[("selected", selected_tab_color), ("active", selected_tab_color)],
