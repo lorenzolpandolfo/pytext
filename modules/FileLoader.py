@@ -37,3 +37,4 @@ class FileLoader:
         FileManager.move_to_directory()
         file = os.path.join(os.getcwd(), "welcome")
         cls.open_file(file)
+        Application.current_file_directory = ""

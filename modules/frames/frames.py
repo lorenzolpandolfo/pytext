@@ -41,8 +41,8 @@ class LeftFrame(ttk.Frame):
     def show_textbox(self):
         self.after_idle(lambda: self.grid(row=0, column=0, sticky="nsew"))
         self.after_idle(lambda: self.textbox.grid(row=0, column=0, sticky="nsew"))
-        file_directory_path = Application.current_file_directory
-        self.textbox.open_directory(file_directory_path)
+        path = Application.current_file_directory if Application.current_file_directory else Application.terminal_path
+        self.textbox.open_directory(path)
         self.textbox.focus_set()
 
     def switch_view(self, e=None):
@@ -166,6 +166,7 @@ class MainFrame(ttk.Frame):
         Application.switch_mode("view")
         Application.selected_tab_frame.textbox.focus_set()
         self.notebook.event_generate("<<TabOpened>>")
+        Application.mainapp.left_frame.textbox.open_directory(Application.current_file_directory)
 
     def add_tab(self, tab_title: str, content: str, file_path: str):
         """

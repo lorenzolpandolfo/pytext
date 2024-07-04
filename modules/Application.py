@@ -38,11 +38,10 @@ class Application:
     @classmethod
     def set_current_file(cls, path):
         visual_path = path
-        cls.mainapp.file_title = path
         cls.current_file_path = path
         cls.current_file_directory = os.path.dirname(path)
 
-        if not os.path.isfile(path):
+        if path != '' and not os.path.isfile(path):
             visual_path = f"{path} (new)"
         cls.mainapp.bottom_frame.output.configure(text=visual_path)
 
@@ -55,8 +54,10 @@ class Application:
                 cls.mainapp.top_frame.notebook.forget(data["frame"])
                 del cls.all_open_files[frame_id]
 
-                if cls.has_any_tab_open():
+                if not cls.has_any_tab_open():
                     cls.selected_tab_frame = False
+                    cls.set_current_file('')
+
                 cls.mainapp.top_frame.notebook.event_generate("<<TabClosed>>")
                 return
 
