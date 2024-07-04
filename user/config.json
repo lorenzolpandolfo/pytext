@@ -1,5 +1,6 @@
 {
         "auto_insert_delimiters"  : true,
+        "enable_welcome_message"  : true,
         "nonexistent_char"        : "",
         "forced_theme"            : "dark",
         "tab_width"               : 4,
@@ -7,9 +8,8 @@
         
         "font" :
         {
-            "title"            	  : "",
             "family"              : "Consolas",
-            "size"                : 17,
-            "gui_size"            : 16
+            "text_size"           : 12,
+            "gui_size"            : 12
         }
 }

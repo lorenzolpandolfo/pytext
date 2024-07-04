@@ -1,24 +1,17 @@
-import customtkinter as ctk
-import os
-from modules.FileManager import FileManager as fm
+from dataclasses import dataclass
+from tkinter.font import Font
 
+
+@dataclass
 class FontManager:
-    @staticmethod
-    def load_user_font(user_config_font:str) -> int | tuple:
-        title = user_config_font["title"]
+    GUI_FONT  = None
+    FILE_FONT = None
 
-        if title:
-            fm.move_to_directory("fonts")
-            src = os.path.join(os.getcwd(), title)
-            print(src)
-            if not ctk.FontManager.load_font(src):
-                return -1
-        
-        family    = user_config_font["family"]
-        size      = user_config_font["size"]
-        gui_size  = user_config_font["gui_size"]
-        
-        return (
-            ctk.CTkFont(family=family, size=size),
-            ctk.CTkFont(family=family, size=gui_size)
-        )
+    @classmethod
+    def load_user_font(cls, user_font: dict):
+        family    = user_font["family"]
+        size      = user_font["text_size"]
+        gui_size  = user_font["gui_size"]
+
+        cls.FILE_FONT = Font(family=family, size=size)
+        cls.GUI_FONT  = Font(family=family, size=gui_size)

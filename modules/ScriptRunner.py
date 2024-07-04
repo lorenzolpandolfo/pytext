@@ -10,7 +10,7 @@ class ScriptRunner:
 
     @staticmethod
     def run_script(e=None):
-        path = Application.mainapp.file_name
+        path = Application.mainapp.file_title
         if not os.path.isfile(path):
             return False
 

@@ -1,4 +1,4 @@
-from typing import Tuple, Any
+from typing import Any
 from uuid import uuid4
 from tkinter import font, ttk
 from ttkbootstrap import Scrollbar, Label, Notebook, Style
@@ -6,77 +6,42 @@ import os
 from modules.widgets.text import Lefttext, Maintext
 from modules.Application import Application
 from modules.FileLoader import FileLoader
-
+from modules.FontManager import FontManager
 
 DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
 
 
-class PytextFrame(ttk.Frame):
-    def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
-        self.bg_color = ''
-        self.fg_color = ''
-        self.mode_color = ''
-        self.command_color = ''
-        self.output_color = ''
-        self.branch_color = ''
-        self.sys_theme = Application.mainapp.sys_theme
-        self.theme = Application.mainapp.theme
-        self.dark = "_dark" if self.sys_theme == "dark" else ""
-
-    def load_frame_theme(self, frame):
-        self.bg_color = self.theme["frames"][frame][f"bg{self.dark}"]
-        self.fg_color = self.theme["frames"][frame][f"fg{self.dark}"]
-
-    def load_bottom_widget_theme(self):
-        self.mode_color = self.theme["widgets"]["bottom"][f"mode{self.dark}"]
-        self.command_color = self.theme["widgets"]["bottom"][f"command{self.dark}"]
-        self.output_color = self.theme["widgets"]["bottom"][f"output{self.dark}"]
-        self.branch_color = self.theme["widgets"]["bottom"][f"branch{self.dark}"]
-
-
-class LeftFrame(PytextFrame):
+class LeftFrame(ttk.Frame):
     """ Contains the file explorer. """
-
-    def __init__(self, master, obj_font: font):
+    def __init__(self, master):
         super().__init__(master)
         self.textbox = None
-        self.font = obj_font
-        self.sys_theme = master.sys_theme
-        self.theme = master.theme
-        self.terminal_dir = master.terminal_dir
-        self.file_name = master.file_name
-        self.sys_theme = master.sys_theme
-        self.theme = master.theme
-        self.mode = master.mode
 
-        self.__grid_setup__()
-        # super().load_frame_theme("left")
-        self.__scrollbar_setup__()
+        self.__grid_setup()
+        self.__scrollbar_setup()
 
-    def __scrollbar_setup__(self):
-        self.scrollbar_x = Scrollbar(self, orient="horizontal", command=self.__scroll_x__)
+    def __scrollbar_setup(self):
+        self.scrollbar_x = Scrollbar(self, orient="horizontal", command=self.__scroll_x)
         self.scrollbar_x.grid(row=1, column=0, sticky="we")
 
-    def __scroll_x__(self, *args):
+    def __scroll_x(self, *args):
         self.textbox.xview(*args)
 
-    def __grid_setup__(self):
+    def __grid_setup(self):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
         return
 
     def create_textbox(self, row: int = 0, column: int = 0):
-        self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none')
-        # self.textbox.configure(bg=self.bg_color)
+        self.textbox = Lefttext(
+            self, font=FontManager.GUI_FONT, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none'
+        )
         self.textbox.config(xscrollcommand=self.scrollbar_x.set)
 
     def show_textbox(self):
-        self.grid(row=0, column=0, sticky="nsew")
-        self.textbox.grid(row=0, column=0, sticky="nsew")
-        file_abs_path = os.path.dirname(os.path.join(self.terminal_dir, self.file_name))
-        isdir = os.path.isdir(file_abs_path)
-        path = file_abs_path if isdir else self.terminal_dir
+        self.after_idle(lambda: self.grid(row=0, column=0, sticky="nsew"))
+        self.after_idle(lambda: self.textbox.grid(row=0, column=0, sticky="nsew"))
+        path = Application.current_file_directory if Application.current_file_directory else Application.terminal_path
         self.textbox.open_directory(path)
         self.textbox.focus_set()
 
@@ -112,85 +77,51 @@ class LeftFrame(PytextFrame):
             # contar quantos diretorios tem antes e ir salvando a posicao do cursor pra retomar
             FileLoader.open_file(content)
 
-# class LineCounterFrame(PytextFrame):
-#     def __init__(self, master):
-#         super().__init__(master)
-#
-#         self.grid_rowconfigure(0, weight=1)
-#         self.grid_columnconfigure(0, weight=0)
-#
-#         self.sys_theme = master.sys_theme
-#         self.theme = master.theme
-#         super().load_frame_theme("line_counter")
-#         self.configure(bg="red")
 
-
-class BottomFrame(PytextFrame):
+class BottomFrame(ttk.Frame):
     """Contains the outputs labels."""
 
     def __init__(self, master):
         super().__init__(master)
         self.output = None
         self.command = None
-        self.branch = None
+        self.mode = None
 
-        self.sys_theme = master.sys_theme
-        self.theme = master.theme
-        self.mode = master.mode
-        self.gui_font = master.gui_font
-
-        # super().load_frame_theme("bottom")
-        super().load_bottom_widget_theme()
-        # self.configure(bg=self.bg_color)
-
-    def create_widgets(self, file_title: str):
+    def create_widgets(self):
         self.mode = Label(
-            self, text=self.mode, justify="center",
-            # bg=self.bg_color, foreground=self.mode_color,
-            font=self.master.gui_font
+            self, justify="center",
+            font=FontManager.GUI_FONT
         )
-        self.mode.grid(row=1, column=0, columnspan=2)
 
         self.command = Label(
-            self, text="", justify="left",
-            # bg=self.bg_color, foreground=self.command_color,
-            font=self.master.gui_font
+            self, justify="left",
+            font=FontManager.GUI_FONT
         )
-        self.command.grid(row=2, column=1, sticky="e")
 
         self.output = Label(
             self, justify="left",
-            # bg=self.bg_color, foreground=self.output_color,
-            text=file_title,
-            font=self.master.gui_font
+            font=FontManager.GUI_FONT
         )
-        self.output.grid(row=2, column=0)
+
         self.grid_columnconfigure(1, weight=1)
+        self.output.grid(row=2, column=0)
+        self.mode.grid(row=1, column=0, columnspan=2)
+        self.command.grid(row=2, column=1, sticky="e")
 
     def clear_command_output(self):
         self.command.configure(text='')
 
 
-class TextFrame(PytextFrame):
+class TextFrame(ttk.Frame):
     """It is the main frame that contains the Maintext instance."""
 
     def __init__(self, master, obj_font: font):
         super().__init__(master)
         self.master = master
-        self.tabs = None
         self.textbox = None
         self.font = obj_font
 
-        self.sys_theme = Application.mainapp.sys_theme
-        self.theme = Application.mainapp.theme
-        self.mode = Application.mainapp.mode
-
-        self.__grid_setup__()
-        self.__load_theme__()
-
-        # style = Style()
-        # style.configure("Debug.TFrame", background="green")
-        # self.configure(style="Debug.TFrame")
+        self.__grid_setup()
 
     def create_textbox(self, row: int = 1, column: int = 2):
         self.textbox = Maintext(self, font=self.font)
@@ -198,13 +129,7 @@ class TextFrame(PytextFrame):
         self.master.update()
         self.textbox.focus_set()
 
-    def __load_theme__(self):
-        dark = "_dark" if self.sys_theme == "dark" else ""
-        self.bg_color = self.theme["frames"]["left"][f"bg{dark}"]
-        self.fg_color = self.theme["frames"]["left"][f"fg{dark}"]
-
-    def __grid_setup__(self):
-        # self.grid_rowconfigure(0, weight=0)
+    def __grid_setup(self):
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(1, weight=1)
         return
@@ -215,19 +140,17 @@ class MainFrame(ttk.Frame):
 
     def __init__(self, master, *a, **kw):
         super().__init__(master, *a, **kw)
+        # remover o master. So é utilizado pra font
         self.master = master
+        self.notebook = Notebook(self)
         self.current_frame = None
-        self.all_frames = []
-        self.__setup__()
-        # self.style = Style()
-        # self.style.configure("Red.TFrame", background="blue")
-        # self.configure(style="Red.TFrame")
+        self.__setup()
 
-        self.notebook.bind("<<NotebookTabChanged>>", lambda e: self.__on_tab_change__(e))
+        self.notebook.bind("<<NotebookTabChanged>>", lambda e: self.__on_tab_change(e))
         # self.notebook.bind("<<TabClosed>>", lambda e: print("tab closed"))
         # self.notebook.bind("<<TabOpened>>", lambda e: print("tab opened!"))
 
-    def __on_tab_change__(self, e=None):
+    def __on_tab_change(self, e=None):
         if not Application.has_any_tab_open():
             Application.switch_mode("view", False)
             return
@@ -239,34 +162,37 @@ class MainFrame(ttk.Frame):
             if str(data["frame"]) == str(self.notebook.select()):
                 Application.set_current_file(data["file_path"])
                 self.notebook.select(data["frame"])
-                # print(data["title"])
 
         Application.switch_mode("view")
         Application.selected_tab_frame.textbox.focus_set()
         self.notebook.event_generate("<<TabOpened>>")
+        Application.mainapp.left_frame.textbox.open_directory(Application.current_file_directory)
 
-    def add_frame(self, tab_title: str, content: str, file_path: str):
+    def add_tab(self, tab_title: str, content: str, file_path: str):
         """
         Creates a new MainFrame to the Notebook bar.
         In the MainFrame, creates the textbox and the line counter.
         Inserts text into the textbox.
         """
-        if os.path.basename(file_path) != tab_title:
+        file_title = os.path.basename(file_path)
+
+        if file_title != tab_title:
             file_path = os.path.join(file_path, tab_title)
 
-        existent_frame_id = MainFrame.frame_exist(file_path)
-        if existent_frame_id:
-            self.notebook.select(self.notebook.index(existent_frame_id[1]["frame"]))
+        existent_tab_id = MainFrame.tab_exist(file_path)
+        if existent_tab_id:
+            widget_frame = existent_tab_id[1]["frame"]
+            index_widget_frame = self.notebook.index(widget_frame)
+            self.notebook.select(index_widget_frame)
             return
 
-        self.current_frame = TextFrame(self.notebook, self.master.font)
-
+        self.current_frame = TextFrame(self.notebook, FontManager.FILE_FONT)
         self.notebook.add(self.current_frame, text=tab_title, sticky="nsew")
         Application.mainapp.update()
-        Application.mainapp.update_idletasks()
 
         self.current_frame.create_textbox()
         self.current_frame.textbox.create_line_counter(self.current_frame)
+
         tab_id = str(uuid4())
         Application.all_open_files[tab_id] = {
             "title": tab_title,
@@ -277,17 +203,14 @@ class MainFrame(ttk.Frame):
         self.notebook.select(self.current_frame)
         Application.selected_tab_frame = self.current_frame
 
-    def __setup__(self):
+    def __setup(self):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
-        self.notebook = Notebook(self)
         self.notebook.grid(row=0, column=0, sticky="nsew")
 
     @staticmethod
-    def frame_exist(file_path: str) -> tuple[Any, Any] | bool:
+    def tab_exist(file_path: str) -> tuple[Any, Any] | bool:
         for frame_id, data in Application.all_open_files.items():
             if str(data["file_path"]) == str(file_path):
                 return frame_id, data
         return False
-
-

@@ -1,2 +1,0 @@
-
-# Write in the first line your file title with its extension. Then, run the save keybind to confirm.

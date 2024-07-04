@@ -2,6 +2,9 @@
   "cursor_color": "#B247B2",
   "cursor_color_dark": "#4a4b4e",
 
+  "selected_tab": "#f3d2f3",
+  "selected_tab_dark": "#26282e",
+
   "frames":
   {
     "main":
@@ -53,7 +56,7 @@
 
     "left_textbox":
     {
-      "bg"                 : "#f7f8fa",
+      "bg"                 : "#ffffff",
       "bg_dark"            : "#2b2d30",
 
       "selected_line"      : "#f3d2f3",
