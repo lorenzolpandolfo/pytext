@@ -6,6 +6,7 @@ it is recommended to add the pytext directory to your user PATH variable, so you
     Example:
     $ pytext (file)
 
+
 Pytext is a study project and it is being developed by Lorenzo Pandolfo.
 Some features are not ready yet and bugs are possible to happen.
 
@@ -16,3 +17,5 @@ For more information and help, check the github repository.
 Best wishes!
 
 - Lorenzo
+
+(you can disable this welcome message in pytext/user/config.json)

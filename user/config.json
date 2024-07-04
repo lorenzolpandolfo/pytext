@@ -1,5 +1,6 @@
 {
         "auto_insert_delimiters"  : true,
+        "enable_welcome_message"  : true,
         "nonexistent_char"        : "",
         "forced_theme"            : "dark",
         "tab_width"               : 4,
