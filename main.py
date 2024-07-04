@@ -16,30 +16,32 @@ from modules.CommandManager import CommandManager
 from modules.ScriptRunner import ScriptRunner
 from modules.FileLoader import FileLoader
 
-from modules.frames.frames import LeftFrame, BottomFrame, MainFrame
+from modules.frames.frames import LeftFrame, BottomFrame, MainFrame, GUI_FONT, FILE_FONT
 
 
 class MainApp(tk.Tk):
-    def __init__(self, terminal_path: str, loaded_file_name: str):
+    def __init__(self, terminal_path: str, arg_file_title: str):
         super().__init__()
         Application.mainapp = self
-        Application.set_mode("view")
+        Application.terminal_path = terminal_path
 
-        self.terminal_path = terminal_path
-        self.file_name = loaded_file_name
+        self.arg_file_title = arg_file_title
 
-        self.__load_user_config__()
-        self.__load_system_theme__()
-        self.__load_user_font__()
-        self.__load_user_theme__()
-        self.__load_ttk_colors__()
-        self.__create_gui__()
+        self.__load_user_config()
+        self.__load_system_theme()
+        self.__load_user_font()
+        self.__load_user_theme()
+        self.__load_ttk_colors()
+        self.__create_gui()
 
-        if self.file_name:
-            self.__load_argv_file__()
-        self.__enable_binds__()
+        if arg_file_title:
+            self.__load_argv_file()
+        else:
+            FileLoader.open_welcome_screen()
 
-    def __load_ttk_colors__(self):
+        self.__enable_binds()
+
+    def __load_ttk_colors(self):
         forced_theme = self.user_config["forced_theme"]
         
         if not forced_theme:
@@ -72,28 +74,21 @@ class MainApp(tk.Tk):
         self.style2.configure("TLabel", background=bg, foreground=fg)
         return
 
-    def __load_user_config__(self):
+    def __load_user_config(self):
         self.user_config = UserConfig.get_user_config()
 
-    def __load_user_font__(self):
+    def __load_user_font(self):
         user_font = self.user_config["font"]
-        loader = FontManager.load_user_font(user_font)
+        FontManager.load_user_font(user_font)
 
-        if isinstance(loader, int):
-            print(f"Error: could not load font '{user_font['title']}'. Loading default font instead.")
-            self.font = tkfont.Font(font="Consolas", size=26)
-            self.gui_font = tkfont.Font(font="Consolas", size=17)
-        else:
-            self.font, self.gui_font = loader
-
-    def __load_system_theme__(self):
+    def __load_system_theme(self):
         forced_theme = self.user_config["forced_theme"]
         self.sys_theme = forced_theme if forced_theme else str(darkdetect.theme()).lower()
 
-    def __load_user_theme__(self):
+    def __load_user_theme(self):
         self.theme = ThemeManager.get_user_theme()
 
-    def __create_gui__(self):
+    def __create_gui(self):
         self.__create_window__()
         self.__configure_grids__()
         self.__create_frames__()
@@ -119,24 +114,24 @@ class MainApp(tk.Tk):
         self.bottom_frame = BottomFrame(self)
         self.bottom_frame.grid(row=2, column=0, sticky="we", columnspan=3)
 
-        self.left_frame = LeftFrame(self, self.font)
+        self.left_frame = LeftFrame(self)
 
     def __create_widgets__(self):
         self.left_frame.create_textbox()
         self.bottom_frame.create_widgets()
 
-    def __load_argv_file__(self):
-        full_path = os.path.join(self.terminal_path, self.file_name)
-        FileLoader.open_file(full_path)
+    def __load_argv_file(self):
+        path = os.path.join(Application.terminal_path, self.arg_file_title)
+        FileLoader.open_file(path)
 
-    def __enable_binds__(self):
+    def __enable_binds(self):
         self.bind("<Escape>", lambda _: Application.switch_mode('view'))
         self.bind("<Control-e>", self.left_frame.switch_view)
         self.bind("<Key>", self.key_manager)
         self.bind("<Return>", TextUtils.return_manager)
         self.bind("<Control-F5>", ScriptRunner.run_script)
         self.bind("<Control-w>", lambda e: Application.delete_tab())
-        self.bind("<Control-t>", lambda e: self.top_frame.add_tab("untitled", "", self.terminal_path))
+        self.bind("<Control-t>", lambda e: self.top_frame.add_tab("untitled", "", Application.terminal_path))
 
     def key_manager(self, event=None):
         if CommandManager.command_dealing(event):
@@ -145,9 +140,8 @@ class MainApp(tk.Tk):
 
 if __name__ == "__main__":
     import sys
-
-    file_name = sys.argv[1] if len(sys.argv) > 1 else ""
-    file_name = file_name[2:] if file_name[:2] == ".\\" else file_name
-    is_argv_file = os.path.isfile(os.path.join(os.getcwd(), file_name))
-    app = MainApp(terminal_path=os.getcwd(), loaded_file_name=file_name)
+    file_title = sys.argv[1] if len(sys.argv) > 1 else ""
+    file_title = file_title[2:] if file_title[:2] == ".\\" else file_title
+    is_argv_file = os.path.isfile(os.path.join(os.getcwd(), file_title))
+    app = MainApp(terminal_path=os.getcwd(), arg_file_title=file_title)
     app.mainloop()

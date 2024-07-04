@@ -1,0 +1,18 @@
+Welcome to The Pytext Editor!
+=============================
+
+Looks like you opened pytext without a file argument...
+it is recommended to add the pytext directory to your user PATH variable, so you can run it in terminal.
+    Example:
+    $ pytext (file)
+
+Pytext is a study project and it is being developed by Lorenzo Pandolfo.
+Some features are not ready yet and bugs are possible to happen.
+
+If you presented bugs or have a cool idea to add to pytext, feel free to open a issue in
+https://github.com/lorenzolpandolfo/pytext
+
+For more information and help, check the github repository.
+Best wishes!
+
+- Lorenzo

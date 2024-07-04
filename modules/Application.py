@@ -13,10 +13,10 @@ class Application:
     all_open_files = {}
     selected_tab_frame: Any
 
-    current_file_path: str = ""
-    current_file_directory: str = ""
-
-    mode: str = "view"
+    current_file_path       = ""
+    current_file_directory  = ""
+    terminal_path           = ""
+    mode                    = "view"
 
     @classmethod
     def set_mode(cls, arg: str):
@@ -38,7 +38,7 @@ class Application:
     @classmethod
     def set_current_file(cls, path):
         visual_path = path
-        cls.mainapp.file_name = path
+        cls.mainapp.file_title = path
         cls.current_file_path = path
         cls.current_file_directory = os.path.dirname(path)
 

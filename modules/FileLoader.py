@@ -2,6 +2,7 @@ import os
 
 from modules.Application import Application
 from modules.LanguageManager import LanguageManager
+from modules.FileManager import FileManager
 
 
 class FileLoader:
@@ -31,3 +32,8 @@ class FileLoader:
             LanguageManager.load_language(file_ext)
             Application.set_current_file(file_path)
 
+    @classmethod
+    def open_welcome_screen(cls):
+        FileManager.move_to_directory()
+        file = os.path.join(os.getcwd(), "welcome")
+        cls.open_file(file)

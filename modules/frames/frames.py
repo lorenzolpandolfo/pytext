@@ -6,17 +6,19 @@ import os
 from modules.widgets.text import Lefttext, Maintext
 from modules.Application import Application
 from modules.FileLoader import FileLoader
+from modules.FontManager import FontManager
 
 DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
+
+GUI_FONT  = None
+FILE_FONT = None
 
 
 class LeftFrame(ttk.Frame):
     """ Contains the file explorer. """
-    def __init__(self, master, obj_font: font):
+    def __init__(self, master):
         super().__init__(master)
         self.textbox = None
-        self.font = obj_font
-        self.file_name = master.file_name
 
         self.__grid_setup()
         self.__scrollbar_setup()
@@ -34,7 +36,9 @@ class LeftFrame(ttk.Frame):
         return
 
     def create_textbox(self, row: int = 0, column: int = 0):
-        self.textbox = Lefttext(self, font=self.font, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none')
+        self.textbox = Lefttext(
+            self, font=FontManager.GUI_FONT, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none'
+        )
         self.textbox.config(xscrollcommand=self.scrollbar_x.set)
 
     def show_textbox(self):
@@ -57,6 +61,8 @@ class LeftFrame(ttk.Frame):
             self.show_textbox()
 
     def open_file_or_directory(self):
+        print("aqui")
+
         if "leftframe" not in str(self.focus_get()):
             return False
 
@@ -90,17 +96,17 @@ class BottomFrame(ttk.Frame):
     def create_widgets(self):
         self.mode = Label(
             self, justify="center",
-            font=self.master.gui_font
+            font=FontManager.GUI_FONT
         )
 
         self.command = Label(
             self, justify="left",
-            font=self.master.gui_font
+            font=FontManager.GUI_FONT
         )
 
         self.output = Label(
             self, justify="left",
-            font=self.master.gui_font
+            font=FontManager.GUI_FONT
         )
 
         self.grid_columnconfigure(1, weight=1)
@@ -185,7 +191,7 @@ class MainFrame(ttk.Frame):
             self.notebook.select(index_widget_frame)
             return
 
-        self.current_frame = TextFrame(self.notebook, self.master.font)
+        self.current_frame = TextFrame(self.notebook, FontManager.FILE_FONT)
         self.notebook.add(self.current_frame, text=tab_title, sticky="nsew")
         Application.mainapp.update()
 
