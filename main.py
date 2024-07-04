@@ -107,8 +107,8 @@ class MainApp(tk.Tk):
     def __create_frames__(self):
         # A maintext agora está contida no TopBarFrame porque ele tem o Notebook que cria o Maintext
         # topbarframe deve estar ao lado do leftframe
-        self.top_frame = MainFrame(self)
-        self.top_frame.grid(row=0, column=1, sticky="nsew")
+        self.main_frame = MainFrame(self)
+        self.main_frame.grid(row=0, column=1, sticky="nsew")
 
         self.bottom_frame = BottomFrame(self)
         self.bottom_frame.grid(row=2, column=0, sticky="we", columnspan=3)
@@ -130,7 +130,7 @@ class MainApp(tk.Tk):
         self.bind("<Return>", TextUtils.return_manager)
         self.bind("<Control-F5>", ScriptRunner.run_script)
         self.bind("<Control-w>", lambda e: Application.delete_tab())
-        self.bind("<Control-t>", lambda e: self.top_frame.add_tab("untitled", "", Application.terminal_path))
+        self.bind("<Control-t>", lambda e: self.main_frame.add_tab("untitled", "", Application.terminal_path))
 
     def key_manager(self, event=None):
         if CommandManager.command_dealing(event):

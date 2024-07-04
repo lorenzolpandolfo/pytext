@@ -104,7 +104,6 @@ class CommandManager:
     @classmethod
     def save_file(cls):
         cur_file_path = Application.current_file_path
-        print("salvando: ", cur_file_path)
         if not cur_file_path:
             cur_file_path = os.path.join(Application.current_file_directory, "untitled.txt")
             print("nao tenho um arquivo aberto no momento.\nSalvando: ", cur_file_path)

@@ -1,6 +1,7 @@
 import os
 import json
 
+
 class SyntaxColors:
     
     @staticmethod
@@ -8,12 +9,10 @@ class SyntaxColors:
         SyntaxColors.__move_to_user_directory__()
         return SyntaxColors.__load_syntaxColors_file__()
 
-
     @staticmethod
     def __load_syntaxColors_file__():
         with open("syntaxColors.json", "r", encoding="utf8") as file:
             return json.load(file)
-
 
     @staticmethod
     def __move_to_user_directory__():

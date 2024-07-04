@@ -16,7 +16,7 @@ class FileLoader:
                     content = file.read()
                     Application.current_file_path = file_path
                     title = os.path.basename(file_path)
-                    Application.mainapp.top_frame.add_tab(title, content, file_path)
+                    Application.mainapp.main_frame.add_tab(title, content, file_path)
 
                     _, file_ext = os.path.splitext(file_path)
                     LanguageManager.load_language(file_ext)
@@ -27,7 +27,7 @@ class FileLoader:
                 return False
         else:
             title = os.path.basename(file_path)
-            Application.mainapp.top_frame.add_tab(tab_title=title, content='', file_path=file_path)
+            Application.mainapp.main_frame.add_tab(tab_title=title, content='', file_path=file_path)
             _, file_ext = os.path.splitext(file_path)
             LanguageManager.load_language(file_ext)
             Application.set_current_file(file_path)

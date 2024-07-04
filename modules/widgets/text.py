@@ -1,5 +1,5 @@
 import tkinter
-from tkinter import Text
+from tkinter import Text, Menu
 import os
 import platform
 

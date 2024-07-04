@@ -51,14 +51,14 @@ class Application:
             file_path = cls.current_file_path
         for frame_id, data in cls.all_open_files.items():
             if str(data["file_path"]) == str(file_path):
-                cls.mainapp.top_frame.notebook.forget(data["frame"])
+                cls.mainapp.main_frame.notebook.forget(data["frame"])
                 del cls.all_open_files[frame_id]
 
                 if not cls.has_any_tab_open():
                     cls.selected_tab_frame = False
                     cls.set_current_file('')
 
-                cls.mainapp.top_frame.notebook.event_generate("<<TabClosed>>")
+                cls.mainapp.main_frame.notebook.event_generate("<<TabClosed>>")
                 return
 
     @classmethod
