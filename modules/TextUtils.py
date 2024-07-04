@@ -36,11 +36,19 @@ class TextUtils:
 
         i_last_line = t.index('end').split('.')[0]
 
+        tab_count = TextUtils.get_tab_count(t)
+
         # if user is using Return in the last line
         if int(i_last_line) == int(i_line) + 1:
-            t.insert(f"{i_line}.end", "\n")
+            content = t.get(i, 'insert lineend')
+            t.delete('insert', "insert lineend")
+            t.insert('insert lineend', '\n')
+            t.mark_set('insert', i_below)
+            t.insert(i_below, content)
+            t.highlight_selected_line()
+            t.update_line_counter()
+            return 'break'
 
-        tab_count = TextUtils.get_tab_count(t)
         t.insert(i_below, f"{t.get('insert', 'insert lineend')}\n")
         t.delete('insert', "insert lineend")
         t.mark_set('insert', i_below)
@@ -48,7 +56,7 @@ class TextUtils:
         if not TextUtils.is_cursor_visible(t):
             t.yview_scroll(1, "units")
 
-        TextUtils.__add_context_tab__(t, tab_count)
+        TextUtils.__add_context_tab(t, tab_count)
         t.highlight_selected_line()
         t.update_line_counter()
         return "break"
@@ -90,7 +98,7 @@ class TextUtils:
         t.insert(i_below, "\n")
         t.mark_set('insert', i_below)
 
-        TextUtils.__add_context_tab__(t, tab_count, manual_tabs)
+        TextUtils.__add_context_tab(t, tab_count, manual_tabs)
         t.highlight_selected_line()
         t.update_line_counter()
         return "break"
@@ -102,7 +110,7 @@ class TextUtils:
         return tab_count
 
     @staticmethod
-    def __add_context_tab__(t, tab_count, manual_tabs: int = 0):
+    def __add_context_tab(t, tab_count, manual_tabs: int = 0):
         """Adds the tab identation for tab_count times in the current line"""
         for i in range(0, manual_tabs):
             TextUtils.add_tab(t)

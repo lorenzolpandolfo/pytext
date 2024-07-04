@@ -224,8 +224,8 @@ class MainFrame(ttk.Frame):
         # self.configure(style="Red.TFrame")
 
         self.notebook.bind("<<NotebookTabChanged>>", lambda e: self.__on_tab_change__(e))
-        self.notebook.bind("<<TabClosed>>", lambda e: print("tab closed"))
-        self.notebook.bind("<<TabOpened>>", lambda e: print("tab opened!"))
+        # self.notebook.bind("<<TabClosed>>", lambda e: print("tab closed"))
+        # self.notebook.bind("<<TabOpened>>", lambda e: print("tab opened!"))
 
     def __on_tab_change__(self, e=None):
         if not Application.has_any_tab_open():
@@ -239,7 +239,7 @@ class MainFrame(ttk.Frame):
             if str(data["frame"]) == str(self.notebook.select()):
                 Application.set_current_file(data["file_path"])
                 self.notebook.select(data["frame"])
-                print(data["title"])
+                # print(data["title"])
 
         Application.switch_mode("view")
         Application.selected_tab_frame.textbox.focus_set()
