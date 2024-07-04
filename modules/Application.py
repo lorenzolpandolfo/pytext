@@ -9,10 +9,14 @@ from ttkbootstrap import Notebook
 @dataclass
 class Application:
     mainapp: None
-    selected_tab_frame: Any
-    current_file_path: str = ""
-    mode: str = "view"
+
     all_open_files = {}
+    selected_tab_frame: Any
+
+    current_file_path: str = ""
+    current_file_directory: str = ""
+
+    mode: str = "view"
 
     @classmethod
     def set_mode(cls, arg: str):
@@ -36,6 +40,7 @@ class Application:
         visual_path = path
         cls.mainapp.file_name = path
         cls.current_file_path = path
+        cls.current_file_directory = os.path.dirname(path)
 
         if not os.path.isfile(path):
             visual_path = f"{path} (new)"

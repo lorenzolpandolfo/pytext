@@ -103,9 +103,11 @@ class CommandManager:
 
     @classmethod
     def save_file(cls):
-        cur_file_path = Application.mainapp.file_name
+        cur_file_path = Application.current_file_path
+        print("salvando: ", cur_file_path)
         if not cur_file_path:
-            cur_file_path = os.path.join(Application.mainapp.terminal_dir, "untitled.txt")
+            cur_file_path = os.path.join(Application.current_file_directory, "untitled.txt")
+            print("nao tenho um arquivo aberto no momento.\nSalvando: ", cur_file_path)
 
         content = Application.selected_tab_frame.textbox.get("1.0", "end-1c")
         with open(cur_file_path, "w", encoding="utf8") as f:
