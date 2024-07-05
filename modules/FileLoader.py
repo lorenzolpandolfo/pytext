@@ -35,7 +35,7 @@ class FileLoader:
     @classmethod
     def open_welcome_file(cls):
         FileManager.move_to_directory()
-        file = os.path.join(os.getcwd(), "welcome")
+        file = os.path.join(os.getcwd(), "welcome.txt")
         cls.open_file(file)
         Application.current_file_directory = ""
 
