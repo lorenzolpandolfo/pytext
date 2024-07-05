@@ -299,9 +299,12 @@ class Lefttext(Generaltext):
 
         new_content = content + e.char
         self.master.searchbar.configure(text=new_content)
-        self.filter_by_prefix(new_content)
+        self.after_idle(lambda: self.filter_by_prefix(new_content))
 
     def filter_by_prefix(self, prefix: str):
+        if prefix == "":
+            return
+        self.configure(state="normal")
         content = self.get("1.0", "end")
         all_lines = content.split('\n')
         self.delete("1.0", "end")
@@ -314,6 +317,8 @@ class Lefttext(Generaltext):
             if line_range == prefix:
                 index += 1
                 self.insert(f"{index}.0", line)
+        self.configure(state="disabled")
+        self.after_idle(self.highlight_selected_line)
 
     def remove_from_searchbar(self, e=None):
         content = self.master.searchbar.cget("text")
