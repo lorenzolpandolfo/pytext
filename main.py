@@ -48,7 +48,6 @@ class MainApp(tk.Tk):
 
         dark = "_dark" if forced_theme == "dark" else ""
         selected_tab_color      = self.theme[f"selected_tab{dark}"]
-        not_selected_tab_color  = self.theme["widgets"]["main_textbox"][f"bg{dark}"]
         bg                      = self.theme["frames"]["main"][f"bg{dark}"]
         fg = "#212529"
 
@@ -59,18 +58,18 @@ class MainApp(tk.Tk):
             theme = "darkly"
             fg = "white"
 
-        self.style2 = Style(theme=theme)
+        self.style = Style(theme=theme)
 
         # desativar/ativar muda a borda (bordercolor = "red")
-        self.style2.configure("TNotebook", background=bg)
-        self.style2.configure("TNotebook.Tab", font=FontManager.FILE_FONT, bordercolor="white",
-                              background=bg)
-        self.style2.map("TNotebook.Tab",
-                        background=[("selected", selected_tab_color), ("active", selected_tab_color)],
-                        foreground=[("selected", fg), ("active", fg)])
+        self.style.configure("TNotebook", background=bg)
+        self.style.configure("TNotebook.Tab", font=FontManager.FILE_FONT, bordercolor="white",
+                             background=bg)
+        self.style.map("TNotebook.Tab",
+                       background=[("selected", selected_tab_color), ("active", selected_tab_color)],
+                       foreground=[("selected", fg), ("active", fg)])
 
-        self.style2.configure("TFrame", background=bg)
-        self.style2.configure("TLabel", background=bg, foreground=fg)
+        self.style.configure("TFrame", background=bg)
+        self.style.configure("TLabel", background=bg, foreground=fg)
         return
 
     def __load_user_config(self):

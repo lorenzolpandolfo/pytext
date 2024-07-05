@@ -16,23 +16,26 @@ class LeftFrame(ttk.Frame):
     def __init__(self, master):
         super().__init__(master)
         self.textbox = None
+        self.searchbar = None
 
         self.__grid_setup()
         self.__scrollbar_setup()
 
     def __scrollbar_setup(self):
         self.scrollbar_x = Scrollbar(self, orient="horizontal", command=self.__scroll_x)
-        self.scrollbar_x.grid(row=1, column=0, sticky="we")
+        self.scrollbar_x.grid(row=2, column=0, sticky="we")
 
     def __scroll_x(self, *args):
         self.textbox.xview(*args)
 
     def __grid_setup(self):
-        self.grid_rowconfigure(0, weight=1)
+        # self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
         return
 
     def create_textbox(self, row: int = 0, column: int = 0):
+        self.searchbar = ttk.Label(self, text="Search...")
         self.textbox = Lefttext(
             self, font=FontManager.GUI_FONT, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none'
         )
@@ -40,10 +43,12 @@ class LeftFrame(ttk.Frame):
 
     def show_textbox(self):
         self.after_idle(lambda: self.grid(row=0, column=0, sticky="nsew"))
-        self.after_idle(lambda: self.textbox.grid(row=0, column=0, sticky="nsew"))
+        self.after_idle(lambda: self.searchbar.grid(row=0, column=0, sticky="ew"))
+        self.after_idle(lambda: self.textbox.grid(row=1, column=0, sticky="nsew"))
         path = Application.current_file_directory if Application.current_file_directory else Application.terminal_path
         self.textbox.open_directory(path)
         self.textbox.focus_set()
+        self.searchbar.configure(text="Search...")
 
     def switch_view(self, e=None):
         if self.winfo_ismapped():

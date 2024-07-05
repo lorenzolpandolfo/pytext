@@ -284,6 +284,46 @@ class Lefttext(Generaltext):
         self.bind("<B1-Motion>", 'break')
         self.bind("<F2>", lambda _: Renamer.create_rename_window())
         self.bind("<Shift-colon>", lambda _: Application.selected_tab_frame.textbox.focus_set())
+        self.bind("<Key>", lambda e: self.add_to_searchbar(e))
+        self.bind("<BackSpace>", lambda _: self.remove_from_searchbar())
+        self.bind("<Control-BackSpace>", lambda _: self.clear_spacebar())
+
+    def add_to_searchbar(self, e):
+        if not e.char.isalpha():
+            self.after_idle(self.highlight_selected_line)
+            return
+        content = self.master.searchbar.cget("text")
+        if content == "Search...":
+            self.master.searchbar.configure(text='')
+            content = ''
+
+        new_content = content + e.char
+        self.master.searchbar.configure(text=new_content)
+        self.filter_by_prefix(new_content)
+
+    def filter_by_prefix(self, prefix: str):
+        content = self.get("1.0", "end")
+        all_lines = content.split('\n')
+        self.delete("1.0", "end")
+
+        index = 1
+        for line in all_lines:
+            line = line.strip()
+            line_range = line[0:len(prefix)]
+
+            if line_range == prefix:
+                index += 1
+                self.insert(f"{index}.0", line)
+
+    def remove_from_searchbar(self, e=None):
+        content = self.master.searchbar.cget("text")
+        if content == "Search...":
+            return
+        content_minus_one = content[0:len(content)-1]
+        self.master.searchbar.configure(text=content_minus_one)
+
+    def clear_spacebar(self, e=None):
+        self.master.searchbar.configure(text='')
 
     def updir(self):
         self.path = os.path.dirname(self.path)
