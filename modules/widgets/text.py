@@ -16,6 +16,7 @@ class Generaltext(Text):
     """ Includes methods that Maintext and Lefttext use. """
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs, insertofftime=0)
+        self.current_file_content = None
         self.can_open_files         = False
         self.font_color             = ''
         self.bg_color               = ''
@@ -124,6 +125,7 @@ class Generaltext(Text):
                     colors=(self.exp_dir_color, self.exp_file_color, self.exp_curdir_color)
                 )
             self.after(1, lambda: self.tag_remove('sel', '1.0', 'end'))
+            self.current_file_content = content[0]
 
     def focus_set(self):
         super().focus_set()
@@ -303,29 +305,39 @@ class Lefttext(Generaltext):
 
     def filter_by_prefix(self, prefix: str):
         if prefix == "":
+            path = Application.current_file_directory if Application.current_file_directory else Application.terminal_path
+            self.open_directory(path)
             return
         self.configure(state="normal")
-        content = self.get("1.0", "end")
-        all_lines = content.split('\n')
+        all_lines = self.current_file_content.split('\n')
         self.delete("1.0", "end")
 
         index = 1
         for line in all_lines:
-            line = line.strip()
+            line = line.strip().replace('/', '')
             line_range = line[0:len(prefix)]
 
             if line_range == prefix:
                 index += 1
-                self.insert(f"{index}.0", line)
+                self.insert(f"{index}.0", f"{line}\n")
+
+        self.delete("end-1c", "end")
         self.configure(state="disabled")
         self.after_idle(self.highlight_selected_line)
 
     def remove_from_searchbar(self, e=None):
         content = self.master.searchbar.cget("text")
+
+        if len(content) == 1:
+            self.master.searchbar.configure(text="Search...")
+            path = Application.current_file_directory if Application.current_file_directory else Application.terminal_path
+            self.open_directory(path)
+            return
         if content == "Search...":
             return
         content_minus_one = content[0:len(content)-1]
         self.master.searchbar.configure(text=content_minus_one)
+        self.after_idle(lambda: self.filter_by_prefix(content_minus_one))
 
     def clear_spacebar(self, e=None):
         self.master.searchbar.configure(text='')

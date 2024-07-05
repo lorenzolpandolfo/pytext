@@ -48,9 +48,10 @@ class LeftFrame(ttk.Frame):
         path = Application.current_file_directory if Application.current_file_directory else Application.terminal_path
         self.textbox.open_directory(path)
         self.textbox.focus_set()
-        self.searchbar.configure(text="Search...")
 
     def switch_view(self, e=None):
+        self.searchbar.configure(text="Search...")
+
         if self.winfo_ismapped():
             if "leftframe" in str(self.focus_get()):
                 self.grid_forget()
@@ -62,6 +63,7 @@ class LeftFrame(ttk.Frame):
             self.show_textbox()
 
     def open_file_or_directory(self):
+        self.searchbar.configure(text="Search...")
         if "leftframe" not in str(self.focus_get()):
             return False
 
