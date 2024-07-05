@@ -1,6 +1,7 @@
 import os
 import tkinter as tk
 from modules.Application import Application
+from modules.Renamer import Renamer
 import re
 
 
@@ -108,7 +109,16 @@ class CommandManager:
             cur_file_path = os.path.join(Application.current_file_directory, "untitled.txt")
             print("nao tenho um arquivo aberto no momento.\nSalvando: ", cur_file_path)
 
+        file_title = os.path.basename(cur_file_path)
+
         content = Application.selected_tab_frame.textbox.get("1.0", "end-1c")
         with open(cur_file_path, "w", encoding="utf8") as f:
             f.write(content)
+
+        if file_title == "untitled":
+            file_to_save = {
+                "file_title": file_title,
+                "file_path": Application.current_file_path
+            }
+            Renamer.create_rename_window(file_to_save)
         return True

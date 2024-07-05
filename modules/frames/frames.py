@@ -210,6 +210,9 @@ class MainFrame(ttk.Frame):
 
     @staticmethod
     def tab_exist(file_path: str) -> tuple[Any, Any] | bool:
+        if os.path.basename(file_path) == "untitled":
+            return False
+
         for frame_id, data in Application.all_open_files.items():
             if str(data["file_path"]) == str(file_path):
                 return frame_id, data
