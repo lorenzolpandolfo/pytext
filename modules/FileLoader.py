@@ -33,8 +33,14 @@ class FileLoader:
             Application.set_current_file(file_path)
 
     @classmethod
-    def open_welcome_screen(cls):
+    def open_welcome_file(cls):
         FileManager.move_to_directory()
         file = os.path.join(os.getcwd(), "welcome")
         cls.open_file(file)
         Application.current_file_directory = ""
+
+    @classmethod
+    def open_config_file(cls):
+        FileManager.move_to_directory("user")
+        file = os.path.join(os.getcwd(), "config.json")
+        cls.open_file(file)

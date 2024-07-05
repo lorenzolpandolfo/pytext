@@ -7,6 +7,7 @@ from modules.FileManager     import FileManager
 from modules.tklinenums      import TkLineNumbers
 from modules.Application     import Application
 from modules.TextUtils       import TextUtils
+from modules.FileLoader import FileLoader
 
 from modules.Renamer import Renamer
 
@@ -150,8 +151,8 @@ class Maintext(Generaltext):
         self.configure(bg=self.bg_color, foreground=self.font_color, state="disabled")
 
     def _enable_binds_(self):
-        
-        shift_tab = "<Shift-Tab>" if platform.system() == "Windows" else "<ISO_Left_Tab>" 
+        shift_tab = "<Shift-Tab>" if platform.system() == "Windows" else "<ISO_Left_Tab>"
+
         self.bind("<Key>", lambda e: self.after_idle(self.__key_dealing__))
         self.bind("<Tab>", lambda e: TextUtils.add_tab(self))
         self.bind(f"{shift_tab}", lambda e: TextUtils.untab(self))
@@ -169,6 +170,7 @@ class Maintext(Generaltext):
         self.bind("<Control-z>", lambda e: self.undo())
         self.bind("<Control-y>", lambda e: self.redo())
         self.bind("<Control-Tab>", Application.change_to_next_tab)
+        self.bind("<Control-comma>", lambda _: FileLoader.open_config_file())
 
     def undo(self):
         try:
@@ -281,6 +283,7 @@ class Lefttext(Generaltext):
 
         self.bind("<B1-Motion>", 'break')
         self.bind("<F2>", lambda _: Renamer.create_rename_window())
+        self.bind("<Shift-colon>", lambda _: Application.selected_tab_frame.textbox.focus_set())
 
     def updir(self):
         self.path = os.path.dirname(self.path)

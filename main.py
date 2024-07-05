@@ -36,7 +36,7 @@ class MainApp(tk.Tk):
         if arg_file_title:
             self.__load_argv_file()
         elif self.user_config["enable_welcome_message"]:
-            FileLoader.open_welcome_screen()
+            FileLoader.open_welcome_file()
 
         self.__enable_binds()
 
