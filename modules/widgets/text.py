@@ -291,7 +291,9 @@ class Maintext(Generaltext):
 
     def __y_scroll_command(self, *args):
         self.update_line_counter()
-        TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
+
+        if Application.selected_tab_frame:
+            TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
         # TextUtils.smart_syntax_highlight(Application.selected_tab_frame.textbox)
         return
 
