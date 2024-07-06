@@ -76,6 +76,8 @@ class Generaltext(Text):
         self.configure(state="normal")
         self.delete("1.0", "end")
         self.insert("1.0", content)
+        print("aqui")
+        self.after_idle(lambda: TextUtils.highlight_visible_lines(self))
 
         if mark_set:
             self.mark_set(mark_set, "1.0")
@@ -146,6 +148,7 @@ class Maintext(Generaltext):
         self.__load_theme()
         super().enable_binds()
         self._enable_binds()
+        self.load_syntax_highlight_theme()
 
     def __load_theme(self):
         super().load_theme("main_textbox")
@@ -250,10 +253,26 @@ class Maintext(Generaltext):
         return 'break'
 
     def __key_dealing(self):
-        # TextUtils.highlight_line(self)
-        TextUtils.highlight_visible_lines(self)
+        TextUtils.highlight_line(self)
+        # TextUtils.highlight_visible_lines(self)
         self.highlight_selected_line()
         self.update_line_counter()
+
+    def load_syntax_highlight_theme(self):
+        self.tag_config("Token.Keyword", foreground="#cc7832")  # Laranja suave
+        self.tag_config("Token.Keyword.Namespace", foreground="#cc7832")
+        self.tag_config("Token.Literal.String.Single", foreground="#6a8759")  # Verde suave
+        self.tag_config("Token.Literal.String.Double", foreground="#6a8759")
+        self.tag_config("Token.Operator", foreground="#a9b7c6")  # Azul acinzentado
+        self.tag_config("Token.Name.Builtin", foreground="#ffc66d")  # Amarelo suave
+        self.tag_config("Token.Comment", foreground="#808080")  # Cinza suave
+        self.tag_config("Token.Name.Function", foreground="#ffc66d")  # Amarelo suave
+        self.tag_config("Token.Name.Class", foreground="#ffc66d")  # Amarelo suave
+        self.tag_config("Token.Name.Decorator", foreground="#bbb529")  # Amarelo
+        self.tag_config("Token.Literal.Number", foreground="#6897bb")  # Azul suave
+        self.tag_config("Token.Name.Variable", foreground="#a9b7c6")  # Azul acinzentado
+        self.tag_config("Token.Text", foreground="#a9b7c6")  # Azul acinzentado
+        self.tag_config("Token.Name", foreground="#a9b7c6")  # Azul acinzentado
 
     def create_line_counter(self, frame):
         dark = "_dark" if self.sys_theme == "dark" else ""

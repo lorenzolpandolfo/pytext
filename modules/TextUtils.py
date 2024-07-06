@@ -86,11 +86,7 @@ class TextUtils:
 
     @staticmethod
     def highlight_line(t, line: int = None):
-        t.tag_config("Token.Keyword.Namespace", foreground="red")
-        t.tag_config("Token.Literal.String.Single", foreground="green")
-        t.tag_config("Token.Operator", foreground="pink")
-        t.tag_config("Token.Name.Builtin", foreground="yellow")
-
+        TextUtils.clear_all_tags(t)
         if line is None:
             line = int(t.index("insert").split(".")[0])
         content = t.get(f"{line}.0", f"{line}.end")
@@ -107,6 +103,9 @@ class TextUtils:
 
     @classmethod
     def highlight_visible_lines(cls, t):
+        for tag in t.tag_names():
+            t.tag_remove(tag, "1.0", "end")
+
         visible_lines = cls.get_visible_lines(t)
 
         first_line = int(visible_lines[0].split('.')[0])
@@ -115,11 +114,14 @@ class TextUtils:
         for line in range(first_line, last_line):
             cls.highlight_line(t, line)
 
-    @staticmethod
-    def add_tag_to_word(t, first_index, last_index):
-        # t.tag_remove("keyword", "1.0", "end")
-        t.tag_add("keyword", first_index, last_index)
-        t.tag_config("keyword", background="red")
+    @classmethod
+    def clear_all_tags(cls, t):
+        visible_lines = cls.get_visible_lines(t)
+
+        for tag in t.tag_names():
+            # print(f"removendo de 1.0 até {visible_lines[0]} e {visible_lines[1]} até end")
+            t.tag_remove(tag, "1.0", visible_lines[0])
+            t.tag_remove(tag, visible_lines[1], "end")
 
     @staticmethod
     def add_newline_with_tab(t):
