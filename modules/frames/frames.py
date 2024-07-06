@@ -7,6 +7,7 @@ from modules.widgets.text import Lefttext, Maintext
 from modules.Application import Application
 from modules.FileLoader import FileLoader
 from modules.FontManager import FontManager
+from modules.TextUtils import TextUtils
 
 DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
 
@@ -174,6 +175,7 @@ class MainFrame(ttk.Frame):
         Application.selected_tab_frame.textbox.focus_set()
         self.notebook.event_generate("<<TabOpened>>")
         Application.mainapp.left_frame.textbox.open_directory(Application.current_file_directory)
+        TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
 
     def add_tab(self, tab_title: str, content: str, file_path: str):
         """
@@ -209,6 +211,7 @@ class MainFrame(ttk.Frame):
         self.current_frame.textbox.write_file_content(content)
         self.notebook.select(self.current_frame)
         Application.selected_tab_frame = self.current_frame
+        TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
 
     def __setup(self):
         self.grid_rowconfigure(0, weight=1)

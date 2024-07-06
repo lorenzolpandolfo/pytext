@@ -76,8 +76,6 @@ class Generaltext(Text):
         self.configure(state="normal")
         self.delete("1.0", "end")
         self.insert("1.0", content)
-        print("aqui")
-        self.after_idle(lambda: TextUtils.highlight_visible_lines(self))
 
         if mark_set:
             self.mark_set(mark_set, "1.0")
@@ -289,7 +287,9 @@ class Maintext(Generaltext):
         self.configure(yscrollcommand=self.__y_scroll_command)
 
     def __y_scroll_command(self, *args):
-        return self.update_line_counter()
+        self.update_line_counter()
+        TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
+        return
 
     def update_line_counter(self):
         Application.mainapp.update()
