@@ -115,6 +115,21 @@ class TextUtils:
             cls.highlight_line(t, line)
 
     @classmethod
+    def smart_syntax_highlight(cls, t):
+        print("-"*30)
+        visible_lines = cls.get_visible_lines(t)
+        first_line = int(visible_lines[0].split('.')[0])
+        last_line = int(visible_lines[1].split('.')[0])
+
+        if t.last_start_visible_line and t.last_final_visible_line:
+            for line in range(t.last_final_visible_line, last_line):
+                print(line)
+                cls.highlight_line(t, line)
+
+        t.last_start_visible_line = first_line
+        t.last_final_visible_line = last_line
+
+    @classmethod
     def clear_all_tags(cls, t):
         visible_lines = cls.get_visible_lines(t)
 

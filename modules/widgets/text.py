@@ -26,6 +26,9 @@ class Generaltext(Text):
         self.selected_line_color    = ''
         self.path                   = ''
 
+        self.last_start_visible_line = None
+        self.last_final_visible_line = None
+
         self.sys_theme = Application.mainapp.sys_theme
         self.theme = Application.mainapp.theme
         self.tab_width = Application.mainapp.user_config["tab_width"]
@@ -289,6 +292,7 @@ class Maintext(Generaltext):
     def __y_scroll_command(self, *args):
         self.update_line_counter()
         TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
+        # TextUtils.smart_syntax_highlight(Application.selected_tab_frame.textbox)
         return
 
     def update_line_counter(self):
