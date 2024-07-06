@@ -1,6 +1,10 @@
 import tkinter as tk
 import re
 
+import pygments
+from pygments import lexer, lexers
+from pygments.lexers import PythonLexer
+
 from modules.Application import Application
 from modules.LanguageManager import LanguageManager
 from modules.FileManager import FileManager as fm
@@ -80,51 +84,26 @@ class TextUtils:
         last_visible_line = int(float(visible_range[1]) * int(t.index('end').split('.')[0])) + 1
         return f"{first_visible_line}.0", f"{last_visible_line}.0"
 
-    @classmethod
-    def apply_syntax_highlight(cls, t):
-        dc = {
-            "operators": ["+", "-", "*", "/", "//", "%", "**", "==", "!=", ">", "<", ">=", "<=", "&", "|", "^", "~",
-                          "<<", ">>", "and", "or", "not", "is", "in"],
-            "statements": ["if", "elif", "else", "for", "while", "break", "continue", "return", "pass", "with", "as",
-                           "try", "except", "finally", "raise", "import", "from", "def", "class", "lambda", "global",
-                           "nonlocal", "assert", "yield", "del"],
-            "data_types": ["int", "float", "complex", "list", "tuple", "range", "str", "set", "frozenset", "dict",
-                           "bool", "bytes", "bytearray", "memoryview"],
-            "built_in_functions": ["abs", "all", "any", "ascii", "bin", "bool", "bytearray", "bytes", "callable", "chr",
-                                   "classmethod", "compile", "complex", "delattr", "dict", "dir", "divmod", "enumerate",
-                                   "eval", "exec", "filter", "float", "format", "frozenset", "getattr", "globals",
-                                   "hasattr", "hash", "help", "hex", "id", "input", "int", "isinstance", "issubclass",
-                                   "iter", "len", "list", "locals", "map", "max", "memoryview", "min", "next", "object",
-                                   "oct", "open", "ord", "pow", "print", "property", "range", "repr", "reversed",
-                                   "round", "set", "setattr", "slice", "sorted", "staticmethod", "str", "sum", "super",
-                                   "tuple", "type", "vars", "zip"],
-            "exceptions": ["BaseException", "Exception", "ArithmeticError", "BufferError", "LookupError",
-                           "AssertionError", "AttributeError", "EOFError", "FloatingPointError", "GeneratorExit",
-                           "ImportError", "ModuleNotFoundError", "IndexError", "KeyError", "KeyboardInterrupt",
-                           "MemoryError", "NameError", "NotImplementedError", "OSError", "OverflowError",
-                           "RecursionError", "ReferenceError", "RuntimeError", "StopIteration", "SyntaxError",
-                           "IndentationError", "TabError", "SystemError", "SystemExit", "TypeError",
-                           "UnboundLocalError", "UnicodeError", "UnicodeEncodeError", "UnicodeDecodeError",
-                           "UnicodeTranslateError", "ValueError", "ZeroDivisionError"],
-            "keywords": ["False", "None", "True", "and", "as", "assert", "async", "await", "break", "class", "continue",
-                         "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if", "import",
-                         "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while",
-                         "with", "yield"]
-        }
+    @staticmethod
+    def highlight_line(t, line: int = None):
+        t.tag_config("Token.Keyword.Namespace", foreground="red")
+        t.tag_config("Token.Literal.String.Single", foreground="green")
+        t.tag_config("Token.Operator", foreground="pink")
+        t.tag_config("Token.Name.Builtin", foreground="yellow")
 
-        ndc = ["import ", " from ", "def ", "class ", "return ", "if ", " in "]
-        visible_lines = cls.get_visible_lines(t)
-        visible_content = t.get(visible_lines[0], visible_lines[1]).split("\n")
+        if line is None:
+            line = int(t.index("insert").split(".")[0])
+        content = t.get(f"{line}.0", f"{line}.end")
+        start = f"{line}.0"
 
-        print("-"*30)
-        for n, line in enumerate(visible_content):
-            cur_line = n + float(visible_lines[0])
-            pattern = r'\b(' + '|'.join(ndc) + r')\b'
+        for tag in t.tag_names(index=None):
+            if tag != "sel" and tag != "current_line_color":
+                t.tag_remove(tag, f"{line}.0", f"{line}.end")
 
-            for m in re.finditer(pattern, line):
-                keyword = m.group(0)
-                first_index = m.start()
-                print(f"[Linha {cur_line}] keyword encontrada: {keyword} em {first_index}.{first_index+len(keyword)}")
+        for token, content in pygments.lex(content, PythonLexer()):
+            end = f"{start.split('.')[0]}.{int(start.split('.')[1]) + len(content)}"
+            t.tag_add(str(token), start, end)
+            start = end
 
     @staticmethod
     def add_tag_to_word(t, first_index, last_index):

@@ -250,7 +250,7 @@ class Maintext(Generaltext):
         return 'break'
 
     def __key_dealing(self):
-        TextUtils.apply_syntax_highlight(self)
+        TextUtils.highlight_line(self)
         self.highlight_selected_line()
         self.update_line_counter()
 
