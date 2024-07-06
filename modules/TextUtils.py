@@ -73,11 +73,69 @@ class TextUtils:
         return first_visible_line <= cursor_line <= last_visible_line
 
     @staticmethod
-    def get_visible_lines(t):
+    def get_visible_lines(t) -> tuple[str, str]:
         visible_range = t.yview()
-        first_visible_line = int(float(visible_range[0]) * int(t.index('end').split('.')[0]))
-        last_visible_line = int(float(visible_range[1]) * int(t.index('end').split('.')[0]))
-        return last_visible_line - first_visible_line + 1
+        first_visible_line = int(float(visible_range[0]) * int(t.index('end').split('.')[0])) + 1
+        last_visible_line = int(float(visible_range[1]) * int(t.index('end').split('.')[0])) + 1
+        return f"{first_visible_line}.0", f"{last_visible_line}.0"
+
+    @classmethod
+    def apply_syntax_highlight(cls, t):
+        dc = {
+            "operators": ["+", "-", "*", "/", "//", "%", "**", "==", "!=", ">", "<", ">=", "<=", "&", "|", "^", "~",
+                          "<<", ">>", "and", "or", "not", "is", "in"],
+            "statements": ["if", "elif", "else", "for", "while", "break", "continue", "return", "pass", "with", "as",
+                           "try", "except", "finally", "raise", "import", "from", "def", "class", "lambda", "global",
+                           "nonlocal", "assert", "yield", "del"],
+            "data_types": ["int", "float", "complex", "list", "tuple", "range", "str", "set", "frozenset", "dict",
+                           "bool", "bytes", "bytearray", "memoryview"],
+            "built_in_functions": ["abs", "all", "any", "ascii", "bin", "bool", "bytearray", "bytes", "callable", "chr",
+                                   "classmethod", "compile", "complex", "delattr", "dict", "dir", "divmod", "enumerate",
+                                   "eval", "exec", "filter", "float", "format", "frozenset", "getattr", "globals",
+                                   "hasattr", "hash", "help", "hex", "id", "input", "int", "isinstance", "issubclass",
+                                   "iter", "len", "list", "locals", "map", "max", "memoryview", "min", "next", "object",
+                                   "oct", "open", "ord", "pow", "print", "property", "range", "repr", "reversed",
+                                   "round", "set", "setattr", "slice", "sorted", "staticmethod", "str", "sum", "super",
+                                   "tuple", "type", "vars", "zip"],
+            "exceptions": ["BaseException", "Exception", "ArithmeticError", "BufferError", "LookupError",
+                           "AssertionError", "AttributeError", "EOFError", "FloatingPointError", "GeneratorExit",
+                           "ImportError", "ModuleNotFoundError", "IndexError", "KeyError", "KeyboardInterrupt",
+                           "MemoryError", "NameError", "NotImplementedError", "OSError", "OverflowError",
+                           "RecursionError", "ReferenceError", "RuntimeError", "StopIteration", "SyntaxError",
+                           "IndentationError", "TabError", "SystemError", "SystemExit", "TypeError",
+                           "UnboundLocalError", "UnicodeError", "UnicodeEncodeError", "UnicodeDecodeError",
+                           "UnicodeTranslateError", "ValueError", "ZeroDivisionError"],
+            "keywords": ["False", "None", "True", "and", "as", "assert", "async", "await", "break", "class", "continue",
+                         "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if", "import",
+                         "in", "is", "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try", "while",
+                         "with", "yield"]
+        }
+
+        ndc = ["import", "from", "def", "class", "return", "if", "in"]
+        visible_lines = cls.get_visible_lines(t)
+        visible_content = t.get(visible_lines[0], visible_lines[1]).split("\n")
+
+        for n, line in enumerate(visible_content):
+            column = 0
+            space_n = -1
+            line = line.split()
+
+            for word in line:
+                column += len(word)
+                space_n += 1
+                if word in ndc:
+                    line_index = (n + 1)
+                    cls.add_tag_to_word(
+                        t,
+                        first_index=f"{line_index}.{column-len(word) + space_n}",
+                        last_index=f"{line_index}.{column + space_n}"
+                    )
+
+    @staticmethod
+    def add_tag_to_word(t, first_index, last_index):
+        # t.tag_remove("keyword", "1.0", "end")
+        t.tag_add("keyword", first_index, last_index)
+        t.tag_config("keyword", background="red")
 
     @staticmethod
     def add_newline_with_tab(t):
