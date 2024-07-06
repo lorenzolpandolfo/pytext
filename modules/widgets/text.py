@@ -1,5 +1,5 @@
 import tkinter
-from tkinter import Text, Menu
+from tkinter import Text, Menu, font
 import os
 import platform
 
@@ -141,21 +141,20 @@ class Maintext(Generaltext):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, undo=True, autoseparators=False, *args, **kwargs)
         self._line_counter = None
-
         self.sys_theme = Application.mainapp.sys_theme
         self.theme = Application.mainapp.theme
-        self.__load_theme__()
+        self.__load_theme()
         super().enable_binds()
-        self._enable_binds_()
+        self._enable_binds()
 
-    def __load_theme__(self):
+    def __load_theme(self):
         super().load_theme("main_textbox")
         self.configure(bg=self.bg_color, foreground=self.font_color, state="disabled")
 
-    def _enable_binds_(self):
+    def _enable_binds(self):
         shift_tab = "<Shift-Tab>" if platform.system() == "Windows" else "<ISO_Left_Tab>"
 
-        self.bind("<Key>", lambda e: self.after_idle(self.__key_dealing__))
+        self.bind("<Key>", lambda e: self.after_idle(self.__key_dealing))
         self.bind("<Tab>", lambda e: TextUtils.add_tab(self))
         self.bind(f"{shift_tab}", lambda e: TextUtils.untab(self))
         self.bind("<Shift-Tab>", lambda e: TextUtils.untab(self))
@@ -173,6 +172,8 @@ class Maintext(Generaltext):
         self.bind("<Control-y>", lambda e: self.redo())
         self.bind("<Control-Tab>", Application.change_to_next_tab)
         self.bind("<Control-comma>", lambda _: FileLoader.open_config_file())
+        self.bind("<Control-equal>", lambda _: self.change_font_size(1))
+        self.bind("<Control-minus>", lambda _: self.change_font_size(-1))
 
     def undo(self):
         try:
@@ -248,7 +249,7 @@ class Maintext(Generaltext):
         self.insert('insert', content)
         return 'break'
 
-    def __key_dealing__(self):
+    def __key_dealing(self):
         self.highlight_selected_line()
         self.update_line_counter()
 
@@ -261,18 +262,25 @@ class Maintext(Generaltext):
             frame, self, justify="right", colors=(lc_font_color, lc_bg_color), tilde=tilde_char, bd=0
         )
         self._line_counter.grid(row=1, column=0, sticky="ns", pady=(0, 0))
-        self.__enable_auto_redraw__()
+        self.__enable_auto_redraw()
 
-    def __enable_auto_redraw__(self):
-        self.configure(yscrollcommand=self.__y_scroll_command__)
+    def __enable_auto_redraw(self):
+        self.configure(yscrollcommand=self.__y_scroll_command)
 
-    def __y_scroll_command__(self, *args):
+    def __y_scroll_command(self, *args):
         return self.update_line_counter()
 
     def update_line_counter(self):
         Application.mainapp.update()
         Application.mainapp.update_idletasks()
         Application.mainapp.after_idle(self._line_counter.redraw)
+
+    def change_font_size(self, value: int):
+        cur_font = self.cget("font")
+        f = font.Font(font=cur_font)
+        family = f.actual()["family"]
+        size = f.actual()["size"]
+        self.configure(font=font.Font(family=family, size=(size + value)))
 
 
 class Lefttext(Generaltext):
