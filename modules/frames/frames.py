@@ -7,6 +7,8 @@ from modules.widgets.text import Lefttext, Maintext
 from modules.Application import Application
 from modules.FileLoader import FileLoader
 from modules.FontManager import FontManager
+from modules.TextUtils import TextUtils
+from modules.FontManager import FontManager
 
 DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
 
@@ -35,7 +37,7 @@ class LeftFrame(ttk.Frame):
         return
 
     def create_textbox(self, row: int = 0, column: int = 0):
-        self.searchbar = ttk.Label(self, text="Search...")
+        self.searchbar = ttk.Label(self, text="Search...", font=FontManager.GUI_FONT)
         self.textbox = Lefttext(
             self, font=FontManager.GUI_FONT, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none'
         )
@@ -174,6 +176,7 @@ class MainFrame(ttk.Frame):
         Application.selected_tab_frame.textbox.focus_set()
         self.notebook.event_generate("<<TabOpened>>")
         Application.mainapp.left_frame.textbox.open_directory(Application.current_file_directory)
+        TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
 
     def add_tab(self, tab_title: str, content: str, file_path: str):
         """

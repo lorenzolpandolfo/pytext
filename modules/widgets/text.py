@@ -26,6 +26,9 @@ class Generaltext(Text):
         self.selected_line_color    = ''
         self.path                   = ''
 
+        self.last_start_visible_line = None
+        self.last_final_visible_line = None
+
         self.sys_theme = Application.mainapp.sys_theme
         self.theme = Application.mainapp.theme
         self.tab_width = Application.mainapp.user_config["tab_width"]
@@ -146,6 +149,7 @@ class Maintext(Generaltext):
         self.__load_theme()
         super().enable_binds()
         self._enable_binds()
+        self.load_syntax_highlight_theme()
 
     def __load_theme(self):
         super().load_theme("main_textbox")
@@ -250,8 +254,27 @@ class Maintext(Generaltext):
         return 'break'
 
     def __key_dealing(self):
+        TextUtils.highlight_line(self)
+        # TextUtils.highlight_visible_lines(self)
         self.highlight_selected_line()
         self.update_line_counter()
+
+    def load_syntax_highlight_theme(self):
+        self.tag_config("Token.Keyword", foreground="#CF8E6D")  # Laranja suave
+        self.tag_config("Token.Keyword.Namespace", foreground="#CF8E6D")
+        self.tag_config("Token.Literal.String.Single", foreground="#6AAB73")  # Verde suave
+        self.tag_config("Token.Literal.String.Double", foreground="#6AAB73")
+        self.tag_config("Token.Operator", foreground="#a9b7c6")  # Azul acinzentado
+        self.tag_config("Token.Name.Builtin", foreground="#ffc66d")  # Amarelo suave
+        self.tag_config("Token.Comment", foreground="#7A7E85")  # Cinza suave
+        self.tag_config("Token.Comment.Single", foreground="#7A7E85")  # Cinza suave
+        self.tag_config("Token.Name.Function", foreground="#56A8F5")  # Amarelo suave
+        self.tag_config("Token.Name.Class", foreground="#C77DBB")  # Amarelo suave
+        self.tag_config("Token.Name.Decorator", foreground="#B3AE60")  # Amarelo
+        self.tag_config("Token.Literal.Number", foreground="#2AACB8")  # Azul suave
+        self.tag_config("Token.Name.Variable", foreground="#a9b7c6")  # Azul acinzentado
+        self.tag_config("Token.Text", foreground="#a9b7c6")  # Azul acinzentado
+        self.tag_config("Token.Name", foreground="#a9b7c6")  # Azul acinzentado
 
     def create_line_counter(self, frame):
         dark = "_dark" if self.sys_theme == "dark" else ""
@@ -268,7 +291,12 @@ class Maintext(Generaltext):
         self.configure(yscrollcommand=self.__y_scroll_command)
 
     def __y_scroll_command(self, *args):
-        return self.update_line_counter()
+        self.update_line_counter()
+
+        if Application.selected_tab_frame:
+            TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
+        # TextUtils.smart_syntax_highlight(Application.selected_tab_frame.textbox)
+        return
 
     def update_line_counter(self):
         Application.mainapp.update()

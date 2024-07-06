@@ -1,4 +1,9 @@
-import tkinter
+import tkinter as tk
+import re
+
+import pygments
+from pygments import lexer, lexers
+from pygments.lexers import PythonLexer
 
 from modules.Application import Application
 from modules.LanguageManager import LanguageManager
@@ -73,11 +78,67 @@ class TextUtils:
         return first_visible_line <= cursor_line <= last_visible_line
 
     @staticmethod
-    def get_visible_lines(t):
+    def get_visible_lines(t) -> tuple[str, str]:
         visible_range = t.yview()
-        first_visible_line = int(float(visible_range[0]) * int(t.index('end').split('.')[0]))
-        last_visible_line = int(float(visible_range[1]) * int(t.index('end').split('.')[0]))
-        return last_visible_line - first_visible_line + 1
+        first_visible_line = int(float(visible_range[0]) * int(t.index('end').split('.')[0])) + 1
+        last_visible_line = int(float(visible_range[1]) * int(t.index('end').split('.')[0])) + 1
+        return f"{first_visible_line}.0", f"{last_visible_line}.0"
+
+    @staticmethod
+    def highlight_line(t, line: int = None):
+        TextUtils.clear_all_tags(t)
+        if line is None:
+            line = int(t.index("insert").split(".")[0])
+        content = t.get(f"{line}.0", f"{line}.end")
+        start = f"{line}.0"
+
+        for tag in t.tag_names(index=None):
+            if tag != "sel" and tag != "current_line_color":
+                t.tag_remove(tag, f"{line}.0", f"{line}.end")
+
+        for token, content in pygments.lex(content, PythonLexer()):
+            end = f"{start.split('.')[0]}.{int(start.split('.')[1]) + len(content)}"
+            t.tag_add(str(token), start, end)
+            start = end
+
+    @classmethod
+    def highlight_visible_lines(cls, t):
+        for tag in t.tag_names():
+            if tag != "sel" and tag != "current_line_color":
+                t.tag_remove(tag, "1.0", "end")
+
+        visible_lines = cls.get_visible_lines(t)
+
+        first_line = int(visible_lines[0].split('.')[0])
+        last_line = int(visible_lines[1].split('.')[0])
+
+        for line in range(first_line, last_line):
+            cls.highlight_line(t, line)
+
+    @classmethod
+    def smart_syntax_highlight(cls, t):
+        print("-"*30)
+        visible_lines = cls.get_visible_lines(t)
+        first_line = int(visible_lines[0].split('.')[0])
+        last_line = int(visible_lines[1].split('.')[0])
+
+        if t.last_start_visible_line and t.last_final_visible_line:
+            for line in range(t.last_final_visible_line, last_line):
+                print(line)
+                cls.highlight_line(t, line)
+
+        t.last_start_visible_line = first_line
+        t.last_final_visible_line = last_line
+
+    @classmethod
+    def clear_all_tags(cls, t):
+        visible_lines = cls.get_visible_lines(t)
+
+        for tag in t.tag_names():
+            # print(f"removendo de 1.0 até {visible_lines[0]} e {visible_lines[1]} até end")
+            if tag != "sel" and tag != "current_line_color":
+                t.tag_remove(tag, "1.0", visible_lines[0])
+                t.tag_remove(tag, visible_lines[1], "end")
 
     @staticmethod
     def add_newline_with_tab(t):
@@ -199,11 +260,11 @@ class TextUtils:
             end_line = int(end.split('.')[0])
             selected_lines = list(range(start_line, end_line + 1))
             return selected_lines
-        except tkinter.TclError:
+        except tk.TclError:
             return []
 
     @staticmethod
-    def swipe_lines(t: tkinter.Text, l1: str | int, l2: str | int):
+    def swipe_lines(t: tk.Text, l1: str | int, l2: str | int):
         """Move content from line1 to line2. l is the line number, with no columns."""
         selected_lines = TextUtils.get_selected_lines(t)
         if selected_lines:
@@ -223,7 +284,7 @@ class TextUtils:
         t.edit_separator()
 
     @staticmethod
-    def swipe_block(t: tkinter.Text, b: tuple | list, direction: str):
+    def swipe_block(t: tk.Text, b: tuple | list, direction: str):
         if isinstance(b, list):
             b = (b[0], b[-1])
 
