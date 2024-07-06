@@ -8,6 +8,7 @@ from modules.Application import Application
 from modules.FileLoader import FileLoader
 from modules.FontManager import FontManager
 from modules.TextUtils import TextUtils
+from modules.FontManager import FontManager
 
 DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET = 20
 
@@ -36,7 +37,7 @@ class LeftFrame(ttk.Frame):
         return
 
     def create_textbox(self, row: int = 0, column: int = 0):
-        self.searchbar = ttk.Label(self, text="Search...")
+        self.searchbar = ttk.Label(self, text="Search...", font=FontManager.GUI_FONT)
         self.textbox = Lefttext(
             self, font=FontManager.GUI_FONT, width=DEFAULT_SIZE_OF_EXPLORER_TEXT_WIDGET, wrap='none'
         )
