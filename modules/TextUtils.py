@@ -1,4 +1,5 @@
-import tkinter
+import tkinter as tk
+import re
 
 from modules.Application import Application
 from modules.LanguageManager import LanguageManager
@@ -111,25 +112,19 @@ class TextUtils:
                          "with", "yield"]
         }
 
-        ndc = ["import", "from", "def", "class", "return", "if", "in"]
+        ndc = ["import ", " from ", "def ", "class ", "return ", "if ", " in "]
         visible_lines = cls.get_visible_lines(t)
         visible_content = t.get(visible_lines[0], visible_lines[1]).split("\n")
 
+        print("-"*30)
         for n, line in enumerate(visible_content):
-            column = 0
-            space_n = -1
-            line = line.split()
+            cur_line = n + float(visible_lines[0])
+            pattern = r'\b(' + '|'.join(ndc) + r')\b'
 
-            for word in line:
-                column += len(word)
-                space_n += 1
-                if word in ndc:
-                    line_index = (n + 1)
-                    cls.add_tag_to_word(
-                        t,
-                        first_index=f"{line_index}.{column-len(word) + space_n}",
-                        last_index=f"{line_index}.{column + space_n}"
-                    )
+            for m in re.finditer(pattern, line):
+                keyword = m.group(0)
+                first_index = m.start()
+                print(f"[Linha {cur_line}] keyword encontrada: {keyword} em {first_index}.{first_index+len(keyword)}")
 
     @staticmethod
     def add_tag_to_word(t, first_index, last_index):
@@ -257,11 +252,11 @@ class TextUtils:
             end_line = int(end.split('.')[0])
             selected_lines = list(range(start_line, end_line + 1))
             return selected_lines
-        except tkinter.TclError:
+        except tk.TclError:
             return []
 
     @staticmethod
-    def swipe_lines(t: tkinter.Text, l1: str | int, l2: str | int):
+    def swipe_lines(t: tk.Text, l1: str | int, l2: str | int):
         """Move content from line1 to line2. l is the line number, with no columns."""
         selected_lines = TextUtils.get_selected_lines(t)
         if selected_lines:
@@ -281,7 +276,7 @@ class TextUtils:
         t.edit_separator()
 
     @staticmethod
-    def swipe_block(t: tkinter.Text, b: tuple | list, direction: str):
+    def swipe_block(t: tk.Text, b: tuple | list, direction: str):
         if isinstance(b, list):
             b = (b[0], b[-1])
 
