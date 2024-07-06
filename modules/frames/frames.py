@@ -211,7 +211,6 @@ class MainFrame(ttk.Frame):
         self.current_frame.textbox.write_file_content(content)
         self.notebook.select(self.current_frame)
         Application.selected_tab_frame = self.current_frame
-        TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
 
     def __setup(self):
         self.grid_rowconfigure(0, weight=1)
