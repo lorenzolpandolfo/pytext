@@ -104,7 +104,8 @@ class TextUtils:
     @classmethod
     def highlight_visible_lines(cls, t):
         for tag in t.tag_names():
-            t.tag_remove(tag, "1.0", "end")
+            if tag != "sel" and tag != "current_line_color":
+                t.tag_remove(tag, "1.0", "end")
 
         visible_lines = cls.get_visible_lines(t)
 
@@ -135,8 +136,9 @@ class TextUtils:
 
         for tag in t.tag_names():
             # print(f"removendo de 1.0 até {visible_lines[0]} e {visible_lines[1]} até end")
-            t.tag_remove(tag, "1.0", visible_lines[0])
-            t.tag_remove(tag, visible_lines[1], "end")
+            if tag != "sel" and tag != "current_line_color":
+                t.tag_remove(tag, "1.0", visible_lines[0])
+                t.tag_remove(tag, visible_lines[1], "end")
 
     @staticmethod
     def add_newline_with_tab(t):

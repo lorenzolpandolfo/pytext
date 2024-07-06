@@ -260,17 +260,18 @@ class Maintext(Generaltext):
         self.update_line_counter()
 
     def load_syntax_highlight_theme(self):
-        self.tag_config("Token.Keyword", foreground="#cc7832")  # Laranja suave
-        self.tag_config("Token.Keyword.Namespace", foreground="#cc7832")
-        self.tag_config("Token.Literal.String.Single", foreground="#6a8759")  # Verde suave
-        self.tag_config("Token.Literal.String.Double", foreground="#6a8759")
+        self.tag_config("Token.Keyword", foreground="#CF8E6D")  # Laranja suave
+        self.tag_config("Token.Keyword.Namespace", foreground="#CF8E6D")
+        self.tag_config("Token.Literal.String.Single", foreground="#6AAB73")  # Verde suave
+        self.tag_config("Token.Literal.String.Double", foreground="#6AAB73")
         self.tag_config("Token.Operator", foreground="#a9b7c6")  # Azul acinzentado
         self.tag_config("Token.Name.Builtin", foreground="#ffc66d")  # Amarelo suave
-        self.tag_config("Token.Comment", foreground="#808080")  # Cinza suave
-        self.tag_config("Token.Name.Function", foreground="#ffc66d")  # Amarelo suave
-        self.tag_config("Token.Name.Class", foreground="#ffc66d")  # Amarelo suave
-        self.tag_config("Token.Name.Decorator", foreground="#bbb529")  # Amarelo
-        self.tag_config("Token.Literal.Number", foreground="#6897bb")  # Azul suave
+        self.tag_config("Token.Comment", foreground="#7A7E85")  # Cinza suave
+        self.tag_config("Token.Comment.Single", foreground="#7A7E85")  # Cinza suave
+        self.tag_config("Token.Name.Function", foreground="#56A8F5")  # Amarelo suave
+        self.tag_config("Token.Name.Class", foreground="#C77DBB")  # Amarelo suave
+        self.tag_config("Token.Name.Decorator", foreground="#B3AE60")  # Amarelo
+        self.tag_config("Token.Literal.Number", foreground="#2AACB8")  # Azul suave
         self.tag_config("Token.Name.Variable", foreground="#a9b7c6")  # Azul acinzentado
         self.tag_config("Token.Text", foreground="#a9b7c6")  # Azul acinzentado
         self.tag_config("Token.Name", foreground="#a9b7c6")  # Azul acinzentado
