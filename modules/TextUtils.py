@@ -105,6 +105,16 @@ class TextUtils:
             t.tag_add(str(token), start, end)
             start = end
 
+    @classmethod
+    def highlight_visible_lines(cls, t):
+        visible_lines = cls.get_visible_lines(t)
+
+        first_line = int(visible_lines[0].split('.')[0])
+        last_line = int(visible_lines[1].split('.')[0])
+
+        for line in range(first_line, last_line):
+            cls.highlight_line(t, line)
+
     @staticmethod
     def add_tag_to_word(t, first_index, last_index):
         # t.tag_remove("keyword", "1.0", "end")
