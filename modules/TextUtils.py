@@ -113,9 +113,10 @@ class TextUtils:
             return
 
         # print("qtd de tags: ", len(t.tag_names()))
-        for tag in t.tag_names():
-            if tag != "sel" and tag != "current_line_color":
-                t.tag_remove(tag, "1.0", "end")
+#         for tag in t.tag_names():
+#             if tag != "sel" and tag != "current_line_color":
+#                 t.tag_remove(tag, "1.0", "end")
+        cls.clear_all_tags(t)
 
         for line in range(first_line, last_line):
             cls.highlight_line(t, line)

@@ -254,8 +254,10 @@ class Maintext(Generaltext):
         return 'break'
 
     def __key_dealing(self):
-        TextUtils.highlight_line(self)
-        # TextUtils.highlight_visible_lines(self)
+        if Application.mainapp.user_config["syntax_highlight"]:
+            TextUtils.highlight_line(self)
+            # TextUtils.highlight_visible_lines(self)
+                
         self.highlight_selected_line()
         self.update_line_counter()
 
@@ -293,7 +295,7 @@ class Maintext(Generaltext):
     def __y_scroll_command(self, *args):
         self.update_line_counter()
 
-        if Application.selected_tab_frame:
+        if Application.mainapp.user_config["syntax_highlight"] and Application.selected_tab_frame:
             TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
             # TextUtils.smart_syntax_highlight(Application.selected_tab_frame.textbox)
             pass
