@@ -1,9 +1,11 @@
 import os
+import ctypes
 
 import tkinter as tk
 from ttkbootstrap import Style
 
 import darkdetect
+import platform
 
 from modules.UserConfig import UserConfig
 from modules.FontManager import FontManager
@@ -26,6 +28,8 @@ class MainApp(tk.Tk):
 
         self.arg_file_title = arg_file_title
 
+        self.__windows_set_dpi_awareness()
+        
         self.__load_user_config()
         self.__load_system_theme()
         self.__load_user_font()
@@ -39,6 +43,11 @@ class MainApp(tk.Tk):
             FileLoader.open_welcome_file()
 
         self.__enable_binds()
+
+    def __windows_set_dpi_awareness(self):
+        scale = self.tk.call('tk', 'scaling')
+        if platform.system() == "Windows" and str(scale) != '1.0':
+            ctypes.windll.shcore.SetProcessDpiAwareness(1)
 
     def __load_ttk_colors(self):
         forced_theme = self.user_config["forced_theme"]

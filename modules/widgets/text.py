@@ -295,7 +295,8 @@ class Maintext(Generaltext):
 
         if Application.selected_tab_frame:
             TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
-        # TextUtils.smart_syntax_highlight(Application.selected_tab_frame.textbox)
+            # TextUtils.smart_syntax_highlight(Application.selected_tab_frame.textbox)
+            pass
         return
 
     def update_line_counter(self):

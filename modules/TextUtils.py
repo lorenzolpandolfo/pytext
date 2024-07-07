@@ -103,29 +103,38 @@ class TextUtils:
 
     @classmethod
     def highlight_visible_lines(cls, t):
+        visible_lines = cls.get_visible_lines(t)
+        first_line = int(visible_lines[0].split('.')[0])
+        last_line = int(visible_lines[1].split('.')[0])
+        # print(first_line, last_line, "\n", t.last_start_visible_line, t.last_final_visible_line)
+
+        if first_line == t.last_start_visible_line and last_line == t.last_final_visible_line:
+            # print("ignorado")
+            return
+
+        # print("qtd de tags: ", len(t.tag_names()))
         for tag in t.tag_names():
             if tag != "sel" and tag != "current_line_color":
                 t.tag_remove(tag, "1.0", "end")
 
-        visible_lines = cls.get_visible_lines(t)
-
-        first_line = int(visible_lines[0].split('.')[0])
-        last_line = int(visible_lines[1].split('.')[0])
-
         for line in range(first_line, last_line):
             cls.highlight_line(t, line)
+        
+        t.last_start_visible_line = first_line
+        t.last_final_visible_line = last_line
+
 
     @classmethod
     def smart_syntax_highlight(cls, t):
-        print("-"*30)
+        # print("-"*30)
         visible_lines = cls.get_visible_lines(t)
         first_line = int(visible_lines[0].split('.')[0])
         last_line = int(visible_lines[1].split('.')[0])
 
-        if t.last_start_visible_line and t.last_final_visible_line:
-            for line in range(t.last_final_visible_line, last_line):
-                print(line)
-                cls.highlight_line(t, line)
+        # if t.last_start_visible_line and t.last_final_visible_line:
+            # for line in range(t.last_final_visible_line, last_line):
+                # print(line)
+                # cls.highlight_line(t, line)
 
         t.last_start_visible_line = first_line
         t.last_final_visible_line = last_line
@@ -136,9 +145,8 @@ class TextUtils:
 
         for tag in t.tag_names():
             # print(f"removendo de 1.0 até {visible_lines[0]} e {visible_lines[1]} até end")
-            if tag != "sel" and tag != "current_line_color":
-                t.tag_remove(tag, "1.0", visible_lines[0])
-                t.tag_remove(tag, visible_lines[1], "end")
+            t.tag_remove(tag, "1.0", visible_lines[0])
+            t.tag_remove(tag, visible_lines[1], "end")
 
     @staticmethod
     def add_newline_with_tab(t):
