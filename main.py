@@ -45,8 +45,10 @@ class MainApp(tk.Tk):
         self.__enable_binds()
 
     def __windows_set_dpi_awareness(self):
+        if platform.system() != "Windows":
+            return
         scale = self.tk.call('tk', 'scaling')
-        if platform.system() == "Windows" and str(scale) != '1.0':
+        if str(scale) != '1.0':
             ctypes.windll.shcore.SetProcessDpiAwareness(1)
 
     def __load_ttk_colors(self):

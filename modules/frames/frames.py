@@ -176,7 +176,8 @@ class MainFrame(ttk.Frame):
         Application.selected_tab_frame.textbox.focus_set()
         self.notebook.event_generate("<<TabOpened>>")
         Application.mainapp.left_frame.textbox.open_directory(Application.current_file_directory)
-        TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
+        if Application.mainapp.user_config["syntax_highlight"]:
+            TextUtils.highlight_visible_lines(Application.selected_tab_frame.textbox)
 
     def add_tab(self, tab_title: str, content: str, file_path: str):
         """
