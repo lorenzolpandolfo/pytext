@@ -1,6 +1,7 @@
 {
         "auto_insert_delimiters"  : true,
         "syntax_highlight"        : true,
+        "show_relative_file_path" : true,
         "enable_welcome_message"  : true,
         "nonexistent_char"        : "",
         "forced_theme"            : "dark",

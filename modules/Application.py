@@ -43,6 +43,9 @@ class Application:
 
         if path != '' and not os.path.isfile(path):
             visual_path = f"{path} (new)"
+
+        if cls.mainapp.user_config["show_relative_file_path"]:
+            visual_path = visual_path.replace(Application.terminal_path, "")
         cls.mainapp.bottom_frame.output.configure(text=visual_path)
 
     @classmethod
