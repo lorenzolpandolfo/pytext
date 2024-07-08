@@ -324,10 +324,14 @@ class Lefttext(Generaltext):
 
         self.bind("<B1-Motion>", 'break')
         self.bind("<F2>", lambda _: Renamer.create_rename_window())
-        self.bind("<Shift-colon>", lambda _: Application.selected_tab_frame.textbox.focus_set())
+        self.bind("<Shift-colon>", lambda _: self.select_maintext())
         self.bind("<Key>", lambda e: self.add_to_searchbar(e))
         self.bind("<BackSpace>", lambda _: self.remove_from_searchbar())
         self.bind("<Control-BackSpace>", lambda _: self.clear_spacebar())
+
+    def select_maintext(self, e=None):
+        if Application.selected_tab_frame:
+            Application.selected_tab_frame.textbox.focus_set()
 
     def add_to_searchbar(self, e):
         if not e.char.isalpha():

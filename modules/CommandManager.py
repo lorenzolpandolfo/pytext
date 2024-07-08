@@ -106,8 +106,7 @@ class CommandManager:
     def save_file(cls):
         cur_file_path = Application.current_file_path
         if not cur_file_path:
-            cur_file_path = os.path.join(Application.current_file_directory, "untitled.txt")
-            print("nao tenho um arquivo aberto no momento.\nSalvando: ", cur_file_path)
+            cur_file_path = os.path.join(Application.terminal_path, "untitled")
 
         file_title = os.path.basename(cur_file_path)
 
@@ -118,7 +117,7 @@ class CommandManager:
         if file_title == "untitled":
             file_to_save = {
                 "file_title": file_title,
-                "file_path": Application.current_file_path
+                "file_path": cur_file_path
             }
             Renamer.create_rename_window(file_to_save)
         return True

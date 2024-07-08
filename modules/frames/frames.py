@@ -70,6 +70,10 @@ class LeftFrame(ttk.Frame):
             return False
 
         side_bar_selected_file_name = self.textbox.get_current_line_content().strip()
+
+        if not side_bar_selected_file_name:
+            return
+
         if side_bar_selected_file_name[0] == "▼":
             self.textbox.updir()
             return
