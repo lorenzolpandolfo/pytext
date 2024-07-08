@@ -32,12 +32,19 @@ To switch from view mode to insert mode, just press i. And, to go to view mode, 
 ## Insert mode shortcuts:
 Shortcut | Description
 --- | --- 
+Shift + : | focus file textbox
 Ctrl + e | open/close file explorer
+Ctrl + t | new tab
+Ctrl + w | close current tab
+Ctrl + tab | move to next tab
+F2 (in file explorer) | rename file to
 Ctrl + Return | new line above
 Ctrl + F5 | run code
 Ctrl + z / y | undo / redo
 Ctrl + c / v | copy / paste
 Ctrl + x | cut the selected line(s)
+Ctrl + , | open config.json file
+Ctrl + =/- | make font bigger/smaller
 Alt + up / down | move selected line(s) up / down
 Alt + shift + up / down | clone selected line(s) up / down
 
